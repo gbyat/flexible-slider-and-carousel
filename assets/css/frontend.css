@@ -1,0 +1,178 @@
+/* Flexible Slider & Carousel - Frontend Styles */
+
+/* Slider Container */
+.fsc-slider {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    margin: 20px 0;
+}
+
+.fsc-slider__frames {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.fsc-slider__frame {
+    flex: 0 0 100%;
+    min-height: 200px;
+}
+
+/* Navigation Arrows */
+.fsc-slider__navigation {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: background 0.3s ease;
+}
+
+.fsc-slider__navigation:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.fsc-slider__navigation--prev {
+    left: 10px;
+}
+
+.fsc-slider__navigation--next {
+    right: 10px;
+}
+
+/* Navigation Dots */
+.fsc-slider__dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+
+.fsc-slider__dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.fsc-slider__dot:hover {
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.fsc-slider__dot--active {
+    background: white;
+}
+
+/* Frame Styles */
+.fsc-frame {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background: white;
+}
+
+.fsc-frame__content {
+    width: 100%;
+    height: 100%;
+}
+
+.fsc-frame__image-img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.fsc-frame__text-content {
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.fsc-frame__video-element {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.fsc-frame__custom-html-content {
+    padding: 20px;
+}
+
+/* Overlay */
+.fsc-frame__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    padding: 20px;
+    z-index: 5;
+}
+
+/* Links */
+.fsc-frame__link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+}
+
+.fsc-frame__link .screen-reader-text {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .fsc-slider__navigation {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .fsc-slider__dots {
+        bottom: 15px;
+    }
+    
+    .fsc-slider__dot {
+        width: 10px;
+        height: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .fsc-slider__navigation {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .fsc-slider__navigation--prev {
+        left: 5px;
+    }
+    
+    .fsc-slider__navigation--next {
+        right: 5px;
+    }
+} 

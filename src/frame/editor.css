@@ -1,0 +1,66 @@
+/* Frame Block Editor Styles */
+.fsc-frame {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 10px 0;
+    background: white;
+    border-radius: 6px;
+    position: relative;
+}
+
+.fsc-frame__content {
+    min-height: 80px;
+}
+
+.fsc-frame__image-placeholder,
+.fsc-frame__video-placeholder,
+.fsc-frame__placeholder {
+    background: #f0f0f0;
+    border: 2px dashed #ccc;
+    padding: 20px;
+    text-align: center;
+    color: #666;
+    border-radius: 4px;
+}
+
+.fsc-frame__media-upload {
+    margin: 10px 0;
+}
+
+.fsc-frame__media-upload-button {
+    margin-right: 10px;
+}
+
+.fsc-frame__text-content {
+    min-height: 60px;
+    border: 1px solid #eee;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.fsc-frame__custom-html-content {
+    min-height: 60px;
+    font-family: monospace;
+    font-size: 12px;
+}
+
+.fsc-frame__acf-preview {
+    background: #e7f3ff;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
+    font-size: 12px;
+}
+
+.fsc-frame__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+}

@@ -1,0 +1,57 @@
+{
+  "name": "flexible-slider-and-carousel",
+  "version": "1.0.0",
+  "description": "A comprehensive WordPress plugin for creating sliders and carousels using Gutenberg blocks",
+  "main": "flexible-slider-and-carousel.php",
+  "scripts": {
+    "build": "webpack --mode=production",
+    "dev": "webpack --mode=development --watch",
+    "start": "webpack --mode=development",
+    "lint": "eslint blocks/**/*.js assets/js/*.js",
+    "lint:fix": "eslint blocks/**/*.js assets/js/*.js --fix",
+    "format": "prettier --write blocks/**/*.js assets/js/*.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "wordpress",
+    "plugin",
+    "slider",
+    "carousel",
+    "gutenberg",
+    "blocks",
+    "wordpress-plugin"
+  ],
+  "author": "Your Name",
+  "license": "GPL-2.0-or-later",
+  "devDependencies": {
+    "@wordpress/eslint-plugin": "^14.0.0",
+    "@wordpress/prettier-config": "^2.0.0",
+    "@wordpress/scripts": "^26.0.0",
+    "copy-webpack-plugin": "^13.0.0",
+    "css-loader": "^6.8.0",
+    "eslint": "^8.0.0",
+    "prettier": "^2.8.0",
+    "style-loader": "^3.3.0",
+    "webpack": "^5.0.0",
+    "webpack-cli": "^5.0.0"
+  },
+  "dependencies": {
+    "@wordpress/api-fetch": "^6.0.0",
+    "@wordpress/block-editor": "^11.0.0",
+    "@wordpress/blocks": "^12.0.0",
+    "@wordpress/components": "^23.0.0",
+    "@wordpress/core-data": "^6.0.0",
+    "@wordpress/data": "^9.0.0",
+    "@wordpress/element": "^5.0.0",
+    "@wordpress/i18n": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

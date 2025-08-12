@@ -1,0 +1,202 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "flexible-slider-carousel/slider",
+  "title": "Slider & Carousel",
+  "description": "Create beautiful sliders and carousels with flexible content options.",
+  "category": "media",
+  "icon": "slides",
+  "keywords": [
+    "slider",
+    "carousel",
+    "slideshow",
+    "gallery",
+    "images",
+    "testimonials",
+    "products",
+    "posts"
+  ],
+  "supports": {
+    "html": false,
+    "align": ["wide", "full"],
+    "alignWide": true,
+    "spacing": {
+      "margin": true,
+      "padding": true
+    },
+    "color": {
+      "background": true,
+      "text": true
+    }
+  },
+  "attributes": {
+    "sliderType": {
+      "type": "string",
+      "default": "slider"
+    },
+    "contentMode": {
+      "type": "string",
+      "default": "manual"
+    },
+    "autoPlay": {
+      "type": "boolean",
+      "default": false
+    },
+    "autoPlaySpeed": {
+      "type": "number",
+      "default": 5000
+    },
+    "loop": {
+      "type": "boolean",
+      "default": true
+    },
+    "showNavigation": {
+      "type": "boolean",
+      "default": true
+    },
+    "showDots": {
+      "type": "boolean",
+      "default": true
+    },
+    "showThumbnails": {
+      "type": "boolean",
+      "default": false
+    },
+    "touchSwipe": {
+      "type": "boolean",
+      "default": true
+    },
+    "transition": {
+      "type": "string",
+      "default": "slide"
+    },
+    "transitionSpeed": {
+      "type": "number",
+      "default": 500
+    },
+    "easing": {
+      "type": "string",
+      "default": "ease-in-out"
+    },
+    "loading": {
+      "type": "string",
+      "default": "eager"
+    },
+    "intersectionObserver": {
+      "type": "boolean",
+      "default": false
+    },
+    "responsiveSettings": {
+      "type": "object",
+      "default": {
+        "desktop": {
+          "padding": 20,
+          "margin": 0,
+          "slidesToShow": 1
+        },
+        "tablet": {
+          "padding": 15,
+          "margin": 0,
+          "slidesToShow": 1
+        },
+        "phone": {
+          "padding": 10,
+          "margin": 0,
+          "slidesToShow": 1
+        }
+      }
+    },
+    "slidesToShow": {
+      "type": "object",
+      "default": {
+        "desktop": 1,
+        "tablet": 1,
+        "phone": 1
+      }
+    },
+    "slidesToScroll": {
+      "type": "object",
+      "default": {
+        "desktop": 1,
+        "tablet": 1,
+        "phone": 1
+      }
+    },
+    "breakpoints": {
+      "type": "object",
+      "default": {
+        "desktop": 1140,
+        "tablet": 1024,
+        "phone": 768
+      }
+    },
+    "colors": {
+      "type": "object",
+      "default": {
+        "navigation_normal": "#333333",
+        "navigation_hover": "#666666",
+        "navigation_inactive": "#cccccc",
+        "navigation_hidden": "transparent"
+      }
+    },
+    "border": {
+      "type": "object",
+      "default": {
+        "width": 0,
+        "style": "solid",
+        "color": "#000000"
+      }
+    },
+    "postQuery": {
+      "type": "object",
+      "default": {
+        "postType": "post",
+        "postsPerPage": 10,
+        "orderBy": "date",
+        "order": "DESC",
+        "categories": [],
+        "tags": [],
+        "include": [],
+        "exclude": [],
+        "metaQuery": [],
+        "taxQuery": []
+      }
+    },
+    "postElements": {
+      "type": "object",
+      "default": {
+        "featuredImage": true,
+        "title": true,
+        "excerpt": true,
+        "meta": true,
+        "date": true,
+        "author": false,
+        "categories": false,
+        "tags": false,
+        "customFields": []
+      }
+    },
+    "sliderId": {
+      "type": "string",
+      "default": ""
+    },
+    "className": {
+      "type": "string",
+      "default": ""
+    },
+    "align": {
+      "type": "string",
+      "default": ""
+    },
+    "alignWide": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "textdomain": "flexible-slider-carousel",
+  "editorScript": "file:./editor.js",
+  "script": "file:./frontend.js",
+  "editorStyle": "file:./editor.css",
+      "style": "file:./frontend.css",
+  "render": "file:./render.php"
+}

@@ -1,0 +1,586 @@
+/**
+ * Flexible Slider & Carousel - Admin Styles
+ * Styling for the WordPress admin interface
+ */
+
+/* Admin Menu Icon */
+#adminmenu .toplevel_page_fsc-settings .wp-menu-image::before {
+    content: "\f161"; /* dashicons-slides */
+}
+
+/* Admin Page Layout */
+.fsc-admin-page {
+    max-width: 1200px;
+    margin: 20px 0;
+}
+
+.fsc-admin-header {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 0;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: none;
+}
+
+.fsc-admin-header h1 {
+    margin: 0 0 10px 0;
+    color: #23282d;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.fsc-admin-header p {
+    margin: 0;
+    color: #646970;
+    font-size: 14px;
+}
+
+/* Settings Form */
+.fsc-settings-form {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 0;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.fsc-settings-section {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f0f0f1;
+}
+
+.fsc-settings-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.fsc-settings-section h2 {
+    margin: 0 0 15px 0;
+    color: #23282d;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.fsc-settings-section p.description {
+    margin: 0 0 15px 0;
+    color: #646970;
+    font-style: italic;
+}
+
+/* Form Fields */
+.fsc-form-row {
+    margin-bottom: 20px;
+}
+
+.fsc-form-row label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #23282d;
+}
+
+.fsc-form-row input[type="text"],
+.fsc-form-row input[type="number"],
+.fsc-form-row input[type="url"],
+.fsc-form-row select,
+.fsc-form-row textarea {
+    width: 100%;
+    max-width: 400px;
+    padding: 8px 12px;
+    border: 1px solid #8c8f94;
+    border-radius: 0;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.fsc-form-row input[type="text"]:focus,
+.fsc-form-row input[type="number"]:focus,
+.fsc-form-row input[type="url"]:focus,
+.fsc-form-row select:focus,
+.fsc-form-row textarea:focus {
+    border-color: #007cba;
+    box-shadow: 0 0 0 1px #007cba;
+    outline: none;
+}
+
+.fsc-form-row input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+.fsc-form-row .description {
+    margin-top: 5px;
+    color: #646970;
+    font-size: 13px;
+}
+
+/* Color Picker */
+.fsc-color-picker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.fsc-color-picker input[type="text"] {
+    max-width: 100px;
+}
+
+/* Range Input */
+.fsc-range-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.fsc-range-input input[type="range"] {
+    flex: 1;
+    max-width: 200px;
+}
+
+.fsc-range-input input[type="number"] {
+    max-width: 80px;
+}
+
+/* Responsive Settings */
+.fsc-responsive-settings {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.fsc-breakpoint {
+    background: #f9f9f9;
+    border: 1px solid #e5e5e5;
+    border-radius: 0;
+    padding: 15px;
+}
+
+.fsc-breakpoint h4 {
+    margin: 0 0 15px 0;
+    color: #23282d;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+/* Buttons */
+.fsc-button {
+    display: inline-block;
+    background: #007cba;
+    color: #fff;
+    border: none;
+    border-radius: 0;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.fsc-button:hover {
+    background: #005a87;
+    color: #fff;
+    text-decoration: none;
+}
+
+.fsc-button:focus {
+    outline: 2px solid #007cba;
+    outline-offset: 2px;
+}
+
+.fsc-button-secondary {
+    background: #f6f7f7;
+    color: #2c3338;
+    border: 1px solid #8c8f94;
+}
+
+.fsc-button-secondary:hover {
+    background: #f0f0f1;
+    color: #2c3338;
+}
+
+.fsc-button-danger {
+    background: #d63638;
+}
+
+.fsc-button-danger:hover {
+    background: #b32d2e;
+}
+
+.fsc-button-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Notices */
+.fsc-notice {
+    background: #fff;
+    border-left: 4px solid #007cba;
+    border-radius: 0;
+    padding: 15px 20px;
+    margin: 20px 0;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.fsc-notice.fsc-notice-success {
+    border-left-color: #00a32a;
+}
+
+.fsc-notice.fsc-notice-warning {
+    border-left-color: #dba617;
+}
+
+.fsc-notice.fsc-notice-error {
+    border-left-color: #d63638;
+}
+
+.fsc-notice h3 {
+    margin: 0 0 10px 0;
+    color: #23282d;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.fsc-notice p {
+    margin: 0;
+    color: #646970;
+}
+
+/* Slider Overview */
+.fsc-slider-overview {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 0;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.fsc-slider-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.fsc-slider-card {
+    border: 1px solid #e5e5e5;
+    border-radius: 0;
+    padding: 15px;
+    background: #f9f9f9;
+    transition: border-color 0.2s ease;
+}
+
+.fsc-slider-card:hover {
+    border-color: #007cba;
+}
+
+.fsc-slider-card h3 {
+    margin: 0 0 10px 0;
+    color: #23282d;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.fsc-slider-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.fsc-slider-meta span {
+    background: #e5e5e5;
+    color: #646970;
+    padding: 4px 8px;
+    border-radius: 0;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.fsc-slider-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.fsc-slider-actions .fsc-button {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+/* Import/Export */
+.fsc-import-export {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 0;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.fsc-import-export h2 {
+    margin: 0 0 20px 0;
+    color: #23282d;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.fsc-export-section,
+.fsc-import-section {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f0f0f1;
+}
+
+.fsc-export-section:last-child,
+.fsc-import-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.fsc-export-section h3,
+.fsc-import-section h3 {
+    margin: 0 0 15px 0;
+    color: #23282d;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.fsc-export-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.fsc-export-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fsc-export-option input[type="checkbox"] {
+    margin: 0;
+}
+
+/* File Upload */
+.fsc-file-upload {
+    border: 2px dashed #b4b9be;
+    border-radius: 0;
+    padding: 40px 20px;
+    text-align: center;
+    background: #f9f9f9;
+    transition: border-color 0.2s ease;
+}
+
+.fsc-file-upload:hover {
+    border-color: #007cba;
+}
+
+.fsc-file-upload input[type="file"] {
+    margin: 0 auto;
+}
+
+.fsc-file-upload p {
+    margin: 10px 0 0 0;
+    color: #646970;
+    font-size: 14px;
+}
+
+/* Performance Tools */
+.fsc-performance-tools {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 0;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.fsc-performance-tools h2 {
+    margin: 0 0 20px 0;
+    color: #23282d;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.fsc-performance-actions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.fsc-performance-action {
+    background: #f6f7f7;
+    border: 1px solid #e5e5e5;
+    border-radius: 0;
+    padding: 15px;
+    flex: 1;
+    min-width: 200px;
+}
+
+.fsc-performance-action h3 {
+    margin: 0 0 10px 0;
+    color: #23282d;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.fsc-performance-action p {
+    margin: 0 0 15px 0;
+    color: #646970;
+    font-size: 13px;
+}
+
+/* Statistics */
+.fsc-statistics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.fsc-stat-card {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 0;
+    padding: 20px;
+    text-align: center;
+}
+
+.fsc-stat-number {
+    font-size: 32px;
+    font-weight: 700;
+    color: #007cba;
+    margin-bottom: 5px;
+}
+
+.fsc-stat-label {
+    color: #646970;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Loading States */
+.fsc-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.fsc-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007cba;
+    border-radius: 50%;
+    animation: fsc-spin 1s linear infinite;
+}
+
+@keyframes fsc-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive Admin */
+@media (max-width: 782px) {
+    .fsc-responsive-settings {
+        grid-template-columns: 1fr;
+    }
+    
+    .fsc-slider-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .fsc-export-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .fsc-performance-actions {
+        flex-direction: column;
+    }
+    
+    .fsc-statistics {
+        grid-template-columns: 1fr;
+    }
+    
+    .fsc-button-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .fsc-button-group .fsc-button {
+        text-align: center;
+    }
+}
+
+/* WordPress Admin Theme Integration */
+.wp-admin .fsc-admin-page {
+    color: #23282d;
+}
+
+.wp-admin .fsc-admin-page h1,
+.wp-admin .fsc-admin-page h2,
+.wp-admin .fsc-admin-page h3 {
+    color: #23282d;
+}
+
+.wp-admin .fsc-admin-page .fsc-button {
+    background: #007cba;
+    color: #fff;
+}
+
+.wp-admin .fsc-admin-page .fsc-button:hover {
+    background: #005a87;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .fsc-admin-page {
+        color: #f0f0f1;
+    }
+    
+    .fsc-admin-header,
+    .fsc-settings-form,
+    .fsc-slider-overview,
+    .fsc-import-export,
+    .fsc-performance-tools {
+        background: #1d2327;
+        border-color: #3c434a;
+    }
+    
+    .fsc-admin-header h1,
+    .fsc-settings-section h2,
+    .fsc-slider-overview h2,
+    .fsc-import-export h2,
+    .fsc-performance-tools h2 {
+        color: #f0f0f1;
+    }
+    
+    .fsc-form-row label {
+        color: #f0f0f1;
+    }
+    
+    .fsc-breakpoint {
+        background: #2c3338;
+        border-color: #3c434a;
+    }
+    
+    .fsc-slider-card {
+        background: #2c3338;
+        border-color: #3c434a;
+    }
+    
+    .fsc-stat-card {
+        background: #2c3338;
+        border-color: #3c434a;
+    }
+} 
