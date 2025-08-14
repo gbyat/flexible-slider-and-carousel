@@ -14,6 +14,9 @@ if (!defined('ABSPATH')) {
 $align = isset($attributes['align']) ? $attributes['align'] : 'center';
 $className = isset($attributes['className']) ? $attributes['className'] : '';
 
+// Frame title attribute
+$frameTitle = isset($attributes['frameTitle']) ? $attributes['frameTitle'] : '';
+
 // Generate unique ID
 $frame_id = 'fsc-frame-' . uniqid();
 
@@ -35,8 +38,9 @@ if (!empty($align)) {
 
 <div id="<?php echo esc_attr($frame_id); ?>"
     class="<?php echo esc_attr(implode(' ', $css_classes)); ?>"
-    style="<?php echo esc_attr($inline_styles); ?>">
-    
+    style="<?php echo esc_attr($inline_styles); ?>"
+    data-frame-title="<?php echo esc_attr($frameTitle); ?>">
+
     <div class="fsc-frame__content">
         <?php echo $content; ?>
     </div>

@@ -19,6 +19,10 @@
     "align": {
       "type": "string",
       "default": "center"
+    },
+    "frameTitle": {
+      "type": "string",
+      "default": ""
     }
   },
   "textdomain": "flexible-slider-carousel",

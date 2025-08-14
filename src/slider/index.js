@@ -6,18 +6,20 @@ import {
     InspectorControls,
     useInnerBlocksProps,
     BlockControls,
-    AlignmentToolbar
+    AlignmentToolbar,
+    ColorPalette
 } from '@wordpress/block-editor';
 import {
     PanelBody,
     SelectControl,
     ToggleControl,
     RangeControl,
-    ColorPicker,
     TextControl,
     Button,
     Notice,
-    Spinner
+    Spinner,
+    ColorIndicator,
+    Popover
 } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -31,36 +33,54 @@ const TEMPLATE = [
 
 const SliderBlock = ({ attributes, setAttributes, clientId }) => {
     const {
-        sliderType,
+        sliderDesign,
         autoPlay,
         autoPlaySpeed,
         touchSwipe,
-        navigation,
-        navigationArrows,
-        navigationDots,
-        navigationThumbnails,
+        showNavigation,
+        showDots,
+        showTextNavigation,
+        textNavigationPosition,
         responsiveSettings,
-        animationType,
-        animationSpeed,
-        animationEasing,
+        transition,
+        transitionSpeed,
+        easing,
         loop,
-        lazyLoading,
+        loading,
         intersectionObserver,
         align,
-        customCSS
+        customCSS,
+        // Tab Styling Attributes
+        tabFontSize,
+        tabFontWeight,
+        tabTextAlign,
+        tabPadding,
+        tabBorderRadius,
+        tabBorderWidth,
+        tabTextColor,
+        tabTextColorActive,
+        tabBackgroundColor,
+        tabBackgroundColorActive,
+        tabBorderColor,
+        tabBorderColorActive,
+        tabBoxShadow,
+        tabBoxShadowActive
     } = attributes;
 
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+    const [activeColorPicker, setActiveColorPicker] = useState(null);
+    const [previewBreakpoint, setPreviewBreakpoint] = useState('desktop');
 
     const blockProps = useBlockProps({
-        className: `fsc-slider fsc-slider--${sliderType}`,
+        className: `fsc-slider fsc-slider--${sliderDesign || 'default'}`,
         style: {
             textAlign: align
         },
         'data-slides-desktop': responsiveSettings?.slidesToShow?.desktop || 3,
         'data-slides-tablet': responsiveSettings?.slidesToShow?.tablet || 2,
-        'data-slides-phone': responsiveSettings?.slidesToShow?.phone || 1
+        'data-slides-phone': responsiveSettings?.slidesToShow?.phone || 1,
+        'data-preview-breakpoint': previewBreakpoint
     });
 
     const innerBlocksProps = useInnerBlocksProps(
@@ -90,6 +110,14 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
         return block ? block.innerBlocks.length : 0;
     }, [clientId]);
 
+    // Calculate current visible range for editor navigation
+    const getCurrentVisibleRange = () => {
+        const currentSlidesToShow = responsiveSettings?.slidesToShow?.desktop || 3;
+        const startIndex = 0; // Editor always starts at 0
+        const endIndex = Math.min(startIndex + currentSlidesToShow - 1, Math.max(0, frameCount - 1));
+        return { startIndex, endIndex };
+    };
+
     // Validate minimum frames
     useEffect(() => {
         if (frameCount < 1) {
@@ -98,6 +126,13 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
             setError('');
         }
     }, [frameCount]);
+
+    // Force re-render when tab styling attributes change
+    useEffect(() => {
+        // This will trigger a re-render when tab styling changes
+    }, [tabFontSize, tabFontWeight, tabTextAlign, tabPadding, tabBorderRadius, tabBorderWidth,
+        tabTextColor, tabTextColorActive, tabBackgroundColor, tabBackgroundColorActive,
+        tabBorderColor, tabBorderColorActive, tabBoxShadow, tabBoxShadowActive]);
 
     return (
         <>
@@ -111,17 +146,16 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
             <InspectorControls>
                 <PanelBody title={__('Slider Settings', 'flexible-slider-carousel')} initialOpen={true}>
                     <SelectControl
-                        label={__('Slider Type', 'flexible-slider-carousel')}
-                        value={sliderType}
+                        label={__('Slider Design', 'flexible-slider-carousel')}
+                        value={sliderDesign}
                         options={[
-                            { label: __('Image Slider', 'flexible-slider-carousel'), value: 'image' },
-                            { label: __('Text Slider', 'flexible-slider-carousel'), value: 'text' },
-                            { label: __('Mixed Content', 'flexible-slider-carousel'), value: 'mixed' },
-                            { label: __('Testimonial', 'flexible-slider-carousel'), value: 'testimonial' },
-                            { label: __('Product', 'flexible-slider-carousel'), value: 'product' },
-                            { label: __('Image Carousel', 'flexible-slider-carousel'), value: 'carousel' }
+                            { label: __('Default', 'flexible-slider-carousel'), value: 'default' },
+                            { label: __('Minimal', 'flexible-slider-carousel'), value: 'minimal' },
+                            { label: __('Modern', 'flexible-slider-carousel'), value: 'modern' },
+                            { label: __('Classic', 'flexible-slider-carousel'), value: 'classic' },
+                            { label: __('Card', 'flexible-slider-carousel'), value: 'card' }
                         ]}
-                        onChange={(value) => setAttributes({ sliderType: value })}
+                        onChange={(value) => setAttributes({ sliderDesign: value })}
                     />
 
                     <div className="fsc-slider__info">
@@ -161,18 +195,19 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
 
                     <SelectControl
                         label={__('Animation Type', 'flexible-slider-carousel')}
-                        value={animationType}
+                        value={transition}
                         options={[
-                            { label: __('Fade', 'flexible-slider-carousel'), value: 'fade' },
-                            { label: __('Slide', 'flexible-slider-carousel'), value: 'slide' }
+                            { label: __('Slide', 'flexible-slider-carousel'), value: 'slide' },
+                            { label: __('Fade', 'flexible-slider-carousel'), value: 'fade' }
                         ]}
-                        onChange={(value) => setAttributes({ animationType: value })}
+                        onChange={(value) => setAttributes({ transition: value })}
+                        help={__('Slide is recommended for carousels', 'flexible-slider-carousel')}
                     />
 
                     <RangeControl
                         label={__('Animation Speed (ms)', 'flexible-slider-carousel')}
-                        value={animationSpeed}
-                        onChange={(value) => setAttributes({ animationSpeed: value })}
+                        value={transitionSpeed}
+                        onChange={(value) => setAttributes({ transitionSpeed: value })}
                         min={200}
                         max={2000}
                         step={100}
@@ -180,7 +215,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
 
                     <SelectControl
                         label={__('Animation Easing', 'flexible-slider-carousel')}
-                        value={animationEasing}
+                        value={easing}
                         options={[
                             { label: __('Ease', 'flexible-slider-carousel'), value: 'ease' },
                             { label: __('Ease-in', 'flexible-slider-carousel'), value: 'ease-in' },
@@ -188,45 +223,317 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                             { label: __('Ease-in-out', 'flexible-slider-carousel'), value: 'ease-in-out' },
                             { label: __('Linear', 'flexible-slider-carousel'), value: 'linear' }
                         ]}
-                        onChange={(value) => setAttributes({ animationEasing: value })}
+                        onChange={(value) => setAttributes({ easing: value })}
                     />
                 </PanelBody>
 
                 <PanelBody title={__('Navigation', 'flexible-slider-carousel')} initialOpen={false}>
                     <ToggleControl
-                        label={__('Show Navigation', 'flexible-slider-carousel')}
-                        checked={navigation}
-                        onChange={(value) => setAttributes({ navigation: value })}
+                        label={__('Navigation Arrows', 'flexible-slider-carousel')}
+                        checked={showNavigation}
+                        onChange={(value) => setAttributes({ showNavigation: value })}
                     />
 
-                    {navigation && (
+                    <ToggleControl
+                        label={__('Navigation Dots', 'flexible-slider-carousel')}
+                        checked={showDots}
+                        onChange={(value) => setAttributes({ showDots: value })}
+                    />
+
+                    <ToggleControl
+                        label={__('Text Navigation', 'flexible-slider-carousel')}
+                        checked={showTextNavigation}
+                        onChange={(value) => setAttributes({ showTextNavigation: value })}
+                        help={__('Show frame titles as navigation tabs', 'flexible-slider-carousel')}
+                    />
+
+                    {showTextNavigation && (
+                        <SelectControl
+                            label={__('Text Navigation Position', 'flexible-slider-carousel')}
+                            value={textNavigationPosition}
+                            options={[
+                                { label: __('Above Slider', 'flexible-slider-carousel'), value: 'above' },
+                                { label: __('Below Slider', 'flexible-slider-carousel'), value: 'below' }
+                            ]}
+                            onChange={(value) => setAttributes({ textNavigationPosition: value })}
+                        />
+                    )}
+
+                    {showTextNavigation && (
                         <>
-                            <ToggleControl
-                                label={__('Navigation Arrows', 'flexible-slider-carousel')}
-                                checked={navigationArrows}
-                                onChange={(value) => setAttributes({ navigationArrows: value })}
-                            />
+                            <PanelBody title={__('Tab Typography', 'flexible-slider-carousel')} initialOpen={false}>
+                                <SelectControl
+                                    label={__('Text Align', 'flexible-slider-carousel')}
+                                    value={tabTextAlign}
+                                    options={[
+                                        { label: __('Left', 'flexible-slider-carousel'), value: 'left' },
+                                        { label: __('Center', 'flexible-slider-carousel'), value: 'center' },
+                                        { label: __('Right', 'flexible-slider-carousel'), value: 'right' }
+                                    ]}
+                                    onChange={(value) => setAttributes({ tabTextAlign: value })}
+                                />
 
-                            <ToggleControl
-                                label={__('Navigation Dots', 'flexible-slider-carousel')}
-                                checked={navigationDots}
-                                onChange={(value) => setAttributes({ navigationDots: value })}
-                            />
+                                <RangeControl
+                                    label={__('Font Size (px)', 'flexible-slider-carousel')}
+                                    value={tabFontSize}
+                                    onChange={(value) => setAttributes({ tabFontSize: value })}
+                                    min={12}
+                                    max={48}
+                                    step={1}
+                                />
 
-                            <ToggleControl
-                                label={__('Navigation Thumbnails', 'flexible-slider-carousel')}
-                                checked={navigationThumbnails}
-                                onChange={(value) => setAttributes({ navigationThumbnails: value })}
-                            />
+                                <SelectControl
+                                    label={__('Font Weight', 'flexible-slider-carousel')}
+                                    value={tabFontWeight}
+                                    options={[
+                                        { label: __('Normal', 'flexible-slider-carousel'), value: 'normal' },
+                                        { label: __('Bold', 'flexible-slider-carousel'), value: 'bold' },
+                                        { label: __('Light', 'flexible-slider-carousel'), value: '300' },
+                                        { label: __('Medium', 'flexible-slider-carousel'), value: '500' },
+                                        { label: __('Semi Bold', 'flexible-slider-carousel'), value: '600' }
+                                    ]}
+                                    onChange={(value) => setAttributes({ tabFontWeight: value })}
+                                />
+                            </PanelBody>
+
+                            <PanelBody title={__('Tab Colors - Normal State', 'flexible-slider-carousel')} initialOpen={false}>
+                                <div className="fsc-color-control">
+                                    <label className="components-base-control__label">{__('Text Color', 'flexible-slider-carousel')}</label>
+                                    <div className="fsc-color-indicator-wrapper">
+                                        <ColorIndicator
+                                            colorValue={tabTextColor}
+                                            onClick={() => setActiveColorPicker('tabTextColor')}
+                                        />
+                                        <Button
+                                            className="fsc-color-button"
+                                            onClick={() => setAttributes({ tabTextColor: undefined })}
+                                        >
+                                            {__('Clear', 'flexible-slider-carousel')}
+                                        </Button>
+                                    </div>
+                                    {activeColorPicker === 'tabTextColor' && (
+                                        <Popover
+                                            position="bottom center"
+                                            onClose={() => setActiveColorPicker(null)}
+                                        >
+                                            <ColorPalette
+                                                value={tabTextColor}
+                                                onChange={(color) => {
+                                                    setAttributes({ tabTextColor: color });
+                                                    setActiveColorPicker(null);
+                                                }}
+                                            />
+                                        </Popover>
+                                    )}
+                                </div>
+
+                                <div className="fsc-color-control">
+                                    <label className="components-base-control__label">{__('Background Color', 'flexible-slider-carousel')}</label>
+                                    <div className="fsc-color-indicator-wrapper">
+                                        <ColorIndicator
+                                            colorValue={tabBackgroundColor}
+                                            onClick={() => setActiveColorPicker('tabBackgroundColor')}
+                                        />
+                                        <Button
+                                            className="fsc-color-button"
+                                            onClick={() => setAttributes({ tabBackgroundColor: undefined })}
+                                        >
+                                            {__('Clear', 'flexible-slider-carousel')}
+                                        </Button>
+                                    </div>
+                                    {activeColorPicker === 'tabBackgroundColor' && (
+                                        <Popover
+                                            position="bottom center"
+                                            onClose={() => setActiveColorPicker(null)}
+                                        >
+                                            <ColorPalette
+                                                value={tabBackgroundColor}
+                                                onChange={(color) => {
+                                                    setAttributes({ tabBackgroundColor: color });
+                                                    setActiveColorPicker(null);
+                                                }}
+                                            />
+                                        </Popover>
+                                    )}
+                                </div>
+
+                                <div className="fsc-color-control">
+                                    <label className="components-base-control__label">{__('Border Color', 'flexible-slider-carousel')}</label>
+                                    <div className="fsc-color-indicator-wrapper">
+                                        <ColorIndicator
+                                            colorValue={tabBorderColor}
+                                            onClick={() => setActiveColorPicker('tabBorderColor')}
+                                        />
+                                        <Button
+                                            className="fsc-color-button"
+                                            onClick={() => setAttributes({ tabBorderColor: undefined })}
+                                        >
+                                            {__('Clear', 'flexible-slider-carousel')}
+                                        </Button>
+                                    </div>
+                                    {activeColorPicker === 'tabBorderColor' && (
+                                        <Popover
+                                            position="bottom center"
+                                            onClose={() => setActiveColorPicker(null)}
+                                        >
+                                            <ColorPalette
+                                                value={tabBorderColor}
+                                                onChange={(color) => {
+                                                    setAttributes({ tabBorderColor: color });
+                                                    setActiveColorPicker(null);
+                                                }}
+                                            />
+                                        </Popover>
+                                    )}
+                                </div>
+                            </PanelBody>
+
+                            <PanelBody title={__('Tab Colors - Active State', 'flexible-slider-carousel')} initialOpen={false}>
+                                <div className="fsc-color-control">
+                                    <label className="components-base-control__label">{__('Text Color (Active)', 'flexible-slider-carousel')}</label>
+                                    <div className="fsc-color-indicator-wrapper">
+                                        <ColorIndicator
+                                            colorValue={tabTextColorActive}
+                                            onClick={() => setActiveColorPicker('tabTextColorActive')}
+                                        />
+                                        <Button
+                                            className="fsc-color-button"
+                                            onClick={() => setAttributes({ tabTextColorActive: undefined })}
+                                        >
+                                            {__('Clear', 'flexible-slider-carousel')}
+                                        </Button>
+                                    </div>
+                                    {activeColorPicker === 'tabTextColorActive' && (
+                                        <Popover
+                                            position="bottom center"
+                                            onClose={() => setActiveColorPicker(null)}
+                                        >
+                                            <ColorPalette
+                                                value={tabTextColorActive}
+                                                onChange={(color) => {
+                                                    setAttributes({ tabTextColorActive: color });
+                                                    setActiveColorPicker(null);
+                                                }}
+                                            />
+                                        </Popover>
+                                    )}
+                                </div>
+
+                                <div className="fsc-color-control">
+                                    <label className="components-base-control__label">{__('Background Color (Active)', 'flexible-slider-carousel')}</label>
+                                    <div className="fsc-color-indicator-wrapper">
+                                        <ColorIndicator
+                                            colorValue={tabBackgroundColorActive}
+                                            onClick={() => setActiveColorPicker('tabBackgroundColorActive')}
+                                        />
+                                        <Button
+                                            className="fsc-color-button"
+                                            onClick={() => setAttributes({ tabBackgroundColorActive: undefined })}
+                                        >
+                                            {__('Clear', 'flexible-slider-carousel')}
+                                        </Button>
+                                    </div>
+                                    {activeColorPicker === 'tabBackgroundColorActive' && (
+                                        <Popover
+                                            position="bottom center"
+                                            onClose={() => setActiveColorPicker(null)}
+                                        >
+                                            <ColorPalette
+                                                value={tabBackgroundColorActive}
+                                                onChange={(color) => {
+                                                    setAttributes({ tabBackgroundColorActive: color });
+                                                    setActiveColorPicker(null);
+                                                }}
+                                            />
+                                        </Popover>
+                                    )}
+                                </div>
+
+                                <div className="fsc-color-control">
+                                    <label className="components-base-control__label">{__('Border Color (Active)', 'flexible-slider-carousel')}</label>
+                                    <div className="fsc-color-indicator-wrapper">
+                                        <ColorIndicator
+                                            colorValue={tabBorderColorActive}
+                                            onClick={() => setActiveColorPicker('tabBorderColorActive')}
+                                        />
+                                        <Button
+                                            className="fsc-color-button"
+                                            onClick={() => setAttributes({ tabBorderColorActive: undefined })}
+                                        >
+                                            {__('Clear', 'flexible-slider-carousel')}
+                                        </Button>
+                                    </div>
+                                    {activeColorPicker === 'tabBorderColorActive' && (
+                                        <Popover
+                                            position="bottom center"
+                                            onClose={() => setActiveColorPicker(null)}
+                                        >
+                                            <ColorPalette
+                                                value={tabBorderColorActive}
+                                                onChange={(color) => {
+                                                    setAttributes({ tabBorderColorActive: color });
+                                                    setActiveColorPicker(null);
+                                                }}
+                                            />
+                                        </Popover>
+                                    )}
+                                </div>
+                            </PanelBody>
+
+                            <PanelBody title={__('Tab Layout & Effects', 'flexible-slider-carousel')} initialOpen={false}>
+                                <RangeControl
+                                    label={__('Padding (px)', 'flexible-slider-carousel')}
+                                    value={tabPadding}
+                                    onChange={(value) => setAttributes({ tabPadding: value })}
+                                    min={0}
+                                    max={40}
+                                    step={1}
+                                />
+
+                                <RangeControl
+                                    label={__('Border Radius (px)', 'flexible-slider-carousel')}
+                                    value={tabBorderRadius}
+                                    onChange={(value) => setAttributes({ tabBorderRadius: value })}
+                                    min={0}
+                                    max={20}
+                                    step={1}
+                                />
+
+                                <RangeControl
+                                    label={__('Border Width (px)', 'flexible-slider-carousel')}
+                                    value={tabBorderWidth}
+                                    onChange={(value) => setAttributes({ tabBorderWidth: value })}
+                                    min={0}
+                                    max={10}
+                                    step={1}
+                                />
+
+                                <TextControl
+                                    label={__('Box Shadow', 'flexible-slider-carousel')}
+                                    value={tabBoxShadow}
+                                    onChange={(value) => setAttributes({ tabBoxShadow: value })}
+                                    placeholder="0 2px 4px rgba(0,0,0,0.1)"
+                                    help={__('CSS box-shadow value (e.g., 0 2px 4px rgba(0,0,0,0.1))', 'flexible-slider-carousel')}
+                                />
+
+                                <TextControl
+                                    label={__('Box Shadow (Active)', 'flexible-slider-carousel')}
+                                    value={tabBoxShadowActive}
+                                    onChange={(value) => setAttributes({ tabBoxShadowActive: value })}
+                                    placeholder="0 4px 8px rgba(0,0,0,0.2)"
+                                    help={__('CSS box-shadow value for active state', 'flexible-slider-carousel')}
+                                />
+                            </PanelBody>
                         </>
                     )}
+
                 </PanelBody>
 
                 <PanelBody title={__('Performance & SEO', 'flexible-slider-carousel')} initialOpen={false}>
                     <ToggleControl
                         label={__('Lazy Loading', 'flexible-slider-carousel')}
-                        checked={lazyLoading}
-                        onChange={(value) => setAttributes({ lazyLoading: value })}
+                        checked={loading}
+                        onChange={(value) => setAttributes({ loading: value })}
                     />
 
                     <ToggleControl
@@ -245,17 +552,12 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                         onChange={(settings) => setAttributes({ responsiveSettings: settings })}
                         onSlidesToShowChange={(slidesToShow) => setAttributes({ slidesToShow })}
                         onSlidesToScrollChange={(slidesToScroll) => setAttributes({ slidesToScroll })}
+                        previewBreakpoint={previewBreakpoint}
+                        onPreviewBreakpointChange={setPreviewBreakpoint}
                     />
                 </PanelBody>
 
-                <PanelBody title={__('Custom CSS', 'flexible-slider-carousel')} initialOpen={false}>
-                    <TextControl
-                        label={__('Custom CSS Classes', 'flexible-slider-carousel')}
-                        value={customCSS}
-                        onChange={(value) => setAttributes({ customCSS: value })}
-                        help={__('Additional CSS classes for custom styling', 'flexible-slider-carousel')}
-                    />
-                </PanelBody>
+
             </InspectorControls>
 
             <div {...blockProps}>
@@ -265,12 +567,60 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                     </Notice>
                 )}
 
+                {/* Text Navigation Above Slider */}
+                {showTextNavigation && textNavigationPosition === 'above' && (
+                    <div className="fsc-slider__text-nav-editor fsc-slider__text-nav-editor--above">
+                        <div className="fsc-slider__frame-titles-editor">
+                            {Array.from({ length: Math.max(1, frameCount) }, (_, i) => {
+                                const frameBlock = wp.data.select('core/block-editor').getBlock(clientId)?.innerBlocks[i];
+                                const frameTitle = frameBlock?.attributes?.frameTitle;
+                                const title = frameTitle ||
+                                    frameBlock?.attributes?.content?.replace(/<[^>]*>/g, '').substring(0, 20) ||
+                                    `${__('Frame', 'flexible-slider-carousel')} ${i + 1}`;
+
+                                const { startIndex, endIndex } = getCurrentVisibleRange();
+                                const isInRange = i >= startIndex && i <= endIndex;
+
+                                return (
+                                    <button
+                                        key={i}
+                                        className={`fsc-slider__frame-title-editor ${isInRange ? 'fsc-slider__frame-title-editor--active' : ''}`}
+                                        style={{
+                                            fontSize: `${tabFontSize}px`,
+                                            fontWeight: tabFontWeight,
+                                            textAlign: tabTextAlign,
+                                            padding: `${tabPadding}px`,
+                                            borderRadius: `${tabBorderRadius}px`,
+                                            borderWidth: `${tabBorderWidth}px`,
+                                            borderStyle: 'solid',
+                                            color: isInRange ? tabTextColorActive : tabTextColor,
+                                            backgroundColor: isInRange ? tabBackgroundColorActive : tabBackgroundColor,
+                                            borderColor: isInRange ? tabBorderColorActive : tabBorderColor,
+                                            boxShadow: isInRange ? tabBoxShadowActive : tabBoxShadow
+                                        }}
+                                        onClick={() => {
+                                            const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames`);
+                                            if (framesContainer) {
+                                                const frameWidth = framesContainer.querySelector('.fsc-frame')?.offsetWidth || 0;
+                                                const gap = 20;
+                                                framesContainer.scrollLeft = i * (frameWidth + gap);
+                                            }
+                                        }}
+                                    >
+                                        {title}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
+
                 <div className="fsc-slider__preview">
                     <div className="fsc-slider__preview-header">
                         <h4>{__('Slider Preview', 'flexible-slider-carousel')}</h4>
                         <div className="fsc-slider__preview-badges">
-                            <span className="fsc-slider__badge fsc-slider__badge--type">
-                                {sliderType.charAt(0).toUpperCase() + sliderType.slice(1)}
+                            <span className="fsc-slider__badge fsc-slider__badge--design">
+                                {sliderDesign ? sliderDesign.charAt(0).toUpperCase() + sliderDesign.slice(1) : 'Default'}
                             </span>
                         </div>
                     </div>
@@ -279,63 +629,122 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                         <div className="fsc-slider__frames-container">
                             <div {...innerBlocksProps} />
 
-                            {/* Editor Navigation Arrows */}
-                            <button
-                                className="fsc-slider__nav-editor fsc-slider__nav-editor--prev"
-                                onClick={() => {
-                                    const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames-container`);
-                                    if (framesContainer) {
-                                        const frameWidth = framesContainer.querySelector('.fsc-frame')?.offsetWidth || 0;
-                                        const gap = 20;
-                                        framesContainer.scrollLeft -= (frameWidth + gap);
-                                    }
-                                }}
-                            >
-                                ‹
-                            </button>
+                            {/* Editor Navigation Arrows - Only show if enabled */}
+                            {showNavigation && (
+                                <>
+                                    <button
+                                        className="fsc-slider__nav-editor fsc-slider__nav-editor--prev"
+                                        onClick={() => {
+                                            const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames`);
+                                            if (framesContainer) {
+                                                const frameWidth = framesContainer.querySelector('.fsc-frame')?.offsetWidth || 0;
+                                                const gap = 20;
+                                                framesContainer.scrollLeft -= (frameWidth + gap);
+                                            }
+                                        }}
+                                    >
+                                        ‹
+                                    </button>
 
-                            <button
-                                className="fsc-slider__nav-editor fsc-slider__nav-editor--next"
-                                onClick={() => {
-                                    const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames-container`);
-                                    if (framesContainer) {
-                                        const frameWidth = framesContainer.querySelector('.fsc-frame')?.offsetWidth || 0;
-                                        const gap = 20;
-                                        framesContainer.scrollLeft += (frameWidth + gap);
-                                    }
-                                }}
-                            >
-                                ›
-                            </button>
+                                    <button
+                                        className="fsc-slider__nav-editor fsc-slider__nav-editor--next"
+                                        onClick={() => {
+                                            const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames`);
+                                            if (framesContainer) {
+                                                const frameWidth = framesContainer.querySelector('.fsc-frame')?.offsetWidth || 0;
+                                                const gap = 20;
+                                                framesContainer.scrollLeft += (frameWidth + gap);
+                                            }
+                                        }}
+                                    >
+                                        ›
+                                    </button>
+                                </>
+                            )}
                         </div>
 
-                        {/* Editor Navigation Dots */}
-                        <div className="fsc-slider__dots-editor">
-                            {Array.from({ length: Math.max(1, frameCount) }, (_, i) => (
-                                <button
-                                    key={i}
-                                    className={`fsc-slider__dot-editor ${i === 0 ? 'fsc-slider__dot-editor--active' : ''}`}
-                                    onClick={() => {
-                                        const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames-container`);
-                                        if (framesContainer) {
-                                            const frameWidth = framesContainer.querySelector('.fsc-frame')?.offsetWidth || 0;
-                                            const gap = 20;
-                                            framesContainer.scrollLeft = i * (frameWidth + gap);
-                                        }
-                                    }}
-                                />
-                            ))}
-                        </div>
+                        {/* Editor Navigation Dots - Only show if enabled */}
+                        {showDots && (
+                            <div className="fsc-slider__dots-editor">
+                                {Array.from({ length: Math.max(1, frameCount) }, (_, i) => {
+                                    const { startIndex, endIndex } = getCurrentVisibleRange();
+                                    const isInRange = i >= startIndex && i <= endIndex;
+
+                                    return (
+                                        <button
+                                            key={i}
+                                            className={`fsc-slider__dot-editor ${isInRange ? 'fsc-slider__dot-editor--active' : ''}`}
+                                            onClick={() => {
+                                                const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames`);
+                                                if (framesContainer) {
+                                                    const frameWidth = framesContainer.querySelector('.fsc-frame')?.offsetWidth || 0;
+                                                    const gap = 20;
+                                                    framesContainer.scrollLeft = i * (frameWidth + gap);
+                                                }
+                                            }}
+                                        />
+                                    );
+                                })}
+                            </div>
+                        )}
+
+                        {/* Editor Text Navigation Below Slider */}
+                        {showTextNavigation && textNavigationPosition === 'below' && (
+                            <div className="fsc-slider__text-nav-editor fsc-slider__text-nav-editor--below">
+                                <div className="fsc-slider__frame-titles-editor">
+                                    {Array.from({ length: Math.max(1, frameCount) }, (_, i) => {
+                                        const frameBlock = wp.data.select('core/block-editor').getBlock(clientId)?.innerBlocks[i];
+                                        const frameTitle = frameBlock?.attributes?.frameTitle;
+                                        const title = frameTitle ||
+                                            frameBlock?.attributes?.content?.replace(/<[^>]*>/g, '').substring(0, 20) ||
+                                            `${__('Frame', 'flexible-slider-carousel')} ${i + 1}`;
+
+                                        const { startIndex, endIndex } = getCurrentVisibleRange();
+                                        const isInRange = i >= startIndex && i <= endIndex;
+
+                                        return (
+                                            <button
+                                                key={i}
+                                                className={`fsc-slider__frame-title-editor ${isInRange ? 'fsc-slider__frame-title-editor--active' : ''}`}
+                                                style={{
+                                                    fontSize: `${tabFontSize}px`,
+                                                    fontWeight: tabFontWeight,
+                                                    textAlign: tabTextAlign,
+                                                    padding: `${tabPadding}px`,
+                                                    borderRadius: `${tabBorderRadius}px`,
+                                                    borderWidth: `${tabBorderWidth}px`,
+                                                    borderStyle: 'solid',
+                                                    color: isInRange ? tabTextColorActive : tabTextColor,
+                                                    backgroundColor: isInRange ? tabBackgroundColorActive : tabBackgroundColor,
+                                                    borderColor: isInRange ? tabBorderColorActive : tabBorderColor,
+                                                    boxShadow: isInRange ? tabBoxShadowActive : tabBoxShadow
+                                                }}
+                                                onClick={() => {
+                                                    const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames`);
+                                                    if (framesContainer) {
+                                                        const frameWidth = framesContainer.querySelector('.fsc-frame')?.offsetWidth || 0;
+                                                        const gap = 20;
+                                                        framesContainer.scrollLeft = i * (frameWidth + gap);
+                                                    }
+                                                }}
+                                            >
+                                                {title}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <div className="fsc-slider__preview-info">
                         <p><strong>{__('Configuration:', 'flexible-slider-carousel')}</strong></p>
                         <ul>
-                            <li>{__('Type:', 'flexible-slider-carousel')} {sliderType}</li>
+                            <li>{__('Design:', 'flexible-slider-carousel')} {sliderDesign || 'Default'}</li>
                             <li>{__('Content:', 'flexible-slider-carousel')} {__('Manual Frames', 'flexible-slider-carousel')}</li>
-                            <li>{__('Animation:', 'flexible-slider-carousel')} {animationType}</li>
+                            <li>{__('Animation:', 'flexible-slider-carousel')} {transition}</li>
                             {autoPlay && <li>{__('Auto Play:', 'flexible-slider-carousel')} {autoPlaySpeed}s</li>}
-                            {navigation && <li>{__('Navigation:', 'flexible-slider-carousel')} {navigationArrows ? __('Arrows', 'flexible-slider-carousel') : ''} {navigationDots ? __('Dots', 'flexible-slider-carousel') : ''} {navigationThumbnails ? __('Thumbnails', 'flexible-slider-carousel') : ''}</li>}
+                            {(showNavigation || showDots || showTextNavigation) && <li>{__('Navigation:', 'flexible-slider-carousel')} {showNavigation ? __('Arrows', 'flexible-slider-carousel') : ''} {showDots ? __('Dots', 'flexible-slider-carousel') : ''} {showTextNavigation ? __('Text', 'flexible-slider-carousel') : ''}</li>}
                         </ul>
                     </div>
                 </div>
@@ -404,7 +813,9 @@ const PostQueryControls = ({ attributes, setAttributes, postTypes, taxonomies })
 };
 
 // Responsive Settings Component
-const ResponsiveSettings = ({ settings, onChange, slidesToShow, slidesToScroll, onSlidesToShowChange, onSlidesToScrollChange }) => {
+const ResponsiveSettings = ({ settings, onChange, slidesToShow, slidesToScroll, onSlidesToShowChange, onSlidesToScrollChange, previewBreakpoint, onPreviewBreakpointChange }) => {
+    const [activeTab, setActiveTab] = useState('desktop');
+
     const updateBreakpoint = (breakpoint, key, value) => {
         onChange({
             ...settings,
@@ -429,58 +840,81 @@ const ResponsiveSettings = ({ settings, onChange, slidesToShow, slidesToScroll, 
         });
     };
 
+    const renderBreakpointSettings = (breakpoint) => (
+        <div className="fsc-breakpoint-settings">
+            {breakpoint !== 'phone' && (
+                <RangeControl
+                    label={__('Min Width (px)', 'flexible-slider-carousel')}
+                    value={settings[breakpoint]?.minWidth || 0}
+                    onChange={(value) => updateBreakpoint(breakpoint, 'minWidth', value)}
+                    min={0}
+                    max={2000}
+                    step={10}
+                />
+            )}
+
+            <RangeControl
+                label={__('Inner Padding (px)', 'flexible-slider-carousel')}
+                value={settings[breakpoint]?.innerPadding || 0}
+                onChange={(value) => updateBreakpoint(breakpoint, 'innerPadding', value)}
+                min={0}
+                max={100}
+                step={5}
+            />
+
+            <RangeControl
+                label={__('Outer Margin (px)', 'flexible-slider-carousel')}
+                value={settings[breakpoint]?.outerMargin || 0}
+                onChange={(value) => updateBreakpoint(breakpoint, 'outerMargin', value)}
+                min={0}
+                max={100}
+                step={5}
+            />
+
+            <RangeControl
+                label={__('Slides To Show', 'flexible-slider-carousel')}
+                value={slidesToShow[breakpoint] || 1}
+                onChange={(value) => updateSlidesToShow(breakpoint, value)}
+                min={1}
+                max={5}
+                step={1}
+            />
+
+            <RangeControl
+                label={__('Slides To Scroll', 'flexible-slider-carousel')}
+                value={slidesToScroll[breakpoint] || 1}
+                onChange={(value) => updateSlidesToScroll(breakpoint, value)}
+                min={1}
+                max={5}
+                step={1}
+            />
+        </div>
+    );
+
     return (
         <div className="fsc-responsive-settings">
-            {['desktop', 'tablet', 'phone'].map(breakpoint => (
-                <div key={breakpoint} className={`fsc-breakpoint fsc-breakpoint--${breakpoint}`}>
-                    <h4>{breakpoint.charAt(0).toUpperCase() + breakpoint.slice(1)}</h4>
+                        {/* Tab Navigation */}
+            <div className="fsc-responsive-tabs">
+                {['desktop', 'tablet', 'phone'].map(breakpoint => (
+                    <button
+                        key={breakpoint}
+                        className={`fsc-responsive-tab ${activeTab === breakpoint ? 'fsc-responsive-tab--active' : ''}`}
+                        onClick={() => {
+                            setActiveTab(breakpoint);
+                            onPreviewBreakpointChange(breakpoint);
+                        }}
+                    >
+                        {breakpoint.charAt(0).toUpperCase() + breakpoint.slice(1)}
+                    </button>
+                ))}
+            </div>
 
-                    <RangeControl
-                        label={__('Min Width (px)', 'flexible-slider-carousel')}
-                        value={settings[breakpoint]?.minWidth || 0}
-                        onChange={(value) => updateBreakpoint(breakpoint, 'minWidth', value)}
-                        min={0}
-                        max={2000}
-                        step={10}
-                    />
-
-                    <RangeControl
-                        label={__('Inner Padding (px)', 'flexible-slider-carousel')}
-                        value={settings[breakpoint]?.innerPadding || 0}
-                        onChange={(value) => updateBreakpoint(breakpoint, 'innerPadding', value)}
-                        min={0}
-                        max={100}
-                        step={5}
-                    />
-
-                    <RangeControl
-                        label={__('Outer Margin (px)', 'flexible-slider-carousel')}
-                        value={settings[breakpoint]?.outerMargin || 0}
-                        onChange={(value) => updateBreakpoint(breakpoint, 'outerMargin', value)}
-                        min={0}
-                        max={100}
-                        step={5}
-                    />
-
-                    <RangeControl
-                        label={__('Slides To Show', 'flexible-slider-carousel')}
-                        value={slidesToShow[breakpoint] || 1}
-                        onChange={(value) => updateSlidesToShow(breakpoint, value)}
-                        min={1}
-                        max={5}
-                        step={1}
-                    />
-
-                    <RangeControl
-                        label={__('Slides To Scroll', 'flexible-slider-carousel')}
-                        value={slidesToScroll[breakpoint] || 1}
-                        onChange={(value) => updateSlidesToScroll(breakpoint, value)}
-                        min={1}
-                        max={5}
-                        step={1}
-                    />
-                </div>
-            ))}
+            {/* Tab Content */}
+            <div className="fsc-responsive-tab-content">
+                {activeTab === 'desktop' && renderBreakpointSettings('desktop')}
+                {activeTab === 'tablet' && renderBreakpointSettings('tablet')}
+                {activeTab === 'phone' && renderBreakpointSettings('phone')}
+            </div>
         </div>
     );
 };

@@ -4,11 +4,16 @@ import {
     useBlockProps,
     InnerBlocks,
     BlockControls,
-    AlignmentToolbar
+    AlignmentToolbar,
+    InspectorControls
 } from '@wordpress/block-editor';
+import {
+    PanelBody,
+    TextControl
+} from '@wordpress/components';
 
-const FrameBlock = ({ attributes, setAttributes }) => {
-    const { align } = attributes;
+const FrameBlock = ({ attributes, setAttributes, clientId }) => {
+    const { align, frameTitle } = attributes;
 
     const blockProps = useBlockProps({
         className: 'fsc-frame'
@@ -22,6 +27,18 @@ const FrameBlock = ({ attributes, setAttributes }) => {
                     onChange={(newAlign) => setAttributes({ align: newAlign })}
                 />
             </BlockControls>
+
+            <InspectorControls>
+                <PanelBody title={__('Frame Title', 'flexible-slider-carousel')} initialOpen={true}>
+                    <TextControl
+                        label={__('Navigation Title', 'flexible-slider-carousel')}
+                        value={frameTitle || ''}
+                        onChange={(value) => setAttributes({ frameTitle: value })}
+                        help={__('This title will be used in the text navigation. Leave empty to use content from the frame.', 'flexible-slider-carousel')}
+                        placeholder={__('Enter frame title...', 'flexible-slider-carousel')}
+                    />
+                </PanelBody>
+            </InspectorControls>
 
             <div {...blockProps}>
                 <div className="fsc-frame__content">

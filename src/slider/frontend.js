@@ -29,8 +29,12 @@
                 autoPlaySpeed: parseInt(this.slider.dataset.autoPlaySpeed) || 5000,
                 loop: this.slider.dataset.loop === 'true',
                 touchSwipe: this.slider.dataset.touchSwipe === 'true',
-                animationType: this.slider.dataset.animationType || 'slide',
-                animationSpeed: parseInt(this.slider.dataset.animationSpeed) || 500,
+                transition: this.slider.dataset.transition || 'slide',
+                transitionSpeed: parseInt(this.slider.dataset.transitionSpeed) || 500,
+                showNavigation: this.slider.dataset.showNavigation === 'true',
+                showDots: this.slider.dataset.showDots === 'true',
+                showTextNavigation: this.slider.dataset.showTextNavigation === 'true',
+                textNavigationPosition: this.slider.dataset.textNavigationPosition || 'below',
                 breakpoints: {
                     desktop: parseInt(this.slider.dataset.breakpointDesktop) || 1140,
                     tablet: parseInt(this.slider.dataset.breakpointTablet) || 1024,
@@ -45,7 +49,22 @@
                     desktop: parseInt(this.slider.dataset.slidesScrollDesktop) || 1,
                     tablet: parseInt(this.slider.dataset.slidesScrollTablet) || 1,
                     phone: parseInt(this.slider.dataset.slidesScrollPhone) || 1
-                }
+                },
+                // Tab Styling Settings
+                tabFontSize: parseInt(this.slider.dataset.tabFontSize) || 14,
+                tabFontWeight: this.slider.dataset.tabFontWeight || 'normal',
+                tabTextAlign: this.slider.dataset.tabTextAlign || 'center',
+                tabPadding: parseInt(this.slider.dataset.tabPadding) || 8,
+                tabBorderRadius: parseInt(this.slider.dataset.tabBorderRadius) || 4,
+                tabBorderWidth: parseInt(this.slider.dataset.tabBorderWidth) || 1,
+                tabTextColor: this.slider.dataset.tabTextColor || '#333333',
+                tabTextColorActive: this.slider.dataset.tabTextColorActive || '#ffffff',
+                tabBackgroundColor: this.slider.dataset.tabBackgroundColor || '#f5f5f5',
+                tabBackgroundColorActive: this.slider.dataset.tabBackgroundColorActive || '#007cba',
+                tabBorderColor: this.slider.dataset.tabBorderColor || '#dddddd',
+                tabBorderColorActive: this.slider.dataset.tabBorderColorActive || '#007cba',
+                tabBoxShadow: this.slider.dataset.tabBoxShadow || '0 1px 3px rgba(0,0,0,0.1)',
+                tabBoxShadowActive: this.slider.dataset.tabBoxShadowActive || '0 2px 6px rgba(0,0,0,0.2)'
             };
         }
 
@@ -66,8 +85,8 @@
         }
 
         createNavigation() {
-            // Create navigation arrows
-            if (this.settings.slidesToShow.desktop > 1 || this.settings.slidesToShow.tablet > 1 || this.settings.slidesToShow.phone > 1) {
+            // Create navigation arrows only if enabled
+            if (this.settings.showNavigation) {
                 const prevBtn = document.createElement('button');
                 prevBtn.className = 'fsc-slider__nav fsc-slider__nav--prev';
                 prevBtn.innerHTML = '‹';
@@ -82,8 +101,8 @@
                 this.slider.appendChild(nextBtn);
             }
 
-            // Create navigation dots
-            if (this.totalSlides > 1) {
+            // Create dots navigation if enabled
+            if (this.settings.showDots && this.totalSlides > 1) {
                 const dotsContainer = document.createElement('div');
                 dotsContainer.className = 'fsc-slider__dots';
 
@@ -91,125 +110,147 @@
                     const dot = document.createElement('button');
                     dot.className = 'fsc-slider__dot';
                     dot.dataset.slide = i;
+                    dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
                     dot.addEventListener('click', () => this.goToSlide(i));
                     dotsContainer.appendChild(dot);
                 }
 
                 this.slider.appendChild(dotsContainer);
-                this.dots = dotsContainer.querySelectorAll('.fsc-slider__dot');
+                this.dots = this.slider.querySelectorAll('.fsc-slider__dot');
+            }
+
+            // Create text navigation if enabled
+            if (this.settings.showTextNavigation) {
+                this.createTextNavigation();
             }
         }
 
+        createTextNavigation() {
+            const textNavContainer = document.createElement('div');
+            textNavContainer.className = `fsc-slider__text-nav fsc-slider__text-nav--${this.settings.textNavigationPosition}`;
+
+            const frameTitlesContainer = document.createElement('div');
+            frameTitlesContainer.className = 'fsc-slider__frame-titles';
+
+            // Create title buttons for each frame
+            for (let i = 0; i < this.totalSlides; i++) {
+                const frame = this.frames[i];
+                const title = frame.dataset.frameTitle ||
+                    frame.querySelector('h1, h2, h3, h4, h5, h6')?.textContent ||
+                    frame.querySelector('img')?.alt ||
+                    `Frame ${i + 1}`;
+
+                const titleBtn = document.createElement('button');
+                titleBtn.className = 'fsc-slider__frame-title';
+                titleBtn.textContent = title;
+                titleBtn.dataset.slide = i;
+                titleBtn.dataset.frameIndex = i;
+
+                // Apply initial styling
+                this.applyTabStyling(titleBtn, false);
+
+                titleBtn.addEventListener('click', () => this.goToSlide(i));
+                frameTitlesContainer.appendChild(titleBtn);
+            }
+
+            textNavContainer.appendChild(frameTitlesContainer);
+
+            // Position text navigation
+            if (this.settings.textNavigationPosition === 'above') {
+                this.slider.insertBefore(textNavContainer, this.framesContainer);
+            } else {
+                this.slider.appendChild(textNavContainer);
+            }
+
+            this.frameTitles = this.slider.querySelectorAll('.fsc-slider__frame-title');
+        }
+
+        applyTabStyling(element, isActive) {
+            const suffix = isActive ? 'Active' : '';
+
+            element.style.fontSize = this.settings.tabFontSize + 'px';
+            element.style.fontWeight = this.settings.tabFontWeight;
+            element.style.textAlign = this.settings.tabTextAlign;
+            element.style.color = this.settings[`tabTextColor${suffix}`];
+            element.style.backgroundColor = this.settings[`tabBackgroundColor${suffix}`];
+            element.style.borderColor = this.settings[`tabBorderColor${suffix}`];
+            element.style.padding = this.settings.tabPadding + 'px';
+            element.style.borderRadius = this.settings.tabBorderRadius + 'px';
+            element.style.borderWidth = this.settings.tabBorderWidth + 'px';
+            element.style.borderStyle = 'solid';
+            element.style.boxShadow = this.settings[`tabBoxShadow${suffix}`];
+        }
+
         setupResponsiveBehavior() {
-            const updateSlider = () => {
-                const width = window.innerWidth;
+            const updateResponsiveSettings = () => {
+                const windowWidth = window.innerWidth;
                 let slidesToShow = 1;
                 let slidesToScroll = 1;
-                let currentBreakpoint = 'phone';
+                let breakpoint = 'phone';
 
-                if (width >= this.settings.breakpoints.desktop) {
+                if (windowWidth >= this.settings.breakpoints.desktop) {
                     slidesToShow = this.settings.slidesToShow.desktop;
                     slidesToScroll = this.settings.slidesToScroll.desktop;
-                    currentBreakpoint = 'desktop';
-                } else if (width >= this.settings.breakpoints.phone) {
+                    breakpoint = 'desktop';
+                } else if (windowWidth >= this.settings.breakpoints.tablet) {
                     slidesToShow = this.settings.slidesToShow.tablet;
                     slidesToScroll = this.settings.slidesToScroll.tablet;
-                    currentBreakpoint = 'tablet';
+                    breakpoint = 'tablet';
                 } else {
                     slidesToShow = this.settings.slidesToShow.phone;
                     slidesToScroll = this.settings.slidesToScroll.phone;
-                    currentBreakpoint = 'phone';
+                    breakpoint = 'phone';
                 }
 
                 this.currentSlidesToShow = slidesToShow;
                 this.currentSlidesToScroll = slidesToScroll;
-                // Calculate the maximum slide index that can be shown
-                // If we have 5 frames and show 3 at once, maxSlide should be 2 (showing frames 2,3,4)
                 this.maxSlide = Math.max(0, this.totalSlides - slidesToShow);
 
-                // Update CSS variables for breakpoints
-                this.updateCSSBreakpoints();
+                // Update slider layout and position
+                this.updateSliderLayout();
                 this.updateSliderPosition();
             };
 
-            // Initial update
-            updateSlider();
+            // Initial setup
+            updateResponsiveSettings();
 
-            // Update on resize
-            window.addEventListener('resize', updateSlider);
+            // Listen for window resize
+            window.addEventListener('resize', updateResponsiveSettings);
         }
 
-        updateCSSBreakpoints() {
-            // Set CSS custom properties for breakpoints on the slider element
-            this.slider.style.setProperty('--fsc-breakpoint-desktop', this.settings.breakpoints.desktop + 'px');
-            this.slider.style.setProperty('--fsc-breakpoint-tablet', this.settings.breakpoints.tablet + 'px');
-            this.slider.style.setProperty('--fsc-breakpoint-phone', this.settings.breakpoints.phone + 'px');
+        updateSliderLayout() {
+            if (!this.framesContainer) return;
 
-            // Generate dynamic CSS for responsive frame widths
-            this.generateDynamicCSS();
-        }
+            const gap = this.getCurrentGap();
+            const containerWidth = this.framesContainer.offsetWidth;
+            const frameWidth = (containerWidth - (this.currentSlidesToShow - 1) * gap) / this.currentSlidesToShow;
 
-        generateDynamicCSS() {
-            // Remove existing dynamic stylesheet if it exists
-            const existingStyle = document.getElementById('fsc-dynamic-css');
-            if (existingStyle) {
-                existingStyle.remove();
-            }
-
-            // Create new stylesheet
-            const style = document.createElement('style');
-            style.id = 'fsc-dynamic-css';
-
-            // Generate CSS rules for each breakpoint
-            const breakpoints = [
-                { name: 'desktop', minWidth: this.settings.breakpoints.desktop, gap: 20 },
-                { name: 'tablet', minWidth: this.settings.breakpoints.phone, maxWidth: this.settings.breakpoints.desktop - 1, gap: 15 },
-                { name: 'phone', maxWidth: this.settings.breakpoints.phone - 1, gap: 10 }
-            ];
-
-            let css = '';
-
-            breakpoints.forEach(breakpoint => {
-                const slidesToShow = this.settings.slidesToShow[breakpoint.name];
-                const gap = breakpoint.gap;
-
-                // Generate media query
-                let mediaQuery = '';
-                if (breakpoint.minWidth && breakpoint.maxWidth) {
-                    mediaQuery = `@media (min-width: ${breakpoint.minWidth}px) and (max-width: ${breakpoint.maxWidth}px)`;
-                } else if (breakpoint.minWidth) {
-                    mediaQuery = `@media (min-width: ${breakpoint.minWidth}px)`;
-                } else if (breakpoint.maxWidth) {
-                    mediaQuery = `@media (max-width: ${breakpoint.maxWidth}px)`;
-                }
-
-                // Generate frame width rules
-                let frameRules = '';
-                for (let i = 1; i <= 5; i++) {
-                    // Calculate gaps: for i frames, we need (i-1) gaps
-                    const gaps = i > 1 ? (i - 1) * gap : 0;
-                    // Ensure the last frame is fully visible by accounting for the right edge
-                    const frameWidth = `calc((100% - ${gaps}px) / ${i})`;
-
-                    frameRules += `
-                    .fsc-slider[data-slides-${breakpoint.name}="${i}"] .fsc-frame {
-                        flex: 0 0 ${frameWidth};
-                        box-sizing: border-box;
-                        max-width: ${frameWidth};
-                    }`;
-                }
-
-                // Add gap rule
-                frameRules += `
-                .fsc-slider[data-slides-${breakpoint.name}="${slidesToShow}"] .fsc-slider__frames {
-                    gap: ${gap}px;
-                }`;
-
-                css += `${mediaQuery} {${frameRules}}`;
+            // Set styles for each frame
+            this.frames.forEach((frame, index) => {
+                frame.style.flex = '0 0 auto';
+                frame.style.width = frameWidth + 'px';
+                frame.style.minWidth = frameWidth + 'px';
+                frame.style.maxWidth = frameWidth + 'px';
+                frame.style.boxSizing = 'border-box';
+                // Don't hide frames - let them be visible for proper layout
+                frame.style.display = 'block';
             });
 
-            style.textContent = css;
-            document.head.appendChild(style);
+            // Set container styles
+            this.framesContainer.style.gap = gap + 'px';
+            this.framesContainer.style.boxSizing = 'border-box';
+            this.framesContainer.style.width = '100%';
+        }
+
+        getCurrentGap() {
+            const windowWidth = window.innerWidth;
+            if (windowWidth >= this.settings.breakpoints.desktop) {
+                return 20;
+            } else if (windowWidth >= this.settings.breakpoints.tablet) {
+                return 15;
+            } else {
+                return 10;
+            }
         }
 
         setupTouchEvents() {
@@ -217,151 +258,134 @@
 
             let startX = 0;
             let startY = 0;
-            let isDragging = false;
+            let isSwiping = false;
 
-            const handleStart = (e) => {
-                startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
-                startY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
-                isDragging = true;
-            };
+            this.framesContainer.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                isSwiping = true;
+            });
 
-            const handleMove = (e) => {
-                if (!isDragging) return;
+            this.framesContainer.addEventListener('touchmove', (e) => {
+                if (!isSwiping) return;
 
-                const currentX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
-                const currentY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
+                const currentX = e.touches[0].clientX;
+                const currentY = e.touches[0].clientY;
                 const diffX = startX - currentX;
                 const diffY = startY - currentY;
 
-                // Check if horizontal swipe
+                // Check if horizontal swipe is more significant than vertical
                 if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
                     e.preventDefault();
+
                     if (diffX > 0) {
                         this.nextSlide();
                     } else {
                         this.prevSlide();
                     }
-                    isDragging = false;
+
+                    isSwiping = false;
                 }
-            };
+            });
 
-            const handleEnd = () => {
-                isDragging = false;
-            };
-
-            // Mouse events
-            this.slider.addEventListener('mousedown', handleStart);
-            document.addEventListener('mousemove', handleMove);
-            document.addEventListener('mouseup', handleEnd);
-
-            // Touch events
-            this.slider.addEventListener('touchstart', handleStart);
-            this.slider.addEventListener('touchmove', handleMove);
-            this.slider.addEventListener('touchend', handleEnd);
+            this.framesContainer.addEventListener('touchend', () => {
+                isSwiping = false;
+            });
         }
 
         nextSlide() {
             if (this.isAnimating) return;
 
-            const nextSlide = this.currentSlide + this.currentSlidesToScroll;
-            if (nextSlide <= this.maxSlide || this.settings.loop) {
-                this.goToSlide(nextSlide > this.maxSlide ? 0 : nextSlide);
-            }
+            const nextSlide = Math.min(this.currentSlide + this.currentSlidesToScroll, this.maxSlide);
+            this.goToSlide(nextSlide);
         }
 
         prevSlide() {
             if (this.isAnimating) return;
 
-            const prevSlide = this.currentSlide - this.currentSlidesToScroll;
-            if (prevSlide >= 0 || this.settings.loop) {
-                this.goToSlide(prevSlide < 0 ? this.maxSlide : prevSlide);
-            }
+            const prevSlide = Math.max(this.currentSlide - this.currentSlidesToScroll, 0);
+            this.goToSlide(prevSlide);
         }
 
         goToSlide(slideIndex) {
-            if (this.isAnimating || slideIndex === this.currentSlide) return;
+            if (this.isAnimating) return;
 
-            this.isAnimating = true;
-            // Ensure we don't go beyond the last valid slide
-            this.currentSlide = Math.min(slideIndex, this.maxSlide);
+            // Clamp slide index to valid range
+            slideIndex = Math.min(slideIndex, this.maxSlide);
+            slideIndex = Math.max(0, slideIndex);
 
-            this.updateSliderPosition();
-            this.updateNavigation();
+            if (slideIndex !== this.currentSlide) {
+                this.currentSlide = slideIndex;
 
-            // Reset animation flag after transition
-            setTimeout(() => {
-                this.isAnimating = false;
-            }, this.settings.animationSpeed);
+                // Update layout and position
+                this.updateSliderLayout();
+                this.updateSliderPosition();
+                this.updateNavigation();
+            }
         }
 
         updateSliderPosition() {
-            // Calculate the width of each slide as a percentage
-            // We need to account for gaps in the calculation
+            if (!this.framesContainer) return;
+
             const gap = this.getCurrentGap();
-            const totalGaps = this.currentSlidesToShow > 1 ? this.currentSlidesToShow - 1 : 0;
-
-            // Calculate slide width as percentage, accounting for gaps
-            // Convert gap from pixels to percentage of container width
             const containerWidth = this.framesContainer.offsetWidth;
-            const gapPercent = (gap / containerWidth) * 100;
-            const slideWidth = (100 - (totalGaps * gapPercent)) / this.currentSlidesToShow;
+            const frameWidth = (containerWidth - (this.currentSlidesToShow - 1) * gap) / this.currentSlidesToShow;
 
-            // Calculate translateX: negative value moves content left, positive moves right
-            // When currentSlide is 0, translateX should be 0 (showing first frame)
-            // When currentSlide is 1, translateX should be -(slideWidth + gapPercent) (showing second frame)
-            const translateX = -(this.currentSlide * (slideWidth + gapPercent));
+            // Calculate the center offset to keep slider centered
+            const totalSliderWidth = this.totalSlides * frameWidth + (this.totalSlides - 1) * gap;
+            const centerOffset = (containerWidth - totalSliderWidth) / 2;
 
-            // Ensure we don't scroll beyond the last frame
-            const maxTranslateX = -(this.maxSlide * (slideWidth + gapPercent));
+            // Calculate translateX position with proper centering
+            const translateX = centerOffset - this.currentSlide * (frameWidth + gap);
 
-            // Clamp the translateX value:
-            // - 0: first frame (no translation)
-            // - maxTranslateX: last frame (maximum left translation)
-            const clampedTranslateX = Math.max(maxTranslateX, Math.min(0, translateX));
+            // Apply transform
+            this.framesContainer.style.transform = `translateX(${translateX}px)`;
+            this.framesContainer.style.transition = `transform ${this.settings.transitionSpeed}ms ease-in-out`;
 
-            // Debug logging
-            console.log('Slider Debug:', {
+            console.log('Slider Position:', {
                 currentSlide: this.currentSlide,
-                slideWidth: slideWidth.toFixed(2) + '%',
-                gap: gap + 'px',
-                gapPercent: gapPercent.toFixed(2) + '%',
-                translateX: translateX.toFixed(2) + '%',
-                maxTranslateX: maxTranslateX.toFixed(2) + '%',
-                clampedTranslateX: clampedTranslateX.toFixed(2) + '%'
+                translateX: translateX + 'px',
+                frameWidth: frameWidth,
+                gap: gap,
+                centerOffset: centerOffset + 'px',
+                totalSliderWidth: totalSliderWidth + 'px',
+                containerWidth: containerWidth + 'px'
             });
-
-            this.framesContainer.style.transform = `translateX(${clampedTranslateX}%)`;
-        }
-
-        getCurrentGap() {
-            const width = window.innerWidth;
-            if (width >= this.settings.breakpoints.desktop) {
-                return 20; // Desktop gap
-            } else if (width >= this.settings.breakpoints.phone) {
-                return 15; // Tablet gap
-            } else {
-                return 10; // Phone gap
-            }
         }
 
         updateNavigation() {
+            const currentSlide = this.currentSlide;
+            const lastVisibleSlide = Math.min(currentSlide + this.currentSlidesToShow - 1, this.totalSlides - 1);
+
             // Update dots
             if (this.dots) {
                 this.dots.forEach((dot, index) => {
-                    dot.classList.toggle('fsc-slider__dot--active', index === this.currentSlide);
+                    const isActive = index >= currentSlide && index <= lastVisibleSlide;
+                    dot.classList.toggle('fsc-slider__dot--active', isActive);
                 });
             }
 
-            // Update navigation arrows
+            // Update frame titles
+            if (this.frameTitles) {
+                this.frameTitles.forEach((title, index) => {
+                    const isActive = index >= currentSlide && index <= lastVisibleSlide;
+                    title.classList.toggle('fsc-slider__frame-title--active', isActive);
+                    this.applyTabStyling(title, isActive);
+                });
+            }
+
+            // Update navigation buttons
             const prevBtn = this.slider.querySelector('.fsc-slider__nav--prev');
             const nextBtn = this.slider.querySelector('.fsc-slider__nav--next');
 
             if (prevBtn) {
-                prevBtn.style.display = (this.currentSlide === 0 && !this.settings.loop) ? 'none' : 'block';
+                prevBtn.disabled = currentSlide === 0;
+                prevBtn.style.opacity = currentSlide === 0 ? '0.5' : '1';
             }
 
             if (nextBtn) {
-                nextBtn.style.display = (this.currentSlide >= this.maxSlide && !this.settings.loop) ? 'none' : 'block';
+                nextBtn.disabled = currentSlide === this.maxSlide;
+                nextBtn.style.opacity = currentSlide === this.maxSlide ? '0.5' : '1';
             }
         }
 
@@ -369,51 +393,60 @@
             if (!this.settings.autoPlay || this.totalSlides <= 1) return;
 
             this.autoPlayInterval = setInterval(() => {
-                this.nextSlide();
-            }, this.settings.autoPlaySpeed);
-
-            // Pause on hover
-            this.slider.addEventListener('mouseenter', () => {
-                if (this.autoPlayInterval) {
-                    clearInterval(this.autoPlayInterval);
+                if (this.currentSlide >= this.maxSlide) {
+                    if (this.settings.loop) {
+                        this.goToSlide(0);
+                    } else {
+                        this.stopAutoPlay();
+                    }
+                } else {
+                    this.nextSlide();
                 }
-            });
+            }, this.settings.autoPlaySpeed);
+        }
 
-            this.slider.addEventListener('mouseleave', () => {
-                this.startAutoPlay();
-            });
+        stopAutoPlay() {
+            if (this.autoPlayInterval) {
+                clearInterval(this.autoPlayInterval);
+                this.autoPlayInterval = null;
+            }
         }
 
         destroy() {
-            if (this.autoPlayInterval) {
-                clearInterval(this.autoPlayInterval);
+            this.stopAutoPlay();
+
+            if (this.framesContainer) {
+                this.framesContainer.removeEventListener('touchstart', null);
+                this.framesContainer.removeEventListener('touchmove', null);
+                this.framesContainer.removeEventListener('touchend', null);
             }
+
+            window.removeEventListener('resize', null);
         }
     }
 
-    // Initialize all sliders when DOM is ready
+    // Initialize all sliders on the page
     function initSliders() {
-        const sliders = document.querySelectorAll('.fsc-slider');
-        sliders.forEach(slider => {
+        document.querySelectorAll('.fsc-slider').forEach(slider => {
             new FlexibleSlider(slider);
         });
     }
 
-    // Initialize on DOM ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initSliders);
-    } else {
-        initSliders();
-    }
+    // Initialize sliders for dynamically added content
+    function initDynamicSliders() {
+        if (!document.body || document.body.classList.contains('wp-admin')) return;
 
-    // Initialize on AJAX content load (for dynamic content)
-    document.addEventListener('DOMContentLoaded', function () {
-        // Observer for dynamically added sliders
-        const observer = new MutationObserver(function (mutations) {
-            mutations.forEach(function (mutation) {
-                mutation.addedNodes.forEach(function (node) {
-                    if (node.nodeType === 1 && node.classList && node.classList.contains('fsc-slider')) {
-                        new FlexibleSlider(node);
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                mutation.addedNodes.forEach((node) => {
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                        if (node.classList.contains('fsc-slider')) {
+                            new FlexibleSlider(node);
+                        }
+                        // Check for sliders within added nodes
+                        node.querySelectorAll('.fsc-slider').forEach(slider => {
+                            new FlexibleSlider(slider);
+                        });
                     }
                 });
             });
@@ -423,6 +456,20 @@
             childList: true,
             subtree: true
         });
-    });
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSliders);
+    } else {
+        initSliders();
+    }
+
+    // Initialize dynamic content observer
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initDynamicSliders);
+    } else {
+        setTimeout(initDynamicSliders, 100);
+    }
 
 })();
