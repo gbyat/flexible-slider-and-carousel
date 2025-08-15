@@ -1,3 +1,12 @@
+## 2025-08-15 11:02:05 - Include includes/ and languages/ directories in releases
+
+### Changed Files:
+- `CHANGELOG.md`
+
+## 2025-08-15 11:01:42 - Include includes/ and languages/ directories in releases
+
+### Changed Files:
+
 ## 2025-08-15 10:54:53 - Release v1.0.2
 
 ### Changed Files:
