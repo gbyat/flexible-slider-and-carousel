@@ -1,3 +1,8 @@
+## 2025-08-15 11:29:26 - Release v1.1.1
+
+### Changed Files:
+- `scripts/sync-version.js`
+
 ## 2025-08-15 11:22:23 - 1.1.1
 
 ### Changed Files:

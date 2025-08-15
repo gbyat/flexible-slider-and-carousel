@@ -26,6 +26,12 @@ if (fs.existsSync(pluginFile)) {
         `"version" => "${version}"`
     );
     
+    // Update FSC_PLUGIN_VERSION constant
+    pluginContent = pluginContent.replace(
+        /define\('FSC_PLUGIN_VERSION',\s*['"]\d+\.\d+\.\d+['"]\);/,
+        `define('FSC_PLUGIN_VERSION', '${version}');`
+    );
+    
     fs.writeFileSync(pluginFile, pluginContent);
     console.log('✅ Updated flexible-slider-and-carousel.php');
 } else {
