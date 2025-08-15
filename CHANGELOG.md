@@ -1,3 +1,8 @@
+## 2025-08-15 11:02:11 - Update changelog with latest changes
+
+### Changed Files:
+- `package.json`
+
 ## 2025-08-15 11:02:05 - Include includes/ and languages/ directories in releases
 
 ### Changed Files:
