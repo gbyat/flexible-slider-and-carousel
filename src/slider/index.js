@@ -42,11 +42,19 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
         showTextNavigation,
         textNavigationPosition,
         responsiveSettings,
-        transition,
-        transitionSpeed,
-        easing,
-        loop,
         loading,
+        // Glide.js specific attributes
+        sliderType,
+        gap,
+        animationDuration,
+        animationTimingFunc,
+        animationType,
+        animationDirection,
+        animationIntensity,
+        focusAt,
+        peek,
+        keyboard,
+        touchRatio,
         intersectionObserver,
         align,
         customCSS,
@@ -58,14 +66,28 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
         tabBorderRadius,
         tabBorderWidth,
         tabTextColor,
+        tabTextColorHover,
         tabTextColorActive,
         tabBackgroundColor,
+        tabBackgroundColorHover,
         tabBackgroundColorActive,
         tabBorderColor,
+        tabBorderColorHover,
         tabBorderColorActive,
         tabBoxShadow,
-        tabBoxShadowActive
+        tabBoxShadowActive,
+        // Navigation Colors
+        arrowBackgroundColor,
+        arrowBackgroundColorHover,
+        arrowTextColor,
+        dotBackgroundColor,
+        dotBackgroundColorHover,
+        dotBackgroundColorActive
     } = attributes;
+
+    // Extract slidesToShow from responsiveSettings
+    const slidesToShow = responsiveSettings?.slidesToShow || { desktop: 1, tablet: 1, phone: 1 };
+    const slidesToScroll = responsiveSettings?.slidesToScroll || { desktop: 1, tablet: 1, phone: 1 };
 
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
@@ -77,10 +99,40 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
         style: {
             textAlign: align
         },
-        'data-slides-desktop': responsiveSettings?.slidesToShow?.desktop || 3,
-        'data-slides-tablet': responsiveSettings?.slidesToShow?.tablet || 2,
-        'data-slides-phone': responsiveSettings?.slidesToShow?.phone || 1,
-        'data-preview-breakpoint': previewBreakpoint
+        'data-slides-desktop': slidesToShow?.desktop || 1,
+        'data-slides-tablet': slidesToShow?.tablet || 1,
+        'data-slides-phone': slidesToShow?.phone || 1,
+        'data-slides-scroll-desktop': slidesToScroll?.desktop || 1,
+        'data-slides-scroll-tablet': slidesToScroll?.tablet || 1,
+        'data-slides-scroll-phone': slidesToScroll?.phone || 1,
+        'data-slider-type': sliderType || 'carousel',
+        'data-gap': gap || 10,
+        'data-animation-duration': animationDuration || 800,
+        'data-animation-timing-func': animationTimingFunc || 'cubic-bezier(0.165, 0.840, 0.440, 1.000)',
+        'data-animation-type': animationType || 'slide',
+        'data-animation-direction': animationDirection || 'horizontal',
+        'data-animation-intensity': animationIntensity || 50,
+        'data-focus-at': focusAt || 'center',
+        'data-peek': peek || 120,
+        'data-keyboard': keyboard !== false ? 'true' : 'false',
+        'data-touch-ratio': touchRatio || 0.5,
+        // Navigation Colors
+        'data-arrow-background-color': arrowBackgroundColor || '#007cba',
+        'data-arrow-background-color-hover': arrowBackgroundColorHover || '#005a87',
+        'data-arrow-text-color': arrowTextColor || '#ffffff',
+        'data-dot-background-color': dotBackgroundColor || '#dddddd',
+        'data-dot-background-color-hover': dotBackgroundColorHover || '#00a0d2',
+        'data-dot-background-color-active': dotBackgroundColorActive || '#007cba',
+        // Tab Colors
+        'data-tab-text-color': tabTextColor || '#333333',
+        'data-tab-text-color-hover': tabTextColorHover || '#ffffff',
+        'data-tab-text-color-active': tabTextColorActive || '#ffffff',
+        'data-tab-background-color': tabBackgroundColor || '#f5f5f5',
+        'data-tab-background-color-hover': tabBackgroundColorHover || '#00a0d2',
+        'data-tab-background-color-active': tabBackgroundColorActive || '#007cba',
+        'data-tab-border-color': tabBorderColor || '#dddddd',
+        'data-tab-border-color-hover': tabBorderColorHover || '#00a0d2',
+        'data-tab-border-color-active': tabBorderColorActive || '#007cba'
     });
 
     const innerBlocksProps = useInnerBlocksProps(
@@ -112,7 +164,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
 
     // Calculate current visible range for editor navigation
     const getCurrentVisibleRange = () => {
-        const currentSlidesToShow = responsiveSettings?.slidesToShow?.desktop || 3;
+        const currentSlidesToShow = slidesToShow?.desktop || 1;
         const startIndex = 0; // Editor always starts at 0
         const endIndex = Math.min(startIndex + currentSlidesToShow - 1, Math.max(0, frameCount - 1));
         return { startIndex, endIndex };
@@ -131,8 +183,145 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
     useEffect(() => {
         // This will trigger a re-render when tab styling changes
     }, [tabFontSize, tabFontWeight, tabTextAlign, tabPadding, tabBorderRadius, tabBorderWidth,
-        tabTextColor, tabTextColorActive, tabBackgroundColor, tabBackgroundColorActive,
-        tabBorderColor, tabBorderColorActive, tabBoxShadow, tabBoxShadowActive]);
+        tabTextColor, tabTextColorHover, tabTextColorActive, tabBackgroundColor, tabBackgroundColorHover, tabBackgroundColorActive,
+        tabBorderColor, tabBorderColorHover, tabBorderColorActive, tabBoxShadow, tabBoxShadowActive]);
+
+    // Update CSS variables in editor when colors change
+    useEffect(() => {
+        console.log('🎨 Color useEffect triggered with:', {
+            arrowBackgroundColor,
+            arrowBackgroundColorHover,
+            arrowTextColor,
+            dotBackgroundColor,
+            dotBackgroundColorHover,
+            dotBackgroundColorActive,
+            tabBackgroundColor,
+            tabBackgroundColorHover,
+            tabBackgroundColorActive,
+            tabTextColor,
+            tabTextColorHover,
+            tabTextColorActive,
+            tabBorderColor,
+            tabBorderColorHover,
+            tabBorderColorActive
+        });
+
+        // Find the current slider block in the editor
+        const currentBlock = wp.data.select('core/block-editor').getBlock(clientId);
+        if (currentBlock) {
+            console.log('🔍 Current block found:', currentBlock);
+
+            // Find the DOM element for this specific block
+            const blockElement = document.querySelector(`[data-block="${clientId}"]`);
+            console.log('🔍 Block element search result:', blockElement);
+
+            if (blockElement) {
+                console.log('🔍 Block element found, using it directly for CSS variables');
+
+                // The block element itself has all the data attributes, so use it directly
+                const sliderElement = blockElement; // Use the block element itself
+                console.log('🎯 Using block element as slider element:', sliderElement);
+
+                // Also find the frames container for additional CSS variable setting
+                const framesContainer = blockElement.querySelector('.fsc-slider__frames');
+
+                // Update arrow colors - set on both slider and frames container
+                if (arrowBackgroundColor) {
+                    sliderElement.style.setProperty('--arrow-background-color', arrowBackgroundColor, 'important');
+                    if (framesContainer) framesContainer.style.setProperty('--arrow-background-color', arrowBackgroundColor, 'important');
+                    console.log('✅ Set --arrow-background-color:', arrowBackgroundColor);
+
+                    // Also set directly on navigation elements
+                    const prevButton = blockElement.querySelector('.swiper-button-prev');
+                    const nextButton = blockElement.querySelector('.swiper-button-next');
+                    if (prevButton) prevButton.style.backgroundColor = arrowBackgroundColor;
+                    if (nextButton) nextButton.style.backgroundColor = arrowBackgroundColor;
+                    console.log('🎯 Set direct background on buttons:', arrowBackgroundColor);
+                }
+                if (arrowBackgroundColorHover) {
+                    sliderElement.style.setProperty('--arrow-background-color-hover', arrowBackgroundColorHover, 'important');
+                    if (framesContainer) framesContainer.style.setProperty('--arrow-background-color-hover', arrowBackgroundColorHover, 'important');
+                    console.log('✅ Set --arrow-background-color-hover:', arrowBackgroundColorHover);
+                }
+                if (arrowTextColor) {
+                    sliderElement.style.setProperty('--arrow-text-color', arrowTextColor, 'important');
+                    if (framesContainer) framesContainer.style.setProperty('--arrow-text-color', arrowTextColor, 'important');
+                    console.log('✅ Set --arrow-text-color:', arrowTextColor);
+
+                    // Also set directly on navigation elements
+                    const prevButton = blockElement.querySelector('.swiper-button-prev');
+                    const nextButton = blockElement.querySelector('.swiper-button-next');
+                    if (prevButton) prevButton.style.color = arrowTextColor;
+                    if (nextButton) nextButton.style.color = arrowTextColor;
+                    console.log('🎯 Set direct color on buttons:', arrowTextColor);
+                }
+
+                // Update dot colors - set on both slider and frames container
+                if (dotBackgroundColor) {
+                    sliderElement.style.setProperty('--dot-background-color', dotBackgroundColor, 'important');
+                    if (framesContainer) framesContainer.style.setProperty('--dot-background-color', dotBackgroundColor, 'important');
+                    console.log('✅ Set --dot-background-color:', dotBackgroundColor);
+                }
+                if (dotBackgroundColorHover) {
+                    sliderElement.style.setProperty('--dot-background-color-hover', dotBackgroundColorHover, 'important');
+                    if (framesContainer) framesContainer.style.setProperty('--dot-background-color-hover', dotBackgroundColorHover, 'important');
+                    console.log('✅ Set --dot-background-color-hover:', dotBackgroundColorHover);
+                }
+                if (dotBackgroundColorActive) {
+                    sliderElement.style.setProperty('--dot-background-color-active', dotBackgroundColorActive, 'important');
+                    if (framesContainer) framesContainer.style.setProperty('--dot-background-color-active', dotBackgroundColorActive, 'important');
+                    console.log('✅ Set --dot-background-color-active:', dotBackgroundColorActive);
+                }
+
+                // Update tab colors
+                if (tabBackgroundColor) {
+                    sliderElement.style.setProperty('--tab-background-color', tabBackgroundColor, 'important');
+                    console.log('✅ Set --tab-background-color:', tabBackgroundColor);
+                }
+                if (tabBackgroundColorHover) {
+                    sliderElement.style.setProperty('--tab-background-color-hover', tabBackgroundColorHover, 'important');
+                    console.log('✅ Set --tab-background-color-hover:', tabBackgroundColorHover);
+                }
+                if (tabBackgroundColorActive) {
+                    sliderElement.style.setProperty('--tab-background-color-active', tabBackgroundColorActive, 'important');
+                    console.log('✅ Set --tab-background-color-active:', tabBackgroundColorActive);
+                }
+                if (tabTextColor) {
+                    sliderElement.style.setProperty('--tab-text-color', tabTextColor, 'important');
+                    console.log('✅ Set --tab-text-color:', tabTextColor);
+                }
+                if (tabTextColorHover) {
+                    sliderElement.style.setProperty('--tab-text-color-hover', tabTextColorHover, 'important');
+                    console.log('✅ Set --tab-text-color-hover:', tabTextColorHover);
+                }
+                if (tabTextColorActive) {
+                    sliderElement.style.setProperty('--tab-text-color-active', tabTextColorActive, 'important');
+                    console.log('✅ Set --tab-text-color-active:', tabTextColorActive);
+                }
+                if (tabBorderColor) {
+                    sliderElement.style.setProperty('--tab-border-color', tabBorderColor, 'important');
+                    console.log('✅ Set --tab-border-color:', tabBorderColor);
+                }
+                if (tabBorderColorHover) {
+                    sliderElement.style.setProperty('--tab-border-color-hover', tabBorderColorHover, 'important');
+                    console.log('✅ Set --tab-border-color-hover:', tabBorderColorHover);
+                }
+                if (tabBorderColorActive) {
+                    sliderElement.style.setProperty('--tab-border-color-active', tabBorderColorActive, 'important');
+                    console.log('✅ Set --tab-border-color-active:', tabBorderColorActive);
+                }
+            } else {
+                console.log('❌ Block element not found for clientId:', clientId);
+            }
+        } else {
+            console.log('❌ Current block not found');
+        }
+    }, [
+        arrowBackgroundColor, arrowBackgroundColorHover, arrowTextColor,
+        dotBackgroundColor, dotBackgroundColorHover, dotBackgroundColorActive,
+        tabBackgroundColor, tabBackgroundColorHover, tabBackgroundColorActive,
+        tabTextColor, tabTextColorHover, tabTextColorActive, tabBorderColor, tabBorderColorHover, tabBorderColorActive
+    ]);
 
     return (
         <>
@@ -187,44 +376,158 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                         onChange={(value) => setAttributes({ touchSwipe: value })}
                     />
 
-                    <ToggleControl
-                        label={__('Loop', 'flexible-slider-carousel')}
-                        checked={loop}
-                        onChange={(value) => setAttributes({ loop: value })}
+                    <SelectControl
+                        label={__('Slider Type', 'flexible-slider-carousel')}
+                        value={sliderType || 'carousel'}
+                        options={[
+                            { label: __('Carousel (Endless Loop)', 'flexible-slider-carousel'), value: 'carousel' },
+                            { label: __('Slider (Finite)', 'flexible-slider-carousel'), value: 'slider' }
+                        ]}
+                        onChange={(value) => setAttributes({ sliderType: value })}
+                        help={__('Carousel loops endlessly, Slider stops at boundaries (Standard: Carousel)', 'flexible-slider-carousel')}
+                    />
+
+                    <RangeControl
+                        label={__('Gap Between Frames (px)', 'flexible-slider-carousel')}
+                        value={gap || 10}
+                        onChange={(value) => setAttributes({ gap: value })}
+                        min={0}
+                        max={50}
+                        step={1}
+                        help={__('Standard: 10px', 'flexible-slider-carousel')}
+                    />
+
+                    <RangeControl
+                        label={__('Animation Duration (ms)', 'flexible-slider-carousel')}
+                        value={animationDuration || 400}
+                        onChange={(value) => setAttributes({ animationDuration: value })}
+                        min={100}
+                        max={2000}
+                        step={50}
+                        help={__('Standard: 400ms', 'flexible-slider-carousel')}
+                    />
+
+                    <SelectControl
+                        label={__('Animation Timing Function', 'flexible-slider-carousel')}
+                        value={animationTimingFunc || 'cubic-bezier(0.165, 0.840, 0.440, 1.000)'}
+                        options={[
+                            { label: __('Default (Smooth)', 'flexible-slider-carousel'), value: 'cubic-bezier(0.165, 0.840, 0.440, 1.000)' },
+                            { label: __('Linear', 'flexible-slider-carousel'), value: 'linear' },
+                            { label: __('Ease', 'flexible-slider-carousel'), value: 'ease' },
+                            { label: __('Ease-in', 'flexible-slider-carousel'), value: 'ease-in' },
+                            { label: __('Ease-out', 'flexible-slider-carousel'), value: 'ease-out' },
+                            { label: __('Ease-in-out', 'flexible-slider-carousel'), value: 'ease-in-out' }
+                        ]}
+                        onChange={(value) => setAttributes({ animationTimingFunc: value })}
+                        help={__('Standard: Default (Smooth)', 'flexible-slider-carousel')}
                     />
 
                     <SelectControl
                         label={__('Animation Type', 'flexible-slider-carousel')}
-                        value={transition}
+                        value={animationType || 'slide'}
                         options={[
-                            { label: __('Slide', 'flexible-slider-carousel'), value: 'slide' },
-                            { label: __('Fade', 'flexible-slider-carousel'), value: 'fade' }
+                            { label: __('Slide (Standard)', 'flexible-slider-carousel'), value: 'slide' },
+                            { label: __('Fade', 'flexible-slider-carousel'), value: 'fade' },
+                            { label: __('Flip', 'flexible-slider-carousel'), value: 'flip' },
+                            { label: __('Coverflow', 'flexible-slider-carousel'), value: 'coverflow' },
+                            { label: __('Creative', 'flexible-slider-carousel'), value: 'creative' }
                         ]}
-                        onChange={(value) => setAttributes({ transition: value })}
-                        help={__('Slide is recommended for carousels', 'flexible-slider-carousel')}
+                        onChange={(value) => setAttributes({ animationType: value })}
+                        help={__('Art der Slide-Animation (Standard: Slide)', 'flexible-slider-carousel')}
+                    />
+
+                    {animationType === 'slide' && (
+                        <SelectControl
+                            label={__('Animation Direction', 'flexible-slider-carousel')}
+                            value={animationDirection || 'horizontal'}
+                            options={[
+                                { label: __('Horizontal (Standard)', 'flexible-slider-carousel'), value: 'horizontal' },
+                                { label: __('Vertical', 'flexible-slider-carousel'), value: 'vertical' },
+                                { label: __('Diagonal Left', 'flexible-slider-carousel'), value: 'diagonal-left' },
+                                { label: __('Diagonal Right', 'flexible-slider-carousel'), value: 'diagonal-right' }
+                            ]}
+                            onChange={(value) => setAttributes({ animationDirection: value })}
+                            help={__('Richtung der Slide-Bewegung (Standard: Horizontal)', 'flexible-slider-carousel')}
+                        />
+                    )}
+
+                    {(animationType === 'flip' || animationType === 'cube' || animationType === 'coverflow' || animationType === 'creative') && (
+                        <RangeControl
+                            label={__('Animation Intensity', 'flexible-slider-carousel')}
+                            value={animationIntensity || 50}
+                            onChange={(value) => setAttributes({ animationIntensity: value })}
+                            min={10}
+                            max={100}
+                            step={5}
+                            help={__('Stärke des 3D-Effekts (Standard: 50)', 'flexible-slider-carousel')}
+                        />
+                    )}
+
+                    <SelectControl
+                        label={__('Focus Position', 'flexible-slider-carousel')}
+                        value={focusAt || '0'}
+                        options={[
+                            { label: __('Left (0)', 'flexible-slider-carousel'), value: '0' },
+                            { label: __('Center', 'flexible-slider-carousel'), value: 'center' }
+                        ]}
+                        onChange={(value) => setAttributes({ focusAt: value })}
+                        help={__('Position of active slide in viewport (Standard: Left)', 'flexible-slider-carousel')}
                     />
 
                     <RangeControl
-                        label={__('Animation Speed (ms)', 'flexible-slider-carousel')}
-                        value={transitionSpeed}
-                        onChange={(value) => setAttributes({ transitionSpeed: value })}
-                        min={200}
-                        max={2000}
-                        step={100}
+                        label={__('Peek Distance (px)', 'flexible-slider-carousel')}
+                        value={peek || 0}
+                        onChange={(value) => setAttributes({ peek: value })}
+                        min={0}
+                        max={100}
+                        step={5}
+                        help={__('Show part of next/previous slides (Standard: 0px)', 'flexible-slider-carousel')}
                     />
 
-                    <SelectControl
-                        label={__('Animation Easing', 'flexible-slider-carousel')}
-                        value={easing}
-                        options={[
-                            { label: __('Ease', 'flexible-slider-carousel'), value: 'ease' },
-                            { label: __('Ease-in', 'flexible-slider-carousel'), value: 'ease-in' },
-                            { label: __('Ease-out', 'flexible-slider-carousel'), value: 'ease-out' },
-                            { label: __('Ease-in-out', 'flexible-slider-carousel'), value: 'ease-in-out' },
-                            { label: __('Linear', 'flexible-slider-carousel'), value: 'linear' }
-                        ]}
-                        onChange={(value) => setAttributes({ easing: value })}
+                    <ToggleControl
+                        label={__('Keyboard Navigation', 'flexible-slider-carousel')}
+                        checked={keyboard !== false}
+                        onChange={(value) => setAttributes({ keyboard: value })}
+                        help={__('Use arrow keys to navigate (Standard: Aktiviert)', 'flexible-slider-carousel')}
                     />
+
+                    <RangeControl
+                        label={__('Touch/Swipe Sensitivity', 'flexible-slider-carousel')}
+                        value={touchRatio || 0.5}
+                        onChange={(value) => setAttributes({ touchRatio: value })}
+                        min={0.1}
+                        max={2.0}
+                        step={0.1}
+                        help={__('Higher values = more sensitive touch/swipe (Standard: 0.5)', 'flexible-slider-carousel')}
+                    />
+
+                    <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #ddd' }}>
+                        <Button
+                            isSecondary
+                            onClick={() => {
+                                setAttributes({
+                                    // Swiper.js settings
+                                    sliderType: 'carousel',
+                                    gap: 15,
+                                    animationDuration: 800,
+                                    animationTimingFunc: 'cubic-bezier(0.165, 0.840, 0.440, 1.000)',
+                                    animationType: 'slide',
+                                    animationDirection: 'horizontal',
+                                    animationIntensity: 50,
+                                    focusAt: 'center',
+                                    peek: 120,
+                                    keyboard: true,
+                                    touchRatio: 0.5
+                                });
+                            }}
+                            style={{ width: '100%' }}
+                        >
+                            {__('Auf Standardwerte zurücksetzen', 'flexible-slider-carousel')}
+                        </Button>
+                        <p style={{ fontSize: '12px', color: '#666', marginTop: '8px', textAlign: 'center' }}>
+                            {__('Setzt alle Glide.js Optionen auf Standardwerte zurück', 'flexible-slider-carousel')}
+                        </p>
+                    </div>
                 </PanelBody>
 
                 <PanelBody title={__('Navigation', 'flexible-slider-carousel')} initialOpen={false}>
@@ -527,6 +830,192 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                         </>
                     )}
 
+                    <PanelBody title={__('Navigation Colors', 'flexible-slider-carousel')} initialOpen={false}>
+                        <h4>{__('Arrow Colors', 'flexible-slider-carousel')}</h4>
+
+                        <div className="fsc-color-control">
+                            <label className="components-base-control__label">{__('Background Color', 'flexible-slider-carousel')}</label>
+                            <div className="fsc-color-indicator-wrapper">
+                                <ColorIndicator
+                                    colorValue={arrowBackgroundColor}
+                                    onClick={() => setActiveColorPicker('arrowBackgroundColor')}
+                                />
+                                <Button
+                                    className="fsc-color-button"
+                                    onClick={() => setAttributes({ arrowBackgroundColor: undefined })}
+                                >
+                                    {__('Clear', 'flexible-slider-carousel')}
+                                </Button>
+                            </div>
+                            {activeColorPicker === 'arrowBackgroundColor' && (
+                                <Popover
+                                    position="bottom center"
+                                    onClose={() => setActiveColorPicker(null)}
+                                >
+                                    <ColorPalette
+                                        value={arrowBackgroundColor}
+                                        onChange={(color) => {
+                                            setAttributes({ arrowBackgroundColor: color });
+                                            setActiveColorPicker(null);
+                                        }}
+                                    />
+                                </Popover>
+                            )}
+                        </div>
+
+                        <div className="fsc-color-control">
+                            <label className="components-base-control__label">{__('Background Color (Hover)', 'flexible-slider-carousel')}</label>
+                            <div className="fsc-color-indicator-wrapper">
+                                <ColorIndicator
+                                    colorValue={arrowBackgroundColorHover}
+                                    onClick={() => setActiveColorPicker('arrowBackgroundColorHover')}
+                                />
+                                <Button
+                                    className="fsc-color-button"
+                                    onClick={() => setAttributes({ arrowBackgroundColorHover: undefined })}
+                                >
+                                    {__('Clear', 'flexible-slider-carousel')}
+                                </Button>
+                            </div>
+                            {activeColorPicker === 'arrowBackgroundColorHover' && (
+                                <Popover
+                                    position="bottom center"
+                                    onClose={() => setActiveColorPicker(null)}
+                                >
+                                    <ColorPalette
+                                        value={arrowBackgroundColorHover}
+                                        onChange={(color) => {
+                                            setAttributes({ arrowBackgroundColorHover: color });
+                                            setActiveColorPicker(null);
+                                        }}
+                                    />
+                                </Popover>
+                            )}
+                        </div>
+
+                        <div className="fsc-color-control">
+                            <label className="components-base-control__label">{__('Arrow Color', 'flexible-slider-carousel')}</label>
+                            <div className="fsc-color-indicator-wrapper">
+                                <ColorIndicator
+                                    colorValue={arrowTextColor}
+                                    onClick={() => setActiveColorPicker('arrowTextColor')}
+                                />
+                                <Button
+                                    className="fsc-color-button"
+                                    onClick={() => setAttributes({ arrowTextColor: undefined })}
+                                >
+                                    {__('Clear', 'flexible-slider-carousel')}
+                                </Button>
+                            </div>
+                            {activeColorPicker === 'arrowTextColor' && (
+                                <Popover
+                                    position="bottom center"
+                                    onClose={() => setActiveColorPicker(null)}
+                                >
+                                    <ColorPalette
+                                        value={arrowTextColor}
+                                        onChange={(color) => {
+                                            setAttributes({ arrowTextColor: color });
+                                            setActiveColorPicker(null);
+                                        }}
+                                    />
+                                </Popover>
+                            )}
+                        </div>
+
+                        <h4>{__('Dot Colors', 'flexible-slider-carousel')}</h4>
+
+                        <div className="fsc-color-control">
+                            <label className="components-base-control__label">{__('Background Color (Normal)', 'flexible-slider-carousel')}</label>
+                            <div className="fsc-color-indicator-wrapper">
+                                <ColorIndicator
+                                    colorValue={dotBackgroundColor}
+                                    onClick={() => setActiveColorPicker('dotBackgroundColor')}
+                                />
+                                <Button
+                                    className="fsc-color-button"
+                                    onClick={() => setAttributes({ dotBackgroundColor: undefined })}
+                                >
+                                    {__('Clear', 'flexible-slider-carousel')}
+                                </Button>
+                            </div>
+                            {activeColorPicker === 'dotBackgroundColor' && (
+                                <Popover
+                                    position="bottom center"
+                                    onClose={() => setActiveColorPicker(null)}
+                                >
+                                    <ColorPalette
+                                        value={dotBackgroundColor}
+                                        onChange={(color) => {
+                                            setAttributes({ dotBackgroundColor: color });
+                                            setActiveColorPicker(null);
+                                        }}
+                                    />
+                                </Popover>
+                            )}
+                        </div>
+
+                        <div className="fsc-color-control">
+                            <label className="components-base-control__label">{__('Background Color (Hover)', 'flexible-slider-carousel')}</label>
+                            <div className="fsc-color-indicator-wrapper">
+                                <ColorIndicator
+                                    colorValue={dotBackgroundColorHover}
+                                    onClick={() => setActiveColorPicker('dotBackgroundColorHover')}
+                                />
+                                <Button
+                                    className="fsc-color-button"
+                                    onClick={() => setAttributes({ dotBackgroundColorHover: undefined })}
+                                >
+                                    {__('Clear', 'flexible-slider-carousel')}
+                                </Button>
+                            </div>
+                            {activeColorPicker === 'dotBackgroundColorHover' && (
+                                <Popover
+                                    position="bottom center"
+                                    onClose={() => setActiveColorPicker(null)}
+                                >
+                                    <ColorPalette
+                                        value={dotBackgroundColorHover}
+                                        onChange={(color) => {
+                                            setAttributes({ dotBackgroundColorHover: color });
+                                            setActiveColorPicker(null);
+                                        }}
+                                    />
+                                </Popover>
+                            )}
+                        </div>
+
+                        <div className="fsc-color-control">
+                            <label className="components-base-control__label">{__('Background Color (Active)', 'flexible-slider-carousel')}</label>
+                            <div className="fsc-color-indicator-wrapper">
+                                <ColorIndicator
+                                    colorValue={dotBackgroundColorActive}
+                                    onClick={() => setActiveColorPicker('dotBackgroundColorActive')}
+                                />
+                                <Button
+                                    className="fsc-color-button"
+                                    onClick={() => setAttributes({ dotBackgroundColorActive: undefined })}
+                                >
+                                    {__('Clear', 'flexible-slider-carousel')}
+                                </Button>
+                            </div>
+                            {activeColorPicker === 'dotBackgroundColorActive' && (
+                                <Popover
+                                    position="bottom center"
+                                    onClose={() => setActiveColorPicker(null)}
+                                >
+                                    <ColorPalette
+                                        value={dotBackgroundColorActive}
+                                        onChange={(color) => {
+                                            setAttributes({ dotBackgroundColorActive: color });
+                                            setActiveColorPicker(null);
+                                        }}
+                                    />
+                                </Popover>
+                            )}
+                        </div>
+                    </PanelBody>
+
                 </PanelBody>
 
                 <PanelBody title={__('Performance & SEO', 'flexible-slider-carousel')} initialOpen={false}>
@@ -633,7 +1122,11 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                             {showNavigation && (
                                 <>
                                     <button
-                                        className="fsc-slider__nav-editor fsc-slider__nav-editor--prev"
+                                        className="swiper-button-prev"
+                                        style={{
+                                            backgroundColor: arrowBackgroundColor || '#007cba',
+                                            color: arrowTextColor || '#ffffff'
+                                        }}
                                         onClick={() => {
                                             const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames`);
                                             if (framesContainer) {
@@ -647,7 +1140,11 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                     </button>
 
                                     <button
-                                        className="fsc-slider__nav-editor fsc-slider__nav-editor--next"
+                                        className="swiper-button-next"
+                                        style={{
+                                            backgroundColor: arrowBackgroundColor || '#007cba',
+                                            color: arrowTextColor || '#ffffff'
+                                        }}
                                         onClick={() => {
                                             const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames`);
                                             if (framesContainer) {
@@ -665,7 +1162,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
 
                         {/* Editor Navigation Dots - Only show if enabled */}
                         {showDots && (
-                            <div className="fsc-slider__dots-editor">
+                            <div className="swiper-pagination">
                                 {Array.from({ length: Math.max(1, frameCount) }, (_, i) => {
                                     const { startIndex, endIndex } = getCurrentVisibleRange();
                                     const isInRange = i >= startIndex && i <= endIndex;
@@ -673,7 +1170,10 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                     return (
                                         <button
                                             key={i}
-                                            className={`fsc-slider__dot-editor ${isInRange ? 'fsc-slider__dot-editor--active' : ''}`}
+                                            className={`swiper-pagination-bullet ${isInRange ? 'swiper-pagination-bullet-active' : ''}`}
+                                            style={{
+                                                backgroundColor: isInRange ? (dotBackgroundColorActive || '#007cba') : (dotBackgroundColor || '#dddddd')
+                                            }}
                                             onClick={() => {
                                                 const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames`);
                                                 if (framesContainer) {
@@ -742,7 +1242,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                         <ul>
                             <li>{__('Design:', 'flexible-slider-carousel')} {sliderDesign || 'Default'}</li>
                             <li>{__('Content:', 'flexible-slider-carousel')} {__('Manual Frames', 'flexible-slider-carousel')}</li>
-                            <li>{__('Animation:', 'flexible-slider-carousel')} {transition}</li>
+                            <li>{__('Animation:', 'flexible-slider-carousel')} {/* transition */}</li>
                             {autoPlay && <li>{__('Auto Play:', 'flexible-slider-carousel')} {autoPlaySpeed}s</li>}
                             {(showNavigation || showDots || showTextNavigation) && <li>{__('Navigation:', 'flexible-slider-carousel')} {showNavigation ? __('Arrows', 'flexible-slider-carousel') : ''} {showDots ? __('Dots', 'flexible-slider-carousel') : ''} {showTextNavigation ? __('Text', 'flexible-slider-carousel') : ''}</li>}
                         </ul>
@@ -855,20 +1355,12 @@ const ResponsiveSettings = ({ settings, onChange, slidesToShow, slidesToScroll, 
 
             <RangeControl
                 label={__('Inner Padding (px)', 'flexible-slider-carousel')}
-                value={settings[breakpoint]?.innerPadding || 0}
+                value={settings[breakpoint]?.innerPadding || 10}
                 onChange={(value) => updateBreakpoint(breakpoint, 'innerPadding', value)}
                 min={0}
                 max={100}
                 step={5}
-            />
-
-            <RangeControl
-                label={__('Outer Margin (px)', 'flexible-slider-carousel')}
-                value={settings[breakpoint]?.outerMargin || 0}
-                onChange={(value) => updateBreakpoint(breakpoint, 'outerMargin', value)}
-                min={0}
-                max={100}
-                step={5}
+                help={__('Padding inside frames (Standard: 10px)', 'flexible-slider-carousel')}
             />
 
             <RangeControl
@@ -893,7 +1385,7 @@ const ResponsiveSettings = ({ settings, onChange, slidesToShow, slidesToScroll, 
 
     return (
         <div className="fsc-responsive-settings">
-                        {/* Tab Navigation */}
+            {/* Tab Navigation */}
             <div className="fsc-responsive-tabs">
                 {['desktop', 'tablet', 'phone'].map(breakpoint => (
                     <button

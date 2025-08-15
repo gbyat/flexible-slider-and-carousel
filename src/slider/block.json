@@ -40,11 +40,7 @@
     },
     "autoPlaySpeed": {
       "type": "number",
-      "default": 5000
-    },
-    "loop": {
-      "type": "boolean",
-      "default": true
+      "default": 4
     },
     "showNavigation": {
       "type": "boolean",
@@ -56,7 +52,7 @@
     },
     "showTextNavigation": {
       "type": "boolean",
-      "default": false
+      "default": true
     },
     "textNavigationPosition": {
       "type": "string",
@@ -81,6 +77,50 @@
     "loading": {
       "type": "string",
       "default": "eager"
+    },
+    "sliderType": {
+      "type": "string",
+      "default": "carousel"
+    },
+    "gap": {
+      "type": "number",
+      "default": 15
+    },
+    "animationDuration": {
+      "type": "number",
+      "default": 800
+    },
+    "animationTimingFunc": {
+      "type": "string",
+      "default": "cubic-bezier(0.165, 0.840, 0.440, 1.000)"
+    },
+    "animationType": {
+      "type": "string",
+      "default": "slide"
+    },
+    "animationDirection": {
+      "type": "string",
+      "default": "horizontal"
+    },
+    "animationIntensity": {
+      "type": "number",
+      "default": 50
+    },
+    "focusAt": {
+      "type": "string",
+      "default": "center"
+    },
+    "peek": {
+      "type": "number",
+      "default": 120
+    },
+    "keyboard": {
+      "type": "boolean",
+      "default": true
+    },
+    "touchRatio": {
+      "type": "number",
+      "default": 0.5
     },
     "slidesToShow": {
       "type": "object",
@@ -110,17 +150,14 @@
       "default": {
         "desktop": {
           "minWidth": 1024,
-          "innerPadding": 0,
-          "outerMargin": 0
+          "innerPadding": 10
         },
         "tablet": {
           "minWidth": 768,
-          "innerPadding": 0,
-          "outerMargin": 0
+          "innerPadding": 10
         },
         "phone": {
-          "innerPadding": 0,
-          "outerMargin": 0
+          "innerPadding": 10
         }
       }
     },
@@ -131,10 +168,13 @@
     "tabBorderRadius": { "type": "number", "default": 4 },
     "tabBorderWidth": { "type": "number", "default": 1 },
     "tabTextColor": { "type": "string", "default": "#333333" },
+    "tabTextColorHover": { "type": "string", "default": "#ffffff" },
     "tabTextColorActive": { "type": "string", "default": "#ffffff" },
     "tabBackgroundColor": { "type": "string", "default": "#f5f5f5" },
+    "tabBackgroundColorHover": { "type": "string", "default": "#00a0d2" },
     "tabBackgroundColorActive": { "type": "string", "default": "#007cba" },
     "tabBorderColor": { "type": "string", "default": "#dddddd" },
+    "tabBorderColorHover": { "type": "string", "default": "#00a0d2" },
     "tabBorderColorActive": { "type": "string", "default": "#007cba" },
     "tabBoxShadow": {
       "type": "string",
@@ -143,6 +183,30 @@
     "tabBoxShadowActive": {
       "type": "string",
       "default": "0 2px 6px rgba(0,0,0,0.2)"
+    },
+    "arrowBackgroundColor": {
+      "type": "string",
+      "default": "#007cba"
+    },
+    "arrowBackgroundColorHover": {
+      "type": "string",
+      "default": "#005a87"
+    },
+    "arrowTextColor": {
+      "type": "string",
+      "default": "#ffffff"
+    },
+    "dotBackgroundColor": {
+      "type": "string",
+      "default": "#dddddd"
+    },
+    "dotBackgroundColorHover": {
+      "type": "string",
+      "default": "#00a0d2"
+    },
+    "dotBackgroundColorActive": {
+      "type": "string",
+      "default": "#007cba"
     },
     "sliderId": {
       "type": "string",

@@ -1,4 +1,24 @@
 /* Slider Block Editor Styles */
+
+/* CSS Variables for editor colors - will be overridden by block attributes */
+.fsc-slider {
+    --arrow-background-color: #0073aa;
+    --arrow-background-color-hover: #005a87;
+    --arrow-text-color: #ffffff;
+    --dot-background-color: #dddddd;
+    --dot-background-color-hover: #00a0d2;
+    --dot-background-color-active: #007cba;
+    --tab-background-color: #f5f5f5;
+    --tab-background-color-hover: #00a0d2;
+    --tab-background-color-active: #007cba;
+    --tab-text-color: #333333;
+    --tab-text-color-hover: #ffffff;
+    --tab-text-color-active: #ffffff;
+    --tab-border-color: #dddddd;
+    --tab-border-color-hover: #00a0d2;
+    --tab-border-color-active: #007cba;
+}
+
 .fsc-slider {
     border: 2px dashed #ccc;
     padding: 20px;
@@ -64,9 +84,9 @@
 
 /* Editor Navigation - similar to frontend but with CSS scrolling */
 .fsc-slider__nav-editor {
-    background-color: #0073aa;
-    color: white;
-    border: 1px solid #0073aa;
+    background-color: var(--arrow-background-color, #0073aa);
+    color: var(--arrow-text-color, white);
+    border: 1px solid var(--arrow-background-color, #0073aa);
     border-radius: 4px;
     transition: all 0.3s ease;
     padding: 8px;
@@ -84,6 +104,11 @@
     z-index: 10;
 }
 
+.fsc-slider__nav-editor:hover {
+    background-color: var(--arrow-background-color-hover, #005a87);
+    border-color: var(--arrow-background-color-hover, #005a87);
+}
+
 /* Hide frontend navigation in editor ONLY */
 .editor-styles-wrapper .fsc-slider .fsc-slider__nav:not(.fsc-slider__nav-editor) {
     display: none !important;
@@ -96,6 +121,39 @@
 /* Ensure editor navigation is always visible */
 .fsc-slider__nav-editor {
     display: flex !important;
+}
+
+/* Editor Dots Navigation */
+.fsc-slider__dots-editor {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.fsc-slider__dot-editor {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--dot-background-color, #dddddd);
+    border: 1px solid var(--dot-background-color, #dddddd);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.fsc-slider__dot-editor:hover {
+    background-color: var(--dot-background-color-hover, #00a0d2);
+    border-color: var(--dot-background-color-hover, #00a0d2);
+    transform: scale(1.2);
+}
+
+.fsc-slider__dot-editor--active {
+    background-color: var(--dot-background-color-active, #007cba);
+    border-color: var(--dot-background-color-active, #007cba);
+    transform: scale(1.2);
 }
 
 /* Tablet Preview - Fix missing right border with more specific targeting */

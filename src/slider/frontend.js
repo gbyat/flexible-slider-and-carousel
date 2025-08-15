@@ -1,7 +1,11 @@
 /**
- * Flexible Slider & Carousel Frontend Script
+ * Flexible Slider & Carousel Frontend Script with Swiper.js
  * @package FlexibleSliderCarousel
  */
+
+import Swiper from 'swiper';
+import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, EffectCoverflow, EffectCreative } from 'swiper/modules';
+// We provide our own CSS; no direct Swiper CSS imports to avoid loader conflicts
 
 (function () {
     'use strict';
@@ -10,17 +14,13 @@
         constructor(element) {
             this.slider = element;
             this.frames = this.slider.querySelectorAll('.fsc-frame');
-            this.framesContainer = this.slider.querySelector('.fsc-slider__frames');
-            this.currentSlide = 0;
             this.totalSlides = this.frames.length;
-            this.isAnimating = false;
-            this.autoPlayInterval = null;
 
             // Get slider settings from data attributes
             this.settings = this.getSliderSettings();
 
-            // Initialize
-            this.init();
+            // Initialize Swiper.js
+            this.initSwiper();
         }
 
         getSliderSettings() {
@@ -58,72 +58,396 @@
                 tabBorderRadius: parseInt(this.slider.dataset.tabBorderRadius) || 4,
                 tabBorderWidth: parseInt(this.slider.dataset.tabBorderWidth) || 1,
                 tabTextColor: this.slider.dataset.tabTextColor || '#333333',
+                tabTextColorHover: this.slider.dataset.tabTextColorHover || '#ffffff',
                 tabTextColorActive: this.slider.dataset.tabTextColorActive || '#ffffff',
                 tabBackgroundColor: this.slider.dataset.tabBackgroundColor || '#f5f5f5',
+                tabBackgroundColorHover: this.slider.dataset.tabBackgroundColorHover || '#00a0d2',
                 tabBackgroundColorActive: this.slider.dataset.tabBackgroundColorActive || '#007cba',
                 tabBorderColor: this.slider.dataset.tabBorderColor || '#dddddd',
+                tabBorderColorHover: this.slider.dataset.tabBorderColorHover || '#00a0d2',
                 tabBorderColorActive: this.slider.dataset.tabBorderColorActive || '#007cba',
                 tabBoxShadow: this.slider.dataset.tabBoxShadow || '0 1px 3px rgba(0,0,0,0.1)',
-                tabBoxShadowActive: this.slider.dataset.tabBoxShadowActive || '0 2px 6px rgba(0,0,0,0.2)'
+                tabBoxShadowActive: this.slider.dataset.tabBoxShadowActive || '0 2px 6px rgba(0,0,0,0.2)',
+                // Navigation Colors
+                arrowBackgroundColor: this.slider.dataset.arrowBackgroundColor || '#007cba',
+                arrowBackgroundColorHover: this.slider.dataset.arrowBackgroundColorHover || '#005a87',
+                arrowTextColor: this.slider.dataset.arrowTextColor || '#ffffff',
+                dotBackgroundColor: this.slider.dataset.dotBackgroundColor || '#dddddd',
+                dotBackgroundColorHover: this.slider.dataset.dotBackgroundColorHover || '#00a0d2',
+                dotBackgroundColorActive: this.slider.dataset.dotBackgroundColorActive || '#007cba',
+                // Swiper related defaults mapped from data-* attributes
+                sliderType: this.slider.dataset.sliderType || 'carousel',
+                gap: parseInt(this.slider.dataset.gap) || 10,
+                animationDuration: parseInt(this.slider.dataset.animationDuration) || 400,
+                animationTimingFunc: this.slider.dataset.animationTimingFunc || 'cubic-bezier(0.165, 0.840, 0.440, 1.000)',
+                animationType: this.slider.dataset.animationType || 'slide',
+                animationDirection: this.slider.dataset.animationDirection || 'horizontal',
+                animationIntensity: parseInt(this.slider.dataset.animationIntensity) || 50,
+                focusAt: this.slider.dataset.focusAt || 'center',
+                peek: parseInt(this.slider.dataset.peek) || 0,
+                keyboard: this.slider.dataset.keyboard === 'true',
+                touchRatio: parseFloat(this.slider.dataset.touchRatio) || 0.5
             };
         }
 
-        init() {
-            if (this.totalSlides <= 1) return;
 
-            // Wait for DOM to be ready
-            if (this.framesContainer) {
-                this.createNavigation();
-                this.setupResponsiveBehavior();
-                this.setupTouchEvents();
-                this.startAutoPlay();
-                this.updateNavigation();
-            } else {
-                // Retry after a short delay
-                setTimeout(() => this.init(), 100);
+        initSwiper() {
+            console.log('Initializing Swiper with', this.totalSlides, 'slides');
+            console.log('Slider settings:', this.settings);
+
+            // Debug specific settings
+            console.log('=== SWIPER SETTINGS DEBUG ===');
+            console.log('Slider Type:', this.settings.sliderType, 'Loop:', this.settings.sliderType === 'carousel');
+            console.log('Autoplay:', this.settings.autoPlay, 'Speed:', this.settings.autoPlaySpeed);
+            console.log('Peek:', this.settings.peek);
+            console.log('Keyboard:', this.settings.keyboard);
+            console.log('Raw data attributes:');
+            console.log('- data-slider-type:', this.slider.dataset.sliderType);
+            console.log('- data-auto-play:', this.slider.dataset.autoPlay);
+            console.log('- data-auto-play-speed:', this.slider.dataset.autoPlaySpeed);
+            console.log('- data-peek:', this.slider.dataset.peek);
+            console.log('- data-keyboard:', this.slider.dataset.keyboard);
+            console.log('================================');
+
+            if (this.totalSlides <= 1) {
+                console.log('Not enough slides, skipping Glide.js initialization');
+                return;
+            }
+
+            try {
+                // Prepare HTML structure for Swiper.js
+                this.prepareSwiperStructure();
+                console.log('Swiper structure prepared');
+
+                // Create text navigation if enabled
+                if (this.settings.showTextNavigation) {
+                    this.createTextNavigation();
+                    console.log('Text navigation created');
+                }
+
+                // Initialize Swiper with responsive breakpoints
+                const effectMap = {
+                    slide: undefined,
+                    fade: 'fade',
+                    flip: 'flip',
+                    coverflow: 'coverflow',
+                    creative: 'creative'
+                };
+                const effect = effectMap[this.settings.animationType];
+
+                // Set data-effect attribute for CSS targeting
+                const swiperElement = this.slider.querySelector('.swiper');
+                if (effect && effect !== 'slide') {
+                    swiperElement.setAttribute('data-effect', effect);
+                }
+
+                // Set peek distance for slide effect
+                if (this.settings.peek > 0 && effect === 'slide') {
+                    swiperElement.setAttribute('data-peek', 'true');
+                    swiperElement.style.setProperty('--peek-distance', `${this.settings.peek}px`);
+                }
+
+                // Set CSS variables for colors on both the main slider container and swiper element
+                if (this.settings.arrowBackgroundColor) {
+                    this.slider.style.setProperty('--arrow-background-color', this.settings.arrowBackgroundColor);
+                    swiperElement.style.setProperty('--arrow-background-color', this.settings.arrowBackgroundColor);
+                }
+                if (this.settings.arrowBackgroundColorHover) {
+                    this.slider.style.setProperty('--arrow-background-color-hover', this.settings.arrowBackgroundColorHover);
+                    swiperElement.style.setProperty('--arrow-background-color-hover', this.settings.arrowBackgroundColorHover);
+                }
+                if (this.settings.arrowTextColor) {
+                    this.slider.style.setProperty('--arrow-text-color', this.settings.arrowTextColor);
+                    swiperElement.style.setProperty('--arrow-text-color', this.settings.arrowTextColor);
+                }
+                if (this.settings.dotBackgroundColor) {
+                    this.slider.style.setProperty('--dot-background-color', this.settings.dotBackgroundColor);
+                    swiperElement.style.setProperty('--dot-background-color', this.settings.dotBackgroundColor);
+                }
+                if (this.settings.dotBackgroundColorHover) {
+                    this.slider.style.setProperty('--dot-background-color-hover', this.settings.dotBackgroundColorHover);
+                    swiperElement.style.setProperty('--dot-background-color-hover', this.settings.dotBackgroundColorHover);
+                }
+                if (this.settings.dotBackgroundColorActive) {
+                    this.slider.style.setProperty('--dot-background-color-active', this.settings.dotBackgroundColorActive);
+                    swiperElement.style.setProperty('--dot-background-color-active', this.settings.dotBackgroundColorActive);
+                }
+
+                // Set CSS variables for tab colors
+                if (this.settings.tabTextColor) {
+                    this.slider.style.setProperty('--tab-text-color', this.settings.tabTextColor);
+                }
+                if (this.settings.tabTextColorHover) {
+                    this.slider.style.setProperty('--tab-text-color-hover', this.settings.tabTextColorHover);
+                }
+                if (this.settings.tabTextColorActive) {
+                    this.slider.style.setProperty('--tab-text-color-active', this.settings.tabTextColorActive);
+                }
+                if (this.settings.tabBackgroundColor) {
+                    this.slider.style.setProperty('--tab-background-color', this.settings.tabBackgroundColor);
+                }
+                if (this.settings.tabBackgroundColorHover) {
+                    this.slider.style.setProperty('--tab-background-color-hover', this.settings.tabBackgroundColorHover);
+                }
+                if (this.settings.tabBackgroundColorActive) {
+                    this.slider.style.setProperty('--tab-background-color-active', this.settings.tabBackgroundColorActive);
+                }
+                if (this.settings.tabBorderColor) {
+                    this.slider.style.setProperty('--tab-border-color', this.settings.tabBorderColor);
+                }
+                if (this.settings.tabBorderColorHover) {
+                    this.slider.style.setProperty('--tab-border-color-hover', this.settings.tabBorderColorHover);
+                }
+                if (this.settings.tabBorderColorActive) {
+                    this.slider.style.setProperty('--tab-border-color-active', this.settings.tabBorderColorActive);
+                }
+
+                // Debug logging for colors
+                console.log('=== COLOR VARIABLES DEBUG ===');
+                console.log('Arrow Background:', this.settings.arrowBackgroundColor);
+                console.log('Arrow Background Hover:', this.settings.arrowBackgroundColorHover);
+                console.log('Arrow Text:', this.settings.arrowTextColor);
+                console.log('Dot Background:', this.settings.dotBackgroundColor);
+                console.log('Dot Background Hover:', this.settings.dotBackgroundColorHover);
+                console.log('Dot Background Active:', this.settings.dotBackgroundColorActive);
+                console.log('Tab Text:', this.settings.tabTextColor);
+                console.log('Tab Text Active:', this.settings.tabTextColorActive);
+                console.log('Tab Background:', this.settings.tabBackgroundColor);
+                console.log('Tab Background Active:', this.settings.tabBackgroundColorActive);
+                console.log('Tab Border:', this.settings.tabBorderColor);
+                console.log('Tab Border Active:', this.settings.tabBorderColorActive);
+                console.log('=============================');
+
+                this.swiper = new Swiper(swiperElement, {
+                    modules: [Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, EffectCoverflow, EffectCreative],
+                    loop: this.settings.sliderType === 'carousel', // Endless loop for carousel, finite for slider
+                    slidesPerView: this.settings.slidesToShow.desktop,
+                    slidesPerGroup: this.settings.slidesToScroll.desktop,
+                    spaceBetween: this.settings.gap,
+                    speed: this.settings.animationDuration,
+                    effect: effect,
+                    centeredSlides: this.settings.focusAt === 'center',
+                    keyboard: { enabled: !!this.settings.keyboard },
+                    allowTouchMove: this.settings.touchSwipe,
+                    touchRatio: this.settings.touchRatio,
+                    autoplay: this.settings.autoPlay ? { delay: this.settings.autoPlaySpeed * 1000, disableOnInteraction: false, pauseOnMouseEnter: true } : undefined,
+                    navigation: this.settings.showNavigation ? { nextEl: this.slider.querySelector('.swiper-button-next'), prevEl: this.slider.querySelector('.swiper-button-prev') } : undefined,
+                    pagination: this.settings.showDots ? { el: this.slider.querySelector('.swiper-pagination'), clickable: true } : undefined,
+
+                    // Peek distance - show part of next/previous slides
+                    // Only apply peek for slide effect, not for 3D effects
+                    ...(this.settings.peek > 0 && effect === 'slide' && {
+                        slidesPerView: 'auto',
+                        centeredSlides: true
+                    }),
+
+                    // Custom animation timing function
+                    on: {
+                        init: () => {
+                            this.applyCustomTiming();
+                        },
+                        slideChangeTransitionStart: () => {
+                            this.applyCustomTiming();
+                        }
+                    },
+
+                    // Effect-specific options
+                    ...(effect === 'fade' && {
+                        fadeEffect: {
+                            crossFade: true
+                        }
+                    }),
+                    ...(effect === 'flip' && {
+                        flipEffect: {
+                            limitRotation: true,
+                            slideShadows: true
+                        }
+                    }),
+
+                    ...(effect === 'coverflow' && {
+                        coverflowEffect: {
+                            rotate: 50,
+                            stretch: 0,
+                            depth: 100,
+                            modifier: 1,
+                            slideShadows: true
+                        }
+                    }),
+                    ...(effect === 'creative' && {
+                        creativeEffect: {
+                            prev: {
+                                shadow: true,
+                                translate: [0, 0, -400]
+                            },
+                            next: {
+                                translate: ['100%', 0, 0]
+                            }
+                        }
+                    }),
+
+                    breakpoints: {
+                        [this.settings.breakpoints.desktop]: {
+                            slidesPerView: this.settings.slidesToShow.desktop,
+                            slidesPerGroup: this.settings.slidesToScroll.desktop,
+                            spaceBetween: this.settings.gap
+                        },
+                        [this.settings.breakpoints.tablet]: {
+                            slidesPerView: this.settings.slidesToShow.tablet,
+                            slidesPerGroup: this.settings.slidesToScroll.tablet,
+                            spaceBetween: Math.max(this.settings.gap - 5, 0)
+                        },
+                        [this.settings.breakpoints.phone]: {
+                            slidesPerView: this.settings.slidesToShow.phone,
+                            slidesPerGroup: this.settings.slidesToScroll.phone,
+                            spaceBetween: Math.max(this.settings.gap - 10, 0)
+                        }
+                    }
+                });
+
+                console.log('🎯 Swiper instance created successfully!');
+                console.log('🔍 About to create animation transformers...');
+                console.log('Settings object:', this.settings);
+                console.log('Animation type from settings:', this.settings.animationType);
+
+                console.log('=====================================');
+
+                // Add custom navigation if enabled
+                // Swiper renders arrows/pagination via CSS selectors we added in structure
+                console.log('Swiper mounted successfully');
+
+                // Apply custom animation timing function
+                this.applyAnimationTiming();
+
+                // Apply custom styling to text navigation
+                this.updateTextNavigation();
+
+            } catch (error) {
+                console.error('Swiper initialization failed:', error);
+                console.log('Falling back to basic slider functionality');
+
+                // Fallback: Basic slider functionality
+                this.initFallbackSlider();
             }
         }
 
-        createNavigation() {
-            // Create navigation arrows only if enabled
+        initFallbackSlider() {
+            console.log('Initializing fallback slider');
+
+            // Show all frames in a basic layout
+            this.frames.forEach((frame, index) => {
+                frame.style.display = 'block';
+                frame.style.width = '100%';
+                frame.style.marginBottom = '20px';
+            });
+
+            // Add basic navigation
             if (this.settings.showNavigation) {
-                const prevBtn = document.createElement('button');
-                prevBtn.className = 'fsc-slider__nav fsc-slider__nav--prev';
-                prevBtn.innerHTML = '‹';
-                prevBtn.addEventListener('click', () => this.prevSlide());
-
-                const nextBtn = document.createElement('button');
-                nextBtn.className = 'fsc-slider__nav fsc-slider__nav--next';
-                nextBtn.innerHTML = '›';
-                nextBtn.addEventListener('click', () => this.nextSlide());
-
-                this.slider.appendChild(prevBtn);
-                this.slider.appendChild(nextBtn);
+                this.addBasicNavigation();
             }
 
-            // Create dots navigation if enabled
-            if (this.settings.showDots && this.totalSlides > 1) {
-                const dotsContainer = document.createElement('div');
-                dotsContainer.className = 'fsc-slider__dots';
-
-                for (let i = 0; i < this.totalSlides; i++) {
-                    const dot = document.createElement('button');
-                    dot.className = 'fsc-slider__dot';
-                    dot.dataset.slide = i;
-                    dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
-                    dot.addEventListener('click', () => this.goToSlide(i));
-                    dotsContainer.appendChild(dot);
-                }
-
-                this.slider.appendChild(dotsContainer);
-                this.dots = this.slider.querySelectorAll('.fsc-slider__dot');
+            // Add dots using the same custom dots helper
+            if (this.settings.showDots) {
+                this.addCustomDots();
             }
 
-            // Create text navigation if enabled
+            // Add text navigation if enabled
             if (this.settings.showTextNavigation) {
                 this.createTextNavigation();
             }
         }
+
+        addBasicNavigation() {
+            const arrows = document.createElement('div');
+            arrows.className = 'fsc-slider__nav-container';
+
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'fsc-slider__nav fsc-slider__nav--prev';
+            prevBtn.innerHTML = '‹';
+            prevBtn.style.position = 'absolute';
+            prevBtn.style.left = '10px';
+            prevBtn.style.top = '50%';
+            prevBtn.style.transform = 'translateY(-50%)';
+            prevBtn.style.zIndex = '1000';
+
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'fsc-slider__nav fsc-slider__nav--next';
+            nextBtn.innerHTML = '›';
+            nextBtn.style.position = 'absolute';
+            nextBtn.style.right = '10px';
+            nextBtn.style.top = '50%';
+            nextBtn.style.transform = 'translateY(-50%)';
+            nextBtn.style.zIndex = '1000';
+
+            // Add click handlers for basic navigation
+            prevBtn.addEventListener('click', () => {
+                if (this.swiper) {
+                    this.swiper.slidePrev();
+                }
+            });
+            nextBtn.addEventListener('click', () => {
+                if (this.swiper) {
+                    this.swiper.slideNext();
+                }
+            });
+
+            arrows.appendChild(prevBtn);
+            arrows.appendChild(nextBtn);
+            this.slider.appendChild(arrows);
+        }
+
+        prepareSwiperStructure() {
+            // Store original frames for later restoration if needed
+            this.originalFrames = Array.from(this.frames).map(frame => frame.cloneNode(true));
+
+            // Build Swiper markup
+            const container = document.createElement('div');
+            container.className = 'swiper';
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'swiper-wrapper';
+
+            // Convert frames to Swiper slides and hide original frames
+            this.frames.forEach((frame) => {
+                const slide = document.createElement('div');
+                slide.className = 'swiper-slide';
+
+                // Inner wrapper to allow 3D transforms per slide content
+                const inner = document.createElement('div');
+                inner.className = 'fsc-slide-inner';
+
+                const frameClone = frame.cloneNode(true);
+                if (frameClone && frameClone.style) frameClone.style.display = '';
+                inner.appendChild(frameClone);
+                slide.appendChild(inner);
+                wrapper.appendChild(slide);
+
+                frame.style.display = 'none';
+            });
+
+            container.appendChild(wrapper);
+
+            // Optional controls per settings
+            if (this.settings.showNavigation) {
+                const prev = document.createElement('div');
+                prev.className = 'swiper-button-prev';
+                const next = document.createElement('div');
+                next.className = 'swiper-button-next';
+                container.appendChild(prev);
+                container.appendChild(next);
+            }
+
+            if (this.settings.showDots) {
+                const pagination = document.createElement('div');
+                pagination.className = 'swiper-pagination';
+                container.appendChild(pagination);
+            }
+
+            this.slider.appendChild(container);
+        }
+
+        addCustomNavigation() { }
+
+        addCustomDots() { }
 
         createTextNavigation() {
             const textNavContainer = document.createElement('div');
@@ -149,7 +473,13 @@
                 // Apply initial styling
                 this.applyTabStyling(titleBtn, false);
 
-                titleBtn.addEventListener('click', () => this.goToSlide(i));
+                // Add click handler to navigate to slide
+                titleBtn.addEventListener('click', () => {
+                    if (this.swiper) {
+                        this.swiper.slideToLoop(i);
+                    }
+                });
+
                 frameTitlesContainer.appendChild(titleBtn);
             }
 
@@ -157,7 +487,7 @@
 
             // Position text navigation
             if (this.settings.textNavigationPosition === 'above') {
-                this.slider.insertBefore(textNavContainer, this.framesContainer);
+                this.slider.insertBefore(textNavContainer, this.slider.querySelector('.swiper'));
             } else {
                 this.slider.appendChild(textNavContainer);
             }
@@ -181,247 +511,95 @@
             element.style.boxShadow = this.settings[`tabBoxShadow${suffix}`];
         }
 
-        setupResponsiveBehavior() {
-            const updateResponsiveSettings = () => {
-                const windowWidth = window.innerWidth;
-                let slidesToShow = 1;
-                let slidesToScroll = 1;
-                let breakpoint = 'phone';
+        applyCustomTiming() {
+            if (!this.swiper) return;
 
-                if (windowWidth >= this.settings.breakpoints.desktop) {
-                    slidesToShow = this.settings.slidesToShow.desktop;
-                    slidesToScroll = this.settings.slidesToScroll.desktop;
-                    breakpoint = 'desktop';
-                } else if (windowWidth >= this.settings.breakpoints.tablet) {
-                    slidesToShow = this.settings.slidesToShow.tablet;
-                    slidesToScroll = this.settings.slidesToScroll.tablet;
-                    breakpoint = 'tablet';
-                } else {
-                    slidesToShow = this.settings.slidesToShow.phone;
-                    slidesToScroll = this.settings.slidesToScroll.phone;
-                    breakpoint = 'phone';
-                }
+            // Get the Swiper wrapper element
+            const wrapper = this.slider.querySelector('.swiper-wrapper');
+            if (!wrapper) return;
 
-                this.currentSlidesToShow = slidesToShow;
-                this.currentSlidesToScroll = slidesToScroll;
-                this.maxSlide = Math.max(0, this.totalSlides - slidesToShow);
+            // Apply custom timing function using CSS custom properties
+            wrapper.style.setProperty('--swiper-transition-timing', this.settings.animationTimingFunc);
 
-                // Update slider layout and position
-                this.updateSliderLayout();
-                this.updateSliderPosition();
-            };
+            // Force the timing function with higher specificity
+            wrapper.style.transitionTimingFunction = this.settings.animationTimingFunc;
 
-            // Initial setup
-            updateResponsiveSettings();
+            // Set data attribute for CSS targeting
+            const timingKey = this.getTimingKey(this.settings.animationTimingFunc);
+            wrapper.setAttribute('data-timing', timingKey);
 
-            // Listen for window resize
-            window.addEventListener('resize', updateResponsiveSettings);
+            // Debug logging
+            console.log('=== CUSTOM TIMING APPLIED ===');
+            console.log('Timing function:', this.settings.animationTimingFunc);
+            console.log('Duration:', this.settings.animationDuration);
+            console.log('Data timing:', timingKey);
+            console.log('=============================');
         }
 
-        updateSliderLayout() {
-            if (!this.framesContainer) return;
-
-            const gap = this.getCurrentGap();
-            const containerWidth = this.framesContainer.offsetWidth;
-            const frameWidth = (containerWidth - (this.currentSlidesToShow - 1) * gap) / this.currentSlidesToShow;
-
-            // Set styles for each frame
-            this.frames.forEach((frame, index) => {
-                frame.style.flex = '0 0 auto';
-                frame.style.width = frameWidth + 'px';
-                frame.style.minWidth = frameWidth + 'px';
-                frame.style.maxWidth = frameWidth + 'px';
-                frame.style.boxSizing = 'border-box';
-                // Don't hide frames - let them be visible for proper layout
-                frame.style.display = 'block';
-            });
-
-            // Set container styles
-            this.framesContainer.style.gap = gap + 'px';
-            this.framesContainer.style.boxSizing = 'border-box';
-            this.framesContainer.style.width = '100%';
+        applyAnimationTiming() {
+            // Legacy function - now calls the new one
+            this.applyCustomTiming();
         }
 
-        getCurrentGap() {
-            const windowWidth = window.innerWidth;
-            if (windowWidth >= this.settings.breakpoints.desktop) {
-                return 20;
-            } else if (windowWidth >= this.settings.breakpoints.tablet) {
-                return 15;
-            } else {
-                return 10;
-            }
+        getTimingKey(timingFunc) {
+            if (timingFunc === 'linear') return 'linear';
+            if (timingFunc === 'ease') return 'ease';
+            if (timingFunc === 'ease-in') return 'ease-in';
+            if (timingFunc === 'ease-out') return 'ease-out';
+            if (timingFunc === 'ease-in-out') return 'ease-in-out';
+            if (timingFunc.includes('cubic-bezier')) return 'cubic-bezier';
+            return 'default';
         }
 
-        setupTouchEvents() {
-            if (!this.settings.touchSwipe) return;
+        updateTextNavigation() {
+            if (!this.frameTitles || !this.swiper) return;
 
-            let startX = 0;
-            let startY = 0;
-            let isSwiping = false;
+            // Set initial active state (first tab should be active by default)
+            const updateActiveState = () => {
+                const currentSlide = this.swiper.realIndex ?? this.swiper.activeIndex ?? 0;
 
-            this.framesContainer.addEventListener('touchstart', (e) => {
-                startX = e.touches[0].clientX;
-                startY = e.touches[0].clientY;
-                isSwiping = true;
-            });
-
-            this.framesContainer.addEventListener('touchmove', (e) => {
-                if (!isSwiping) return;
-
-                const currentX = e.touches[0].clientX;
-                const currentY = e.touches[0].clientY;
-                const diffX = startX - currentX;
-                const diffY = startY - currentY;
-
-                // Check if horizontal swipe is more significant than vertical
-                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-                    e.preventDefault();
-
-                    if (diffX > 0) {
-                        this.nextSlide();
-                    } else {
-                        this.prevSlide();
-                    }
-
-                    isSwiping = false;
-                }
-            });
-
-            this.framesContainer.addEventListener('touchend', () => {
-                isSwiping = false;
-            });
-        }
-
-        nextSlide() {
-            if (this.isAnimating) return;
-
-            const nextSlide = Math.min(this.currentSlide + this.currentSlidesToScroll, this.maxSlide);
-            this.goToSlide(nextSlide);
-        }
-
-        prevSlide() {
-            if (this.isAnimating) return;
-
-            const prevSlide = Math.max(this.currentSlide - this.currentSlidesToScroll, 0);
-            this.goToSlide(prevSlide);
-        }
-
-        goToSlide(slideIndex) {
-            if (this.isAnimating) return;
-
-            // Clamp slide index to valid range
-            slideIndex = Math.min(slideIndex, this.maxSlide);
-            slideIndex = Math.max(0, slideIndex);
-
-            if (slideIndex !== this.currentSlide) {
-                this.currentSlide = slideIndex;
-
-                // Update layout and position
-                this.updateSliderLayout();
-                this.updateSliderPosition();
-                this.updateNavigation();
-            }
-        }
-
-        updateSliderPosition() {
-            if (!this.framesContainer) return;
-
-            const gap = this.getCurrentGap();
-            const containerWidth = this.framesContainer.offsetWidth;
-            const frameWidth = (containerWidth - (this.currentSlidesToShow - 1) * gap) / this.currentSlidesToShow;
-
-            // Calculate the center offset to keep slider centered
-            const totalSliderWidth = this.totalSlides * frameWidth + (this.totalSlides - 1) * gap;
-            const centerOffset = (containerWidth - totalSliderWidth) / 2;
-
-            // Calculate translateX position with proper centering
-            const translateX = centerOffset - this.currentSlide * (frameWidth + gap);
-
-            // Apply transform
-            this.framesContainer.style.transform = `translateX(${translateX}px)`;
-            this.framesContainer.style.transition = `transform ${this.settings.transitionSpeed}ms ease-in-out`;
-
-            console.log('Slider Position:', {
-                currentSlide: this.currentSlide,
-                translateX: translateX + 'px',
-                frameWidth: frameWidth,
-                gap: gap,
-                centerOffset: centerOffset + 'px',
-                totalSliderWidth: totalSliderWidth + 'px',
-                containerWidth: containerWidth + 'px'
-            });
-        }
-
-        updateNavigation() {
-            const currentSlide = this.currentSlide;
-            const lastVisibleSlide = Math.min(currentSlide + this.currentSlidesToShow - 1, this.totalSlides - 1);
-
-            // Update dots
-            if (this.dots) {
-                this.dots.forEach((dot, index) => {
-                    const isActive = index >= currentSlide && index <= lastVisibleSlide;
-                    dot.classList.toggle('fsc-slider__dot--active', isActive);
-                });
-            }
-
-            // Update frame titles
-            if (this.frameTitles) {
                 this.frameTitles.forEach((title, index) => {
-                    const isActive = index >= currentSlide && index <= lastVisibleSlide;
+                    // Only the currently active slide is highlighted (native Glide.js behavior)
+                    const isActive = index === currentSlide;
                     title.classList.toggle('fsc-slider__frame-title--active', isActive);
                     this.applyTabStyling(title, isActive);
                 });
-            }
+            };
 
-            // Update navigation buttons
-            const prevBtn = this.slider.querySelector('.fsc-slider__nav--prev');
-            const nextBtn = this.slider.querySelector('.fsc-slider__nav--next');
+            // Listen for Swiper events to update text navigation and animation timing
+            this.swiper.on('slideChangeTransitionStart', () => {
+                updateActiveState();
+                // Re-apply animation timing after each slide change
+                this.applyAnimationTiming();
+            });
 
-            if (prevBtn) {
-                prevBtn.disabled = currentSlide === 0;
-                prevBtn.style.opacity = currentSlide === 0 ? '0.5' : '1';
-            }
-
-            if (nextBtn) {
-                nextBtn.disabled = currentSlide === this.maxSlide;
-                nextBtn.style.opacity = currentSlide === this.maxSlide ? '0.5' : '1';
-            }
-        }
-
-        startAutoPlay() {
-            if (!this.settings.autoPlay || this.totalSlides <= 1) return;
-
-            this.autoPlayInterval = setInterval(() => {
-                if (this.currentSlide >= this.maxSlide) {
-                    if (this.settings.loop) {
-                        this.goToSlide(0);
-                    } else {
-                        this.stopAutoPlay();
-                    }
-                } else {
-                    this.nextSlide();
-                }
-            }, this.settings.autoPlaySpeed);
-        }
-
-        stopAutoPlay() {
-            if (this.autoPlayInterval) {
-                clearInterval(this.autoPlayInterval);
-                this.autoPlayInterval = null;
-            }
+            // Set initial state immediately (first tab active)
+            updateActiveState();
         }
 
         destroy() {
-            this.stopAutoPlay();
-
-            if (this.framesContainer) {
-                this.framesContainer.removeEventListener('touchstart', null);
-                this.framesContainer.removeEventListener('touchmove', null);
-                this.framesContainer.removeEventListener('touchend', null);
+            if (this.swiper) {
+                this.swiper.destroy(true, true);
             }
 
-            window.removeEventListener('resize', null);
+            // Restore original frames
+            if (this.originalFrames) {
+                this.frames.forEach((frame, index) => {
+                    if (this.originalFrames[index]) {
+                        frame.style.display = '';
+                        frame.innerHTML = this.originalFrames[index].innerHTML;
+                    }
+                });
+            }
+
+            // Remove Swiper structure
+            const track = this.slider.querySelector('.swiper');
+            if (track) {
+                track.remove();
+            }
+
+            // Remove Swiper class
+            this.slider.classList.remove('glide');
         }
     }
 
@@ -472,4 +650,4 @@
         setTimeout(initDynamicSliders, 100);
     }
 
-})();
+})(); 
