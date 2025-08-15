@@ -1,3 +1,8 @@
+## 2025-08-15 11:18:21 - 1.1.0
+
+### Changed Files:
+- `flexible-slider-and-carousel.php`
+
 ## 2025-08-15 11:18:18 - Simplify plugin: remove unused admin features, database tables, and complex options
 
 ### Changed Files:
