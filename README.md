@@ -55,6 +55,45 @@ A comprehensive WordPress plugin for creating beautiful sliders and carousels us
 3. **Activate** the plugin through the 'Plugins' menu in WordPress
 4. **Configure** global settings in 'Slider & Carousel' admin menu
 
+## Development & Release
+
+### 🚀 **Release Workflow**
+
+This plugin uses automated versioning and release management:
+
+```bash
+# Check current status
+npm run status
+
+# Create releases
+npm run release:patch    # 1.0.0 → 1.0.1
+npm run release:minor    # 1.0.0 → 1.1.0  
+npm run release:major    # 1.0.0 → 2.0.0
+
+# Sync version across files
+npm run version
+```
+
+**What happens during release:**
+1. **Version bump** - Updates package.json and plugin files
+2. **Build** - Compiles production assets
+3. **Git operations** - Commit, tag, and push to GitHub
+4. **GitHub Actions** - Automatically creates release with ZIP file
+5. **WordPress Updates** - Plugin shows update notification in dashboard
+
+### 📦 **Release Contents**
+
+Only production files are included in releases:
+- ✅ `flexible-slider-and-carousel.php` - Main plugin file
+- ✅ `blocks/` - Compiled block files
+- ✅ `assets/` - CSS/JS assets
+- ✅ `README.md` - Documentation
+- ✅ `CHANGELOG.md` - Change history
+- ✅ `LICENSE` - License file
+- ❌ `src/` - Source files (excluded)
+- ❌ `webpack.config.js` - Build config (excluded)
+- ❌ `node_modules/` - Dependencies (excluded)
+
 ## Quick Start
 
 ### Creating Your First Slider

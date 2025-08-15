@@ -5,12 +5,18 @@
   "main": "flexible-slider-and-carousel.php",
   "scripts": {
     "build": "webpack --mode=production",
+    "build:prod": "webpack --mode=production",
     "dev": "webpack --mode=development --watch",
     "start": "webpack --mode=development",
     "lint": "eslint blocks/**/*.js assets/js/*.js",
     "lint:fix": "eslint blocks/**/*.js assets/js/*.js --fix",
     "format": "prettier --write blocks/**/*.js assets/js/*.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "status": "node scripts/status.js",
+    "release:patch": "npm version patch && npm run build:prod && node scripts/release.js",
+    "release:minor": "npm version minor && npm run build:prod && node scripts/release.js",
+    "release:major": "npm version major && npm run build:prod && node scripts/release.js",
+    "version": "node scripts/sync-version.js"
   },
   "keywords": [
     "wordpress",
