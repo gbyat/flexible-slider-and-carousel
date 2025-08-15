@@ -87,6 +87,7 @@ Only production files are included in releases:
 - ✅ `flexible-slider-and-carousel.php` - Main plugin file
 - ✅ `blocks/` - Compiled block files
 - ✅ `assets/` - CSS/JS assets
+- ✅ `includes/` - PHP classes (Assets management)
 - ✅ `languages/` - Translation files
 - ✅ `README.md` - Documentation
 - ✅ `CHANGELOG.md` - Change history

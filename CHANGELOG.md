@@ -1,3 +1,9 @@
+## 2025-08-15 11:22:15 - Release v1.1.0
+
+### Changed Files:
+- `.github/workflows/release.yml`
+- `README.md`
+
 ## 2025-08-15 11:18:21 - 1.1.0
 
 ### Changed Files:
