@@ -1,3 +1,8 @@
+## 2025-08-15 11:22:21 - feat: Include includes/ and languages/ directories in release ZIP
+
+### Changed Files:
+- `package.json`
+
 ## 2025-08-15 11:22:15 - Release v1.1.0
 
 ### Changed Files:
