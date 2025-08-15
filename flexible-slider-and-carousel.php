@@ -140,14 +140,8 @@ class FlexibleSliderCarousel
      */
     private function load_dependencies()
     {
-        // Core classes
-        require_once FSC_PLUGIN_DIR . 'includes/class-fsc-admin.php';
+        // Only load assets class - blocks are loaded via block.json
         require_once FSC_PLUGIN_DIR . 'includes/class-fsc-assets.php';
-        require_once FSC_PLUGIN_DIR . 'includes/class-fsc-post-loader.php';
-        require_once FSC_PLUGIN_DIR . 'includes/class-fsc-theme-integration.php';
-        require_once FSC_PLUGIN_DIR . 'includes/class-fsc-utilities.php';
-
-        // Block classes werden über block.json automatisch geladen
     }
 
     /**
@@ -155,16 +149,8 @@ class FlexibleSliderCarousel
      */
     private function init_components()
     {
-        // Initialize admin
-        if (is_admin()) {
-            new FSC_Admin();
-        }
-
-        // Initialize assets
+        // Initialize assets only
         new FSC_Assets();
-
-        // Initialize theme integration
-        new FSC_Theme_Integration();
     }
 
     /**
@@ -184,13 +170,7 @@ class FlexibleSliderCarousel
      */
     public function activate()
     {
-        // Create database tables if needed
-        $this->create_tables();
-
-        // Set default options
-        $this->set_default_options();
-
-        // Flush rewrite rules
+        // Flush rewrite rules only
         flush_rewrite_rules();
     }
 
@@ -203,79 +183,7 @@ class FlexibleSliderCarousel
         flush_rewrite_rules();
     }
 
-    /**
-     * Create database tables
-     */
-    private function create_tables()
-    {
-        global $wpdb;
 
-        $charset_collate = $wpdb->get_charset_collate();
-
-        // Table for slider statistics
-        $table_name = $wpdb->prefix . 'fsc_slider_stats';
-
-        $sql = "CREATE TABLE $table_name (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            slider_id varchar(255) NOT NULL,
-            post_id bigint(20) NOT NULL,
-            views int(11) DEFAULT 0,
-            created_at datetime DEFAULT CURRENT_TIMESTAMP,
-            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            PRIMARY KEY (id),
-            KEY slider_id (slider_id),
-            KEY post_id (post_id)
-        ) $charset_collate;";
-
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
-    }
-
-    /**
-     * Set default plugin options
-     */
-    private function set_default_options()
-    {
-        $defaults = array(
-            'fsc_default_colors' => array(
-                'navigation_normal' => '#333333',
-                'navigation_hover' => '#666666',
-                'navigation_inactive' => '#cccccc',
-                'navigation_hidden' => 'transparent'
-            ),
-            'fsc_default_layout' => array(
-                'desktop' => array(
-                    'padding' => 20,
-                    'margin' => 0
-                ),
-                'tablet' => array(
-                    'padding' => 15,
-                    'margin' => 0
-                ),
-                'phone' => array(
-                    'padding' => 10,
-                    'margin' => 0
-                )
-            ),
-            'fsc_default_loading' => 'eager',
-            'fsc_default_breakpoints' => array(
-                'desktop' => 1024,
-                'tablet' => 768,
-                'phone' => 480
-            ),
-            'fsc_default_animations' => array(
-                'transition' => 'slide',
-                'speed' => 500,
-                'easing' => 'ease-in-out'
-            )
-        );
-
-        foreach ($defaults as $option => $value) {
-            if (get_option($option) === false) {
-                add_option($option, $value);
-            }
-        }
-    }
 
     /**
      * Check for plugin updates from GitHub

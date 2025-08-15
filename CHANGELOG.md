@@ -1,3 +1,10 @@
+## 2025-08-15 11:07:55 - Release v1.0.3
+
+### Changed Files:
+- `.github/workflows/release.yml`
+- `README.md`
+- `flexible-slider-and-carousel.php`
+
 ## 2025-08-15 11:02:13 - 1.0.3
 
 ### Changed Files:
