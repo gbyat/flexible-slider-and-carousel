@@ -1,3 +1,8 @@
+## 2025-08-15 10:49:00 - Release v1.0.1
+
+### Changed Files:
+- `package.json`
+
 ## 2025-08-15 10:46:50 - 1.0.1
 
 ### Changed Files:
