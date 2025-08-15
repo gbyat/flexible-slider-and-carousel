@@ -1,3 +1,8 @@
+## 2025-08-15 11:22:23 - 1.1.1
+
+### Changed Files:
+- `flexible-slider-and-carousel.php`
+
 ## 2025-08-15 11:22:21 - feat: Include includes/ and languages/ directories in release ZIP
 
 ### Changed Files:
