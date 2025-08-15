@@ -1,3 +1,8 @@
+## 2025-08-15 10:46:50 - 1.0.1
+
+### Changed Files:
+- `flexible-slider-and-carousel.php`
+
 ## 2025-08-15 10:46:47 - Add automated release workflow and versioning system
 
 ### Changed Files:

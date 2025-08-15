@@ -1,0 +1,282 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "flexible-slider-carousel/slider",
+  "title": "Slider & Carousel",
+  "description": "Create beautiful sliders and carousels with flexible content options.",
+  "category": "media",
+  "icon": "slides",
+  "keywords": [
+    "slider",
+    "carousel",
+    "slideshow",
+    "gallery",
+    "images",
+    "testimonials",
+    "products",
+    "posts"
+  ],
+  "supports": {
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ],
+    "alignWide": true,
+    "spacing": {
+      "margin": true,
+      "padding": true
+    },
+    "color": {
+      "background": true,
+      "text": true
+    }
+  },
+  "attributes": {
+    "sliderDesign": {
+      "type": "string",
+      "default": "default"
+    },
+    "autoPlay": {
+      "type": "boolean",
+      "default": false
+    },
+    "autoPlaySpeed": {
+      "type": "number",
+      "default": 4
+    },
+    "showNavigation": {
+      "type": "boolean",
+      "default": true
+    },
+    "showDots": {
+      "type": "boolean",
+      "default": true
+    },
+    "showTextNavigation": {
+      "type": "boolean",
+      "default": true
+    },
+    "textNavigationPosition": {
+      "type": "string",
+      "default": "below"
+    },
+    "touchSwipe": {
+      "type": "boolean",
+      "default": true
+    },
+    "transition": {
+      "type": "string",
+      "default": "slide"
+    },
+    "transitionSpeed": {
+      "type": "number",
+      "default": 500
+    },
+    "easing": {
+      "type": "string",
+      "default": "ease-in-out"
+    },
+    "loading": {
+      "type": "string",
+      "default": "eager"
+    },
+    "sliderType": {
+      "type": "string",
+      "default": "carousel"
+    },
+    "gap": {
+      "type": "number",
+      "default": 15
+    },
+    "animationDuration": {
+      "type": "number",
+      "default": 800
+    },
+    "animationTimingFunc": {
+      "type": "string",
+      "default": "cubic-bezier(0.165, 0.840, 0.440, 1.000)"
+    },
+    "animationType": {
+      "type": "string",
+      "default": "slide"
+    },
+    "animationDirection": {
+      "type": "string",
+      "default": "horizontal"
+    },
+    "animationIntensity": {
+      "type": "number",
+      "default": 50
+    },
+    "focusAt": {
+      "type": "string",
+      "default": "center"
+    },
+    "peek": {
+      "type": "number",
+      "default": 120
+    },
+    "keyboard": {
+      "type": "boolean",
+      "default": true
+    },
+    "touchRatio": {
+      "type": "number",
+      "default": 0.5
+    },
+    "slidesToShow": {
+      "type": "object",
+      "default": {
+        "desktop": 1,
+        "tablet": 1,
+        "phone": 1
+      }
+    },
+    "slidesToScroll": {
+      "type": "object",
+      "default": {
+        "desktop": 1,
+        "tablet": 1,
+        "phone": 1
+      }
+    },
+    "breakpoints": {
+      "type": "object",
+      "default": {
+        "desktop": 1024,
+        "tablet": 768
+      }
+    },
+    "responsiveSettings": {
+      "type": "object",
+      "default": {
+        "desktop": {
+          "minWidth": 1024,
+          "innerPadding": 10
+        },
+        "tablet": {
+          "minWidth": 768,
+          "innerPadding": 10
+        },
+        "phone": {
+          "innerPadding": 10
+        }
+      }
+    },
+    "tabFontSize": {
+      "type": "number",
+      "default": 14
+    },
+    "tabFontWeight": {
+      "type": "string",
+      "default": "normal"
+    },
+    "tabTextAlign": {
+      "type": "string",
+      "default": "center"
+    },
+    "tabPadding": {
+      "type": "number",
+      "default": 8
+    },
+    "tabBorderRadius": {
+      "type": "number",
+      "default": 4
+    },
+    "tabBorderWidth": {
+      "type": "number",
+      "default": 1
+    },
+    "tabTextColor": {
+      "type": "string",
+      "default": "#333333"
+    },
+    "tabTextColorHover": {
+      "type": "string",
+      "default": "#ffffff"
+    },
+    "tabTextColorActive": {
+      "type": "string",
+      "default": "#ffffff"
+    },
+    "tabBackgroundColor": {
+      "type": "string",
+      "default": "#f5f5f5"
+    },
+    "tabBackgroundColorHover": {
+      "type": "string",
+      "default": "#00a0d2"
+    },
+    "tabBackgroundColorActive": {
+      "type": "string",
+      "default": "#007cba"
+    },
+    "tabBorderColor": {
+      "type": "string",
+      "default": "#dddddd"
+    },
+    "tabBorderColorHover": {
+      "type": "string",
+      "default": "#00a0d2"
+    },
+    "tabBorderColorActive": {
+      "type": "string",
+      "default": "#007cba"
+    },
+    "tabBoxShadow": {
+      "type": "string",
+      "default": "0 1px 3px rgba(0,0,0,0.1)"
+    },
+    "tabBoxShadowActive": {
+      "type": "string",
+      "default": "0 2px 6px rgba(0,0,0,0.2)"
+    },
+    "arrowBackgroundColor": {
+      "type": "string",
+      "default": "#007cba"
+    },
+    "arrowBackgroundColorHover": {
+      "type": "string",
+      "default": "#005a87"
+    },
+    "arrowTextColor": {
+      "type": "string",
+      "default": "#ffffff"
+    },
+    "dotBackgroundColor": {
+      "type": "string",
+      "default": "#dddddd"
+    },
+    "dotBackgroundColorHover": {
+      "type": "string",
+      "default": "#00a0d2"
+    },
+    "dotBackgroundColorActive": {
+      "type": "string",
+      "default": "#007cba"
+    },
+    "sliderId": {
+      "type": "string",
+      "default": ""
+    },
+    "className": {
+      "type": "string",
+      "default": ""
+    },
+    "align": {
+      "type": "string",
+      "default": ""
+    },
+    "alignWide": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "textdomain": "flexible-slider-carousel",
+  "editorScript": "file:./editor.js",
+  "script": "file:./frontend.js",
+  "editorStyle": "file:./editor.css",
+  "style": "file:./frontend.css",
+  "render": "file:./render.php"
+}

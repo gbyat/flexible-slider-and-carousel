@@ -1,0 +1,589 @@
+/* Slider Block Editor Styles */
+
+/* CSS Variables for editor colors - will be overridden by block attributes */
+.fsc-slider {
+    --arrow-background-color: #0073aa;
+    --arrow-background-color-hover: #005a87;
+    --arrow-text-color: #ffffff;
+    --dot-background-color: #dddddd;
+    --dot-background-color-hover: #00a0d2;
+    --dot-background-color-active: #007cba;
+    --tab-background-color: #f5f5f5;
+    --tab-background-color-hover: #00a0d2;
+    --tab-background-color-active: #007cba;
+    --tab-text-color: #333333;
+    --tab-text-color-hover: #ffffff;
+    --tab-text-color-active: #ffffff;
+    --tab-border-color: #dddddd;
+    --tab-border-color-hover: #00a0d2;
+    --tab-border-color-active: #007cba;
+}
+
+.fsc-slider {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    margin: 20px 0;
+    background: #f9f9f9;
+}
+
+.fsc-slider__preview {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.fsc-slider__preview-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.fsc-slider__type,
+.fsc-slider__mode {
+    background: #0073aa;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.fsc-slider__frames {
+    min-height: 100px;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 20px; /* Default gap for editor */
+    overflow: hidden; /* Hide overflow for navigation to work */
+    scroll-behavior: smooth; /* Smooth scrolling */
+    scroll-snap-type: x mandatory; /* Snap to frames */
+    /* Remove any existing transforms */
+    transform: none !important;
+    position: relative; /* For navigation positioning */
+}
+
+/* Container for frames with scrolling */
+.fsc-slider__frames-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Make frames snap points */
+.fsc-frame {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+}
+
+/* Editor Navigation - similar to frontend but with CSS scrolling */
+.fsc-slider__nav-editor {
+    background-color: var(--arrow-background-color, #0073aa);
+    color: var(--arrow-text-color, white);
+    border: 1px solid var(--arrow-background-color, #0073aa);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    padding: 8px;
+    min-width: 36px;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+}
+
+.fsc-slider__nav-editor:hover {
+    background-color: var(--arrow-background-color-hover, #005a87);
+    border-color: var(--arrow-background-color-hover, #005a87);
+}
+
+/* Hide frontend navigation in editor ONLY */
+.editor-styles-wrapper .fsc-slider .fsc-slider__nav:not(.fsc-slider__nav-editor) {
+    display: none !important;
+}
+
+.editor-styles-wrapper .fsc-slider .fsc-slider__dots:not(.fsc-slider__dots-editor) {
+    display: none !important;
+}
+
+/* Ensure editor navigation is always visible */
+.fsc-slider__nav-editor {
+    display: flex !important;
+}
+
+/* Editor Dots Navigation */
+.fsc-slider__dots-editor {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.fsc-slider__dot-editor {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--dot-background-color, #dddddd);
+    border: 1px solid var(--dot-background-color, #dddddd);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.fsc-slider__dot-editor:hover {
+    background-color: var(--dot-background-color-hover, #00a0d2);
+    border-color: var(--dot-background-color-hover, #00a0d2);
+    transform: scale(1.2);
+}
+
+.fsc-slider__dot-editor--active {
+    background-color: var(--dot-background-color-active, #007cba);
+    border-color: var(--dot-background-color-active, #007cba);
+    transform: scale(1.2);
+}
+
+/* Tablet Preview - Fix missing right border with more specific targeting */
+.fsc-slider[data-preview-breakpoint="tablet"] .fsc-frame:last-child {
+    border-right: 1px solid #ddd !important;
+    position: relative !important;
+}
+
+.fsc-slider[data-preview-breakpoint="tablet"] .fsc-frame:last-child::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: #ddd;
+    z-index: 10;
+}
+
+/* Phone Preview - Fix missing right border with more specific targeting */
+.fsc-slider[data-preview-breakpoint="phone"] .fsc-frame:last-child {
+    border-right: 1px solid #ddd !important;
+    position: relative !important;
+}
+
+.fsc-slider[data-preview-breakpoint="phone"] .fsc-frame:last-child::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: #ddd;
+    z-index: 10;
+}
+
+.fsc-slider__dots-editor {
+    display: flex !important;
+}
+
+.fsc-slider__nav-editor--prev {
+    left: 10px;
+}
+
+.fsc-slider__nav-editor--next {
+    right: 10px;
+}
+
+.fsc-slider__nav-editor:hover {
+    background-color: #005a87;
+    border-color: #005a87;
+    transform: translateY(-50%) scale(1.05);
+}
+
+.fsc-slider__nav-editor:focus {
+    outline: 2px solid #00a0d2;
+    outline-offset: 2px;
+}
+
+/* Editor Navigation Dots */
+.fsc-slider__dots-editor {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.fsc-slider__dot-editor {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #dddddd;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    padding: 0;
+}
+
+.fsc-slider__dot-editor:hover {
+    background-color: #666666;
+    transform: scale(1.2);
+}
+
+.fsc-slider__dot-editor--active {
+    background-color: #0073aa;
+}
+
+/* Frame sizing in editor - should match frontend behavior */
+.fsc-frame {
+    flex: 0 0 calc((100% - 40px) / 3); /* Default: 3 frames with 20px gap */
+    min-width: 0;
+    max-width: calc((100% - 40px) / 3);
+    box-sizing: border-box;
+}
+
+/* Dynamic frame sizing based on slidesToShow settings */
+.fsc-slider[data-slides-desktop="1"] .fsc-frame {
+    flex: 0 0 100%;
+    max-width: 100%;
+}
+
+/* Preview Breakpoint Styles */
+.fsc-slider[data-preview-breakpoint="tablet"] {
+    max-width: 768px !important;
+    margin: 0 auto !important;
+    width: 768px !important;
+}
+
+.fsc-slider[data-preview-breakpoint="phone"] {
+    max-width: 375px !important;
+    margin: 0 auto !important;
+    width: 375px !important;
+}
+
+/* Alignwide and Alignfull support for preview */
+.fsc-slider[data-preview-breakpoint="tablet"].alignwide,
+.fsc-slider[data-preview-breakpoint="phone"].alignwide {
+    max-width: 768px !important;
+    width: 768px !important;
+}
+
+.fsc-slider[data-preview-breakpoint="phone"].alignwide {
+    max-width: 375px !important;
+    width: 375px !important;
+}
+
+.fsc-slider[data-preview-breakpoint="tablet"].alignfull,
+.fsc-slider[data-preview-breakpoint="phone"].alignfull {
+    max-width: 768px !important;
+    width: 768px !important;
+}
+
+.fsc-slider[data-preview-breakpoint="phone"].alignfull {
+    max-width: 375px !important;
+    width: 375px !important;
+}
+
+/* Override WordPress alignwide/alignfull styles for preview */
+.fsc-slider[data-preview-breakpoint="tablet"].alignwide,
+.fsc-slider[data-preview-breakpoint="phone"].alignwide {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.fsc-slider[data-preview-breakpoint="phone"].alignwide {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.fsc-slider[data-preview-breakpoint="tablet"].alignfull,
+.fsc-slider[data-preview-breakpoint="phone"].alignfull {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.fsc-slider[data-preview-breakpoint="phone"].alignfull {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.fsc-slider[data-slides-desktop="2"] .fsc-frame {
+    flex: 0 0 calc((100% - 20px) / 2);
+    max-width: calc((100% - 20px) / 2);
+}
+
+.fsc-slider[data-slides-desktop="3"] .fsc-frame {
+    flex: 0 0 calc((100% - 40px) / 3);
+    max-width: calc((100% - 40px) / 3);
+}
+
+.fsc-slider[data-slides-desktop="4"] .fsc-frame {
+    flex: 0 0 calc((100% - 60px) / 4);
+    max-width: calc((100% - 60px) / 4);
+}
+
+.fsc-slider[data-slides-desktop="5"] .fsc-frame {
+    flex: 0 0 calc((100% - 80px) / 5);
+    max-width: calc((100% - 80px) / 5);
+}
+
+/* Responsive frame sizing for editor */
+@media (max-width: 1023px) {
+    .fsc-slider[data-slides-tablet="1"] .fsc-frame {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    
+    .fsc-slider[data-slides-tablet="2"] .fsc-frame {
+        flex: 0 0 calc((100% - 15px) / 2);
+        max-width: calc((100% - 15px) / 2);
+    }
+    
+    .fsc-slider[data-slides-tablet="3"] .fsc-frame {
+        flex: 0 0 calc((100% - 30px) / 3);
+        max-width: calc((100% - 30px) / 3);
+    }
+}
+
+@media (max-width: 767px) {
+    .fsc-slider[data-slides-phone="1"] .fsc-frame {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    
+    .fsc-slider[data-slides-phone="2"] .fsc-frame {
+        flex: 0 0 calc((100% - 10px) / 2);
+        max-width: calc((100% - 10px) / 2);
+    }
+}
+
+/* Preview Breakpoint Frame Sizing - Override responsive settings for preview */
+.fsc-slider[data-preview-breakpoint="tablet"][data-slides-tablet="1"] .fsc-frame {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+}
+
+.fsc-slider[data-preview-breakpoint="tablet"][data-slides-tablet="2"] .fsc-frame {
+    flex: 0 0 calc((100% - 15px) / 2) !important;
+    max-width: calc((100% - 15px) / 2) !important;
+}
+
+.fsc-slider[data-preview-breakpoint="tablet"][data-slides-tablet="3"] .fsc-frame {
+    flex: 0 0 calc((100% - 30px) / 3) !important;
+    max-width: calc((100% - 30px) / 3) !important;
+}
+
+.fsc-slider[data-preview-breakpoint="phone"][data-slides-phone="1"] .fsc-frame {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+}
+
+.fsc-slider[data-preview-breakpoint="phone"][data-slides-phone="2"] .fsc-frame {
+    flex: 0 0 calc((100% - 10px) / 2) !important;
+    max-width: calc((100% - 10px) / 2) !important;
+}
+
+.fsc-slider__add-frame {
+    text-align: center;
+    padding: 20px;
+    border: 2px dashed #0073aa;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+/* Editor Text Navigation */
+.fsc-slider__text-nav-editor {
+    margin: 15px 0;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+}
+
+.fsc-slider__text-nav-editor--above {
+    margin-bottom: 15px;
+}
+
+.fsc-slider__text-nav-editor--below {
+    margin-top: 15px;
+}
+
+.fsc-slider__frame-titles-editor {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.fsc-slider__frame-title-editor {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    color: #333;
+    font-size: 14px;
+    font-weight: normal;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 80px;
+    text-align: center;
+}
+
+.fsc-slider__frame-title-editor:hover {
+    background: #f0f0f0;
+    border-color: #0073aa;
+}
+
+
+
+.fsc-slider__preview-info {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    font-size: 12px;
+    color: #666;
+}
+
+.fsc-slider__preview-info p {
+    margin: 5px 0;
+}
+
+/* WordPress Standard Color Field Styles */
+.components-color-indicator {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.components-color-indicator:hover {
+    border-color: #0073aa;
+    transform: scale(1.05);
+}
+
+.components-color-indicator:focus {
+    outline: 2px solid #00a0d2;
+    outline-offset: 2px;
+}
+
+/* WordPress Standard Popover Styles */
+.components-popover {
+    z-index: 100000;
+}
+
+.components-popover .components-color-palette {
+    padding: 16px;
+    min-width: 200px;
+}
+
+.components-popover .components-color-palette__item {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.components-popover .components-color-palette__item:hover {
+    transform: scale(1.1);
+    border-color: #0073aa;
+}
+
+.components-popover .components-color-palette__item.is-selected {
+    border-color: #0073aa;
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px #0073aa;
+}
+
+/* WordPress Standard Button Styles */
+.components-button.is-small {
+    height: 24px;
+    padding: 0 8px;
+    font-size: 11px;
+    border-radius: 3px;
+}
+
+/* WordPress Standard Label Styles */
+.components-base-control__label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #1e1e1e;
+}
+
+/* WordPress Standard Layout */
+.fsc-color-control {
+    margin-bottom: 16px;
+}
+
+.fsc-color-control:last-child {
+    margin-bottom: 0;
+}
+
+.fsc-color-indicator-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Responsive Settings Tabs */
+.fsc-responsive-tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+
+
+.fsc-responsive-tab {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    border-bottom: none;
+    background: #f8f9fa;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 4px 4px 0 0;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.fsc-responsive-tab:hover {
+    background: #e9ecef;
+    color: #333;
+}
+
+.fsc-responsive-tab--active {
+    background: #0073aa;
+    color: white;
+    border-color: #0073aa;
+}
+
+.fsc-responsive-tab-content {
+    padding: 20px 0;
+}
+
+.fsc-breakpoint-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}

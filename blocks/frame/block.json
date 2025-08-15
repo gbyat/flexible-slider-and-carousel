@@ -1,0 +1,40 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "flexible-slider-carousel/frame",
+  "title": "Frame",
+  "description": "A container frame for your slider that can hold any content blocks.",
+  "category": "media",
+  "icon": "format-image",
+  "keywords": [
+    "frame",
+    "slide",
+    "container",
+    "content"
+  ],
+  "parent": [
+    "flexible-slider-carousel/slider"
+  ],
+  "supports": {
+    "html": false,
+    "align": true,
+    "spacing": false,
+    "color": false,
+    "inserter": true
+  },
+  "attributes": {
+    "align": {
+      "type": "string",
+      "default": "center"
+    },
+    "frameTitle": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "textdomain": "flexible-slider-carousel",
+  "editorScript": "file:./editor.js",
+  "editorStyle": "file:./editor.css",
+  "style": "file:./frontend.css",
+  "render": "file:./render.php"
+}
