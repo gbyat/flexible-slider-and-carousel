@@ -1,6 +1,6 @@
 {
   "name": "flexible-slider-and-carousel",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A comprehensive WordPress plugin for creating sliders and carousels using Gutenberg blocks",
   "main": "flexible-slider-and-carousel.php",
   "scripts": {

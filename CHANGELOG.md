@@ -1,3 +1,8 @@
+## 2025-08-15 10:46:47 - Add automated release workflow and versioning system
+
+### Changed Files:
+- `package.json`
+
 ## 2025-08-15 10:34:21 - Add Glide.js and Swiper.js integration for enhanced slider functionality
 
 ### Changed Files:
@@ -10,4 +15,3 @@
 - `scripts/sync-version.js`
 
 # Flexible Slider & Carousel - Changelog
-
