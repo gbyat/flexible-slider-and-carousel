@@ -1,3 +1,8 @@
+## 2025-08-15 11:18:18 - Simplify plugin: remove unused admin features, database tables, and complex options
+
+### Changed Files:
+- `package.json`
+
 ## 2025-08-15 11:07:55 - Release v1.0.3
 
 ### Changed Files:
