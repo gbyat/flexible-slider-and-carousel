@@ -63,6 +63,22 @@ jobs:
             echo "⚠️  Assets directory not found (optional)"
           fi
 
+          # Copy includes directory (PHP classes)
+          if [ -d "includes" ]; then
+            cp -r includes temp/
+            echo "✅ Copied includes/ (PHP classes)"
+          else
+            echo "⚠️  Includes directory not found (optional)"
+          fi
+
+          # Copy languages directory (translations)
+          if [ -d "languages" ]; then
+            cp -r languages temp/
+            echo "✅ Copied languages/ (translation files)"
+          else
+            echo "⚠️  Languages directory not found (optional)"
+          fi
+
           # Copy documentation files
           for doc in README.md CHANGELOG.md LICENSE; do
             if [ -f "$doc" ]; then
