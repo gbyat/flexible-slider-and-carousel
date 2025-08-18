@@ -1,3 +1,8 @@
+## 2025-08-18 13:21:39 - 1.2.0
+
+### Changed Files:
+- `flexible-slider-and-carousel.php`
+
 ## 2025-08-18 13:21:36 - feat: Migrate from Glide.js to Swiper.js for slider functionality, update author information, and enhance frame styling options
 
 ### Changed Files:
