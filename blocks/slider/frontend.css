@@ -1,67 +1,31 @@
 /**
- * Flexible Slider & Carousel Frontend CSS with Glide.js
+ * Flexible Slider & Carousel Frontend CSS with Swiper.js
  * @package FlexibleSliderCarousel
  */
 
-/* Glide.js Core CSS - Required for slider functionality */
-.glide{position:relative;width:100%;box-sizing:border-box}.glide *{box-sizing:inherit}.glide__track{overflow:hidden}.glide__slides{position:relative;width:100%;list-style:none;backface-visibility:hidden;transform-style:preserve-3d;touch-action:pan-Y;overflow:hidden;margin:0;padding:0;white-space:nowrap;display:flex;flex-wrap:nowrap;will-change:transform}.glide__slides--dragging{user-select:none}.glide__slide{width:100%;height:100%;flex-shrink:0;white-space:normal;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}.glide__slide a{user-select:none;-webkit-user-drag:none;-moz-user-select:none;-ms-user-select:none}.glide__arrows{-webkit-touch-callout:none;user-select:none}.glide__bullets{-webkit-touch-callout:none;user-select:none}.glide--rtl{direction:rtl}
+/* Swiper.js Core CSS - Required for slider functionality */
 
 /* Minimal Swiper CSS so layout works without importing module CSS */
-.swiper{position:relative;width:100%;box-sizing:border-box;overflow:hidden}
+.swiper{position:relative;width:100%;box-sizing:border-box;overflow:hidden;border:none !important;outline:none !important;box-shadow:none !important}
 .swiper-wrapper{display:flex;box-sizing:border-box;white-space:nowrap;will-change:transform}
-.swiper-slide{width:100%;height:100%;flex-shrink:0;white-space:normal;box-sizing:border-box}
+.swiper-slide{height:100%;flex-shrink:0;white-space:normal;box-sizing:border-box}
+/* Width will be set dynamically by Swiper.js based on slidesPerView */
 
-/* Swiper Navigation Buttons - with CSS Variables */
+/* All Swiper effects are handled natively - no custom overrides needed */
+
+/* Swiper Navigation Buttons - Custom Colors via CSS Variables */
 .swiper-button-prev,
 .swiper-button-next {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--arrow-text-color, #ffffff);
-    background-color: var(--arrow-background-color, #007cba);
-    border: 1px solid var(--arrow-background-color, #007cba);
-    cursor: pointer;
+    color: var(--arrow-text-color, #ffffff) !important;
+    background-color: var(--arrow-background-color, #007cba) !important;
+    border: 1px solid var(--arrow-background-color, #007cba) !important;
     border-radius: 4px;
-    transition: all 0.2s ease;
-}
-
-.swiper-button-prev {
-    left: 1rem;
-}
-
-.swiper-button-next {
-    right: 1rem;
 }
 
 .swiper-button-prev:hover,
 .swiper-button-next:hover {
-    background-color: var(--arrow-background-color-hover, #005a87);
-    border-color: var(--arrow-background-color-hover, #005a87);
-    transform: translateY(-50%) scale(1.05);
-}
-
-.swiper-button-prev::before,
-.swiper-button-next::before {
-    content: '';
-    width: 12px;
-    height: 12px;
-    border: 2px solid currentColor;
-    border-top: none;
-    border-right: none;
-}
-
-.swiper-button-prev::before {
-    transform: rotate(45deg);
-}
-
-.swiper-button-next::before {
-    transform: rotate(-135deg);
+    background-color: var(--arrow-background-color-hover, #005a87) !important;
+    border-color: var(--arrow-background-color-hover, #005a87) !important;
 }
 
 /* Swiper Pagination Dots - with CSS Variables */
@@ -153,15 +117,10 @@
     backface-visibility: hidden;
 }
 
-/* Peek Distance Implementation */
+/* Peek Distance Implementation - Now handled by JavaScript for better control */
 .swiper[data-peek] {
-    padding-left: var(--peek-distance, 0px);
-    padding-right: var(--peek-distance, 0px);
-}
-
-.swiper[data-peek] .swiper-slide {
-    width: calc(100% - var(--peek-distance, 0px) * 2) !important;
-    margin-right: var(--peek-distance, 0px);
+    /* Peek distance is now applied directly via JavaScript */
+    overflow: visible;
 }
 
 /* Custom Animation Timing Functions */
@@ -194,8 +153,7 @@
     transition-timing-function: var(--swiper-transition-timing, ease) !important;
 }
 
-/* Glide.js Theme CSS - Basic styling */
-.glide__arrow{position:absolute;display:block;top:50%;z-index:2;color:#fff;text-transform:uppercase;padding:9px 12px;background-color:transparent;border:2px solid rgba(255,255,255,.5);border-radius:4px;box-shadow:0 .25em .5em 0 rgba(0,0,0,.1);text-shadow:0 .25em .5em rgba(0,0,0,.1);opacity:1;cursor:pointer;transition:opacity 150ms ease,border 300ms ease-in-out;transform:translateY(-50%);line-height:1}.glide__arrow:focus{outline:none}.glide__arrow:hover{border-color:#fff}.glide__arrow--left{left:2em}.glide__arrow--right{right:2em}.glide__arrow--disabled{opacity:.33}.glide__bullets{position:absolute;z-index:2;bottom:2em;left:50%;display:inline-flex;list-style:none;transform:translateX(-50%)}.glide__bullet{background-color:rgba(255,255,255,.5);width:9px;height:9px;padding:0;border-radius:50%;border:2px solid transparent;transition:all 300ms ease-in-out;cursor:pointer;line-height:0;box-shadow:0 .25em .5em 0 rgba(0,0,0,.1);margin:0 .25em}.glide__bullet:focus{outline:none}.glide__bullet:hover,.glide__bullet:focus{border:2px solid #fff;background-color:rgba(255,255,255,.5)}.glide__bullet--active{background-color:#fff}.glide--swipeable{cursor:grab;cursor:-moz-grab;cursor:-webkit-grab}.glide--dragging{cursor:grabbing;cursor:-moz-grabbing;cursor:-webkit-grabbing}
+/* Swiper.js Theme CSS - Basic styling */
 
 /* CSS Variables for theme colors - with fallbacks */
 :root {
@@ -270,152 +228,27 @@
     background-color: var(--fsc-bg-primary, transparent);
     /* Ensure proper box-sizing for accurate width calculations */
     box-sizing: border-box;
+
 }
 
-/* Glide.js Integration */
-.fsc-slider.glide {
-    /* Override Glide.js default styles to match our design */
+/* Swiper.js Integration */
+.fsc-slider {
+    /* Basic slider container styling */
     position: relative;
     overflow: hidden;
-}
-
-.fsc-slider.glide .glide__track {
-    overflow: hidden;
-    position: relative;
-    width: 100%;
-}
-
-/* Allow overflow during 3D flips so faces aren't clipped */
-.fsc-slider.glide[data-animation-type="flip"] .glide__track {
-    overflow: visible;
-}
-
-.fsc-slider.glide .glide__slides {
-    /* Remove default list styling */
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    transition: transform 0.5s ease;
-    /* Allow 3D rotated slides to protrude during flip */
-    overflow: visible;
-}
-
-/* Custom animation timing functions - these will be overridden by JavaScript */
-.fsc-slider.glide .glide__slides[data-timing="linear"] {
-    transition-timing-function: linear !important;
-}
-
-.fsc-slider.glide .glide__slides[data-timing="ease"] {
-    transition-timing-function: ease !important;
-}
-
-.fsc-slider.glide .glide__slides[data-timing="ease-in"] {
-    transition-timing-function: ease-in !important;
-}
-
-.fsc-slider.glide .glide__slides[data-timing="ease-out"] {
-    transition-timing-function: ease-out !important;
-}
-
-.fsc-slider.glide .glide__slides[data-timing="ease-in-out"] {
-    transition-timing-function: ease-in-out !important;
-}
-
-.fsc-slider.glide .glide__slides[data-timing="cubic-bezier"] {
-    transition-timing-function: cubic-bezier(0.165, 0.840, 0.440, 1.000) !important;
-}
-
-/* Animation Effects */
-.fsc-slider.glide[data-animation-type="fade"] .glide__slide {
-    transition: opacity 0.4s ease, transform 0.4s ease;
-}
-
-.fsc-slider.glide[data-animation-type="zoom"] .glide__slide {
-    transition: transform 0.4s ease;
-    transform-origin: center center;
-}
-
-.fsc-slider.glide[data-animation-type="rotate"] .glide__slide {
-    transition: transform 0.4s ease;
-}
-
-.fsc-slider.glide[data-animation-type="scale"] .glide__slide {
-    transition: transform 0.4s ease;
-    transform-origin: center center;
-}
-
-/* Inner wrapper used for 3D transforms */
-.fsc-slide-inner {
-	width: 100%;
-	height: 100%;
-	transform-style: preserve-3d;
-}
-
-/* Flip: transform inner wrapper instead of outer slide */
-.fsc-slider.glide[data-animation-type="flip"] .glide__slide .fsc-slide-inner {
-	transition: transform 0.6s ease;
-	backface-visibility: hidden;
-}
-
-/* Ensure slide contents don't bleed through during rotation */
-.fsc-slider.glide[data-animation-type="flip"] .glide__slide .fsc-slide-inner * {
-	backface-visibility: hidden;
-}
-
-/* Apply 3D context on the container for rotate/flip */
-.fsc-slider.glide[data-animation-type="rotate"] .glide__track,
-.fsc-slider.glide[data-animation-type="flip"] .glide__track {
-    perspective: 1000px;
-}
-
-.fsc-slider.glide[data-animation-type="rotate"] .glide__slides,
-.fsc-slider.glide[data-animation-type="flip"] .glide__slides {
-    transform-style: preserve-3d;
-}
-
-/* Direction-specific animations */
-.fsc-slider.glide[data-animation-direction="vertical"] .glide__slides {
-    transform: translateY(0);
-}
-
-.fsc-slider.glide[data-animation-direction="diagonal-left"] .glide__slides {
-    transform: translateX(0) translateY(0);
-}
-
-.fsc-slider.glide[data-animation-direction="diagonal-right"] .glide__slides {
-    transform: translateX(0) translateY(0);
-}
-
-.fsc-slider.glide .glide__slide {
-    /* Ensure proper frame sizing */
-    box-sizing: border-box;
-    flex-shrink: 0;
-    width: 100%;
-}
-
-/* Hide original frames when Glide.js is active */
-.fsc-slider.glide .fsc-frame {
-    display: none !important;
-}
-
-/* Show Glide.js slides */
-.fsc-slider.glide .glide__slide .fsc-frame {
-    display: block !important;
-    width: 100%;
 }
 
 /* Individual Frame */
 .fsc-frame {
-    /* Width will be set dynamically by Glide.js */
+    /* Width will be set dynamically by JavaScript */
     box-sizing: border-box;
     /* Ensure content fits properly */
     max-width: 100%;
+
 }
 
 /* Navigation buttons - theme-aware styling */
-.fsc-slider__nav,
-.glide__arrow {
+.fsc-slider__nav {
     background-color: var(--fsc-primary-color, #007cba);
     color: var(--fsc-text-white, #ffffff);
     border: 1px solid var(--fsc-primary-color, #007cba);
@@ -437,33 +270,28 @@
     line-height: 1;
 }
 
-.fsc-slider__nav:hover,
-.glide__arrow:hover {
+.fsc-slider__nav:hover {
     background-color: var(--fsc-secondary-color, #005a87);
     border-color: var(--fsc-secondary-color, #005a87);
     transform: translateY(-50%) scale(1.1);
 }
 
-.fsc-slider__nav:disabled,
-.glide__arrow:disabled {
+.fsc-slider__nav:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     transform: translateY(-50%) scale(1);
 }
 
-.fsc-slider__nav--prev,
-.glide__arrow--left {
+.fsc-slider__nav--prev {
     left: var(--fsc-spacing-md, 1rem);
 }
 
-.fsc-slider__nav--next,
-.glide__arrow--right {
+.fsc-slider__nav--next {
     right: var(--fsc-spacing-md, 1rem);
 }
 
 /* Dots Navigation */
-.fsc-slider__dots,
-.glide__bullets {
+.fsc-slider__dots {
     display: flex;
     justify-content: center;
     gap: var(--fsc-spacing-sm, 0.5rem);
@@ -471,8 +299,7 @@
     flex-wrap: wrap;
 }
 
-.fsc-slider__dot,
-.glide__bullet {
+.fsc-slider__dot {
     width: 12px;
     height: 12px;
     border-radius: 50%;
@@ -484,14 +311,12 @@
     flex-shrink: 0;
 }
 
-.fsc-slider__dot:hover,
-.glide__bullet:hover {
+.fsc-slider__dot:hover {
     background-color: var(--fsc-accent-color, #00a0d2);
     transform: scale(1.2);
 }
 
-.fsc-slider__dot--active,
-.glide__bullet--active {
+.fsc-slider__dot--active {
     background-color: var(--fsc-primary-color, #007cba);
     transform: scale(1.2);
 }
@@ -548,20 +373,17 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .fsc-slider__nav,
-    .glide__arrow {
+    .fsc-slider__nav {
         min-width: 36px;
         min-height: 36px;
         font-size: 16px;
     }
     
-    .fsc-slider__nav--prev,
-    .glide__arrow--left {
+    .fsc-slider__nav--prev {
         left: var(--fsc-spacing-sm, 0.5rem);
     }
     
-    .fsc-slider__nav--next,
-    .glide__arrow--right {
+    .fsc-slider__nav--next {
         right: var(--fsc-spacing-sm, 0.5rem);
     }
     
@@ -577,9 +399,7 @@
 
 /* Accessibility */
 .fsc-slider__nav:focus,
-.glide__arrow:focus,
 .fsc-slider__dot:focus,
-.glide__bullet:focus,
 .fsc-slider__frame-title:focus {
     outline: 2px solid var(--fsc-accent-color, #00a0d2);
     outline-offset: 2px;
@@ -587,13 +407,11 @@
 
 /* High contrast mode support */
 @media (prefers-contrast: high) {
-    .fsc-slider__nav,
-    .glide__arrow {
+    .fsc-slider__nav {
         border-width: 2px;
     }
     
-    .fsc-slider__dot,
-    .glide__bullet {
+    .fsc-slider__dot {
         border: 1px solid var(--fsc-text-color, #333333);
     }
     
@@ -605,23 +423,17 @@
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
     .fsc-slider__nav,
-    .glide__arrow,
     .fsc-slider__dot,
-    .glide__bullet,
-    .fsc-slider__frame-title,
-    .glide__slides {
+    .fsc-slider__frame-title {
         transition: none;
     }
     
-    .fsc-slider__nav:hover,
-    .glide__arrow:hover {
+    .fsc-slider__nav:hover {
         transform: translateY(-50%);
     }
     
     .fsc-slider__dot:hover,
-    .fsc-slider__dot--active,
-    .glide__bullet:hover,
-    .glide__bullet--active {
+    .fsc-slider__dot--active {
         transform: scale(1);
     }
 }

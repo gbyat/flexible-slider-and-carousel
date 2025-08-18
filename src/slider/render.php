@@ -24,9 +24,9 @@ if (!empty($attributes['align'])) {
 
 // Safe defaults for all attributes
 $slides_to_show = [
-    'desktop' => isset($attributes['slidesToShow']['desktop']) ? $attributes['slidesToShow']['desktop'] : 1,
-    'tablet' => isset($attributes['slidesToShow']['tablet']) ? $attributes['slidesToShow']['tablet'] : 1,
-    'phone' => isset($attributes['slidesToShow']['phone']) ? $attributes['slidesToShow']['phone'] : 1
+    'desktop' => isset($attributes['slidesToShow']['desktop']) ? $attributes['slidesToShow']['desktop'] : 10,
+    'tablet' => isset($attributes['slidesToShow']['tablet']) ? $attributes['slidesToShow']['tablet'] : 10,
+    'phone' => isset($attributes['slidesToShow']['phone']) ? $attributes['slidesToShow']['phone'] : 10
 ];
 
 $slides_to_scroll = [
@@ -66,7 +66,7 @@ $show_dots = isset($attributes['showDots']) ? $attributes['showDots'] : true;
 $show_text_navigation = isset($attributes['showTextNavigation']) ? $attributes['showTextNavigation'] : false;
 $text_navigation_position = isset($attributes['textNavigationPosition']) ? $attributes['textNavigationPosition'] : 'below';
 
-// Glide.js specific settings
+// Swiper.js specific settings
 $slider_type = isset($attributes['sliderType']) ? $attributes['sliderType'] : 'carousel';
 $gap = isset($attributes['gap']) ? $attributes['gap'] : 10;
 $animation_duration = isset($attributes['animationDuration']) ? $attributes['animationDuration'] : 400;
@@ -78,6 +78,7 @@ $focus_at = isset($attributes['focusAt']) ? $attributes['focusAt'] : 0;
 $peek = isset($attributes['peek']) ? $attributes['peek'] : 0;
 $keyboard = isset($attributes['keyboard']) ? $attributes['keyboard'] : true;
 $touch_ratio = isset($attributes['touchRatio']) ? $attributes['touchRatio'] : 0.5;
+$centered_slides = isset($attributes['centeredSlides']) ? $attributes['centeredSlides'] : true;
 
 // Navigation Colors
 $arrow_background_color = isset($attributes['arrowBackgroundColor']) ? $attributes['arrowBackgroundColor'] : '#007cba';
@@ -97,6 +98,12 @@ $tab_border_width = isset($attributes['tabBorderWidth']) ? $attributes['tabBorde
 $tab_text_color = isset($attributes['tabTextColor']) ? $attributes['tabTextColor'] : '#333333';
 $tab_text_color_hover = isset($attributes['tabTextColorHover']) ? $attributes['tabTextColorHover'] : '#ffffff';
 $tab_text_color_active = isset($attributes['tabTextColorActive']) ? $attributes['tabTextColorActive'] : '#ffffff';
+
+// Frame Styling settings
+$frame_border_radius = isset($attributes['frameBorderRadius']) ? $attributes['frameBorderRadius'] : 8;
+$frame_border_width = isset($attributes['frameBorderWidth']) ? $attributes['frameBorderWidth'] : 0;
+$frame_border_color = isset($attributes['frameBorderColor']) ? $attributes['frameBorderColor'] : '#dddddd';
+$frame_box_shadow = isset($attributes['frameBoxShadow']) ? $attributes['frameBoxShadow'] : 'none';
 $tab_background_color = isset($attributes['tabBackgroundColor']) ? $attributes['tabBackgroundColor'] : '#f5f5f5';
 $tab_background_color_hover = isset($attributes['tabBackgroundColorHover']) ? $attributes['tabBackgroundColorHover'] : '#00a0d2';
 $tab_background_color_active = isset($attributes['tabBackgroundColorActive']) ? $attributes['tabBackgroundColorActive'] : '#007cba';
@@ -105,6 +112,10 @@ $tab_border_color_hover = isset($attributes['tabBorderColorHover']) ? $attribute
 $tab_border_color_active = isset($attributes['tabBorderColorActive']) ? $attributes['tabBorderColorActive'] : '#007cba';
 $tab_box_shadow = isset($attributes['tabBoxShadow']) ? $attributes['tabBoxShadow'] : '0 1px 3px rgba(0,0,0,0.1)';
 $tab_box_shadow_active = isset($attributes['tabBoxShadowActive']) ? $attributes['tabBoxShadowActive'] : '0 2px 6px rgba(0,0,0,0.2)';
+
+// Enqueue Swiper CSS
+$swiper_css_url = plugin_dir_url(__FILE__) . '../../blocks/slider/swiper-bundle.css';
+wp_enqueue_style('swiper-bundle', $swiper_css_url, array(), '11.2.10');
 ?>
 
 <div id="<?php echo esc_attr($slider_id); ?>"
@@ -139,6 +150,10 @@ $tab_box_shadow_active = isset($attributes['tabBoxShadowActive']) ? $attributes[
     data-tab-border-color-active="<?php echo esc_attr($tab_border_color_active); ?>"
     data-tab-box-shadow="<?php echo esc_attr($tab_box_shadow); ?>"
     data-tab-box-shadow-active="<?php echo esc_attr($tab_box_shadow_active); ?>"
+    data-frame-border-radius="<?php echo esc_attr($frame_border_radius); ?>"
+    data-frame-border-width="<?php echo esc_attr($frame_border_width); ?>"
+    data-frame-border-color="<?php echo esc_attr($frame_border_color); ?>"
+    data-frame-box-shadow="<?php echo esc_attr($frame_box_shadow); ?>"
     data-arrow-background-color="<?php echo esc_attr($arrow_background_color); ?>"
     data-arrow-background-color-hover="<?php echo esc_attr($arrow_background_color_hover); ?>"
     data-arrow-text-color="<?php echo esc_attr($arrow_text_color); ?>"
@@ -160,7 +175,10 @@ $tab_box_shadow_active = isset($attributes['tabBoxShadowActive']) ? $attributes[
     data-focus-at="<?php echo esc_attr($focus_at); ?>"
     data-peek="<?php echo esc_attr($peek); ?>"
     data-keyboard="<?php echo esc_attr($keyboard ? 'true' : 'false'); ?>"
-    data-touch-ratio="<?php echo esc_attr($touch_ratio); ?>">
+    data-touch-ratio="<?php echo esc_attr($touch_ratio); ?>"
+    data-centered-slides="<?php echo esc_attr($centered_slides ? 'true' : 'false'); ?>"
+    data-grid-rows="<?php echo esc_attr($attributes['gridRows'] ?? 1); ?>"
+    data-grid-fill="<?php echo esc_attr($attributes['gridFill'] ?? 'column'); ?>">
 
     <div class="fsc-slider__frames">
         <?php echo $content; ?>

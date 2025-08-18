@@ -110,9 +110,22 @@
       "type": "string",
       "default": "center"
     },
+    "centeredSlides": {
+      "type": "boolean",
+      "default": false
+    },
+    "gridRows": {
+      "type": "number",
+      "default": 1
+    },
+    "gridFill": {
+      "type": "string",
+      "default": "column",
+      "enum": ["row", "column"]
+    },
     "peek": {
       "type": "number",
-      "default": 120
+      "default": 0
     },
     "keyboard": {
       "type": "boolean",
@@ -125,9 +138,9 @@
     "slidesToShow": {
       "type": "object",
       "default": {
-        "desktop": 1,
-        "tablet": 1,
-        "phone": 1
+        "desktop": 10,
+        "tablet": 10,
+        "phone": 10
       }
     },
     "slidesToScroll": {
@@ -183,6 +196,22 @@
     "tabBoxShadowActive": {
       "type": "string",
       "default": "0 2px 6px rgba(0,0,0,0.2)"
+    },
+    "frameBorderRadius": {
+      "type": "number",
+      "default": 8
+    },
+    "frameBorderWidth": {
+      "type": "number",
+      "default": 0
+    },
+    "frameBorderColor": {
+      "type": "string",
+      "default": "#dddddd"
+    },
+    "frameBoxShadow": {
+      "type": "string",
+      "default": "none"
     },
     "arrowBackgroundColor": {
       "type": "string",

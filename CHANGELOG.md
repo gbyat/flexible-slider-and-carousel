@@ -1,3 +1,17 @@
+## 2025-08-18 13:21:07 - fix: Update FSC_PLUGIN_VERSION constant in sync-version.js
+
+### Changed Files:
+- `flexible-slider-and-carousel.php`
+- `scripts/sync-version.js`
+- `src/frame/frontend.css`
+- `src/slider/block.json`
+- `src/slider/editor.css`
+- `src/slider/frontend.css`
+- `src/slider/frontend.js`
+- `src/slider/index.js`
+- `src/slider/render.php`
+- `webpack.config.js`
+
 ## 2025-08-15 11:29:26 - Release v1.1.1
 
 ### Changed Files:

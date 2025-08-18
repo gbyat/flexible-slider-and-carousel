@@ -80,6 +80,15 @@
 .fsc-frame {
     scroll-snap-align: start;
     flex-shrink: 0;
+    border-radius: var(--frame-border-radius, 8px);
+    box-shadow: var(--frame-box-shadow, none);
+}
+
+/* Border styling - only applied when needed */
+.fsc-slider--has-frame-border .fsc-frame {
+    border-width: var(--frame-border-width, 0px);
+    border-style: solid;
+    border-color: var(--frame-border-color, transparent);
 }
 
 /* Editor Navigation - similar to frontend but with CSS scrolling */

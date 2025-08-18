@@ -42,8 +42,10 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
         showTextNavigation,
         textNavigationPosition,
         responsiveSettings,
+        slidesToShow,
+        slidesToScroll,
         loading,
-        // Glide.js specific attributes
+        // Swiper.js specific attributes
         sliderType,
         gap,
         animationDuration,
@@ -51,8 +53,8 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
         animationType,
         animationDirection,
         animationIntensity,
-        focusAt,
-        peek,
+        centeredSlides,
+
         keyboard,
         touchRatio,
         intersectionObserver,
@@ -76,18 +78,26 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
         tabBorderColorActive,
         tabBoxShadow,
         tabBoxShadowActive,
+        // Frame Styling Attributes
+        frameBorderRadius,
+        frameBorderWidth,
+        frameBorderColor,
+        frameBoxShadow,
         // Navigation Colors
         arrowBackgroundColor,
         arrowBackgroundColorHover,
         arrowTextColor,
         dotBackgroundColor,
         dotBackgroundColorHover,
-        dotBackgroundColorActive
+        dotBackgroundColorActive,
+        // Grid Settings
+        gridRows,
+        gridFill
     } = attributes;
 
-    // Extract slidesToShow from responsiveSettings
-    const slidesToShow = responsiveSettings?.slidesToShow || { desktop: 1, tablet: 1, phone: 1 };
-    const slidesToScroll = responsiveSettings?.slidesToScroll || { desktop: 1, tablet: 1, phone: 1 };
+    // Use slidesToShow and slidesToScroll from attributes, with fallbacks
+    const currentSlidesToShow = slidesToShow || { desktop: 1, tablet: 1, phone: 1 };
+    const currentSlidesToScroll = slidesToScroll || { desktop: 1, tablet: 1, phone: 1 };
 
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
@@ -112,8 +122,9 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
         'data-animation-type': animationType || 'slide',
         'data-animation-direction': animationDirection || 'horizontal',
         'data-animation-intensity': animationIntensity || 50,
-        'data-focus-at': focusAt || 'center',
-        'data-peek': peek || 120,
+        // Removed focusAt - using centeredSlides instead
+        'data-centered-slides': centeredSlides !== false ? 'true' : 'false',
+
         'data-keyboard': keyboard !== false ? 'true' : 'false',
         'data-touch-ratio': touchRatio || 0.5,
         // Navigation Colors
@@ -132,7 +143,16 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
         'data-tab-background-color-active': tabBackgroundColorActive || '#007cba',
         'data-tab-border-color': tabBorderColor || '#dddddd',
         'data-tab-border-color-hover': tabBorderColorHover || '#00a0d2',
-        'data-tab-border-color-active': tabBorderColorActive || '#007cba'
+        'data-tab-border-color-active': tabBorderColorActive || '#007cba',
+        // Frame Styling
+        'data-frame-border-radius': frameBorderRadius !== undefined ? frameBorderRadius : 8,
+        'data-frame-border-width': frameBorderWidth !== undefined ? frameBorderWidth : 0,
+        'data-frame-border-color': frameBorderColor !== undefined ? frameBorderColor : '#dddddd',
+        'data-frame-box-shadow': frameBoxShadow !== undefined ? frameBoxShadow : 'none',
+        // Responsive Settings
+        'data-inner-padding-desktop': responsiveSettings?.desktop?.innerPadding !== undefined ? responsiveSettings.desktop.innerPadding : 10,
+        'data-inner-padding-tablet': responsiveSettings?.tablet?.innerPadding !== undefined ? responsiveSettings.tablet.innerPadding : 10,
+        'data-inner-padding-phone': responsiveSettings?.phone?.innerPadding !== undefined ? responsiveSettings.phone.innerPadding : 10
     });
 
     const innerBlocksProps = useInnerBlocksProps(
@@ -156,19 +176,26 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
         }
     );
 
+    // Get visible frames for editor preview based on slidesToShow setting
+    const visibleFrames = useSelect(select => {
+        const block = select('core/block-editor').getBlock(clientId);
+        if (!block) return [];
+
+        const frames = block.innerBlocks || [];
+        // Use slidesToShow directly (no division needed)
+        const slidesToShowCount = Math.ceil((slidesToShow?.desktop || 1) * frames.length);
+
+        // Return only the first N frames based on slidesToShow setting
+        return frames.slice(0, slidesToShowCount);
+    }, [clientId, slidesToShow]);
+
     // Get frame count for validation
     const frameCount = useSelect(select => {
         const block = select('core/block-editor').getBlock(clientId);
         return block ? block.innerBlocks.length : 0;
     }, [clientId]);
 
-    // Calculate current visible range for editor navigation
-    const getCurrentVisibleRange = () => {
-        const currentSlidesToShow = slidesToShow?.desktop || 1;
-        const startIndex = 0; // Editor always starts at 0
-        const endIndex = Math.min(startIndex + currentSlidesToShow - 1, Math.max(0, frameCount - 1));
-        return { startIndex, endIndex };
-    };
+
 
     // Validate minimum frames
     useEffect(() => {
@@ -178,6 +205,58 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
             setError('');
         }
     }, [frameCount]);
+
+    // Auto-set responsive settings to 1 frame for 3D effects
+    useEffect(() => {
+        console.log('🎯 useEffect triggered with animationType:', animationType);
+        console.log('Current slidesToShow:', slidesToShow);
+        console.log('Current slidesToScroll:', slidesToScroll);
+
+        const is3DEffect = ['flip', 'creative', 'cube', 'fade'].includes(animationType);
+
+        if (is3DEffect) {
+            console.log('🎯 3D effect detected!');
+
+            // Check if current settings are not already 1 frame
+            const currentSlidesToShow = slidesToShow || { desktop: 1, tablet: 1, phone: 1 };
+            const currentSlidesToScroll = slidesToScroll || { desktop: 1, tablet: 1, phone: 1 };
+
+            const needsUpdate = currentSlidesToShow.desktop !== 1 || currentSlidesToShow.tablet !== 1 || currentSlidesToShow.phone !== 1 ||
+                currentSlidesToScroll.desktop !== 1 || currentSlidesToScroll.tablet !== 1 || currentSlidesToScroll.phone !== 1;
+
+            console.log('Needs update?', needsUpdate);
+            console.log('Current slidesToShow:', currentSlidesToShow);
+            console.log('Current slidesToScroll:', currentSlidesToScroll);
+
+            if (needsUpdate) {
+                console.log('🎯 Updating slides to 1 frame...');
+                setAttributes({
+                    slidesToShow: { desktop: 1, tablet: 1, phone: 1 },
+                    slidesToScroll: { desktop: 1, tablet: 1, phone: 1 }
+                });
+                console.log('✅ Update completed');
+            } else {
+                console.log('✅ No update needed - already set to 1 frame');
+            }
+        } else {
+            console.log('🎯 Not a 3D effect, no update needed');
+
+            // Special handling for cards effect - removed minimum frame restriction
+            if (animationType === 'cards') {
+                // Allow any number of frames for cards effect
+                console.log('🎯 Cards effect detected - allowing any frame count');
+            } else {
+                // For other non-3D effects, ensure we have proper default values
+                if (!slidesToShow) {
+                    setAttributes({
+                        slidesToShow: { desktop: 3, tablet: 2, phone: 1 },
+                        slidesToScroll: { desktop: 1, tablet: 1, phone: 1 }
+                    });
+                    console.log('✅ Set default slidesToShow for non-3D effect');
+                }
+            }
+        }
+    }, [animationType, slidesToShow, slidesToScroll, setAttributes]);
 
     // Force re-render when tab styling attributes change
     useEffect(() => {
@@ -350,6 +429,67 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                     <div className="fsc-slider__info">
                         <p>{__('Add frames manually using the + button below to create your slider content.', 'flexible-slider-carousel')}</p>
                     </div>
+
+                    <PanelBody title={__('Frame Styling', 'flexible-slider-carousel')} initialOpen={false}>
+                        <RangeControl
+                            label={__('Border Radius (px)', 'flexible-slider-carousel')}
+                            value={frameBorderRadius !== undefined ? frameBorderRadius : 8}
+                            onChange={(value) => setAttributes({ frameBorderRadius: value })}
+                            min={0}
+                            max={50}
+                            step={1}
+                            help={__('Rounded corners for frames (Standard: 8px)', 'flexible-slider-carousel')}
+                        />
+
+                        <RangeControl
+                            label={__('Border Width (px)', 'flexible-slider-carousel')}
+                            value={frameBorderWidth !== undefined ? frameBorderWidth : 0}
+                            onChange={(value) => setAttributes({ frameBorderWidth: value })}
+                            min={0}
+                            max={10}
+                            step={1}
+                            help={__('Frame border thickness (Standard: 0px)', 'flexible-slider-carousel')}
+                        />
+
+                        <div className="fsc-color-control">
+                            <label className="components-base-control__label">{__('Border Color', 'flexible-slider-carousel')}</label>
+                            <div className="fsc-color-indicator-wrapper">
+                                <ColorIndicator
+                                    colorValue={frameBorderColor}
+                                    onClick={() => setActiveColorPicker('frameBorderColor')}
+                                />
+                                <Button
+                                    className="fsc-color-button"
+                                    onClick={() => setAttributes({ frameBorderColor: undefined })}
+                                >
+                                    {__('Clear', 'flexible-slider-carousel')}
+                                </Button>
+                            </div>
+                            {activeColorPicker === 'frameBorderColor' && (
+                                <Popover
+                                    position="bottom center"
+                                    onClose={() => setActiveColorPicker(null)}
+                                >
+                                    <ColorPalette
+                                        value={frameBorderColor}
+                                        onChange={(color) => {
+                                            setAttributes({ frameBorderColor: color });
+                                            setActiveColorPicker(null);
+                                        }}
+                                    />
+                                </Popover>
+                            )}
+                        </div>
+
+                        <TextControl
+                            label={__('Box Shadow', 'flexible-slider-carousel')}
+                            value={frameBoxShadow || 'none'}
+                            onChange={(value) => setAttributes({ frameBoxShadow: value })}
+                            help={__('CSS box-shadow value (e.g., "0 2px 8px rgba(0,0,0,0.1)" or "none")', 'flexible-slider-carousel')}
+                            placeholder="none"
+                        />
+
+                    </PanelBody>
                 </PanelBody>
 
                 <PanelBody title={__('Animation & Behavior', 'flexible-slider-carousel')} initialOpen={false}>
@@ -389,7 +529,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
 
                     <RangeControl
                         label={__('Gap Between Frames (px)', 'flexible-slider-carousel')}
-                        value={gap || 10}
+                        value={gap !== undefined ? gap : 10}
                         onChange={(value) => setAttributes({ gap: value })}
                         min={0}
                         max={50}
@@ -428,60 +568,39 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                         options={[
                             { label: __('Slide (Standard)', 'flexible-slider-carousel'), value: 'slide' },
                             { label: __('Fade', 'flexible-slider-carousel'), value: 'fade' },
-                            { label: __('Flip', 'flexible-slider-carousel'), value: 'flip' },
+                            { label: __('Flip (1 Frame)', 'flexible-slider-carousel'), value: 'flip' },
                             { label: __('Coverflow', 'flexible-slider-carousel'), value: 'coverflow' },
-                            { label: __('Creative', 'flexible-slider-carousel'), value: 'creative' }
+                            { label: __('Creative (1 Frame)', 'flexible-slider-carousel'), value: 'creative' },
+                            { label: __('Cube (1 Frame)', 'flexible-slider-carousel'), value: 'cube' },
+                            { label: __('Cards', 'flexible-slider-carousel'), value: 'cards' }
                         ]}
                         onChange={(value) => setAttributes({ animationType: value })}
                         help={__('Art der Slide-Animation (Standard: Slide)', 'flexible-slider-carousel')}
                     />
 
+                    {/* Animation Direction - only for slide effect */}
                     {animationType === 'slide' && (
                         <SelectControl
                             label={__('Animation Direction', 'flexible-slider-carousel')}
                             value={animationDirection || 'horizontal'}
                             options={[
                                 { label: __('Horizontal (Standard)', 'flexible-slider-carousel'), value: 'horizontal' },
-                                { label: __('Vertical', 'flexible-slider-carousel'), value: 'vertical' },
-                                { label: __('Diagonal Left', 'flexible-slider-carousel'), value: 'diagonal-left' },
-                                { label: __('Diagonal Right', 'flexible-slider-carousel'), value: 'diagonal-right' }
+                                { label: __('Vertical', 'flexible-slider-carousel'), value: 'vertical' }
                             ]}
                             onChange={(value) => setAttributes({ animationDirection: value })}
                             help={__('Richtung der Slide-Bewegung (Standard: Horizontal)', 'flexible-slider-carousel')}
                         />
                     )}
 
-                    {(animationType === 'flip' || animationType === 'cube' || animationType === 'coverflow' || animationType === 'creative') && (
-                        <RangeControl
-                            label={__('Animation Intensity', 'flexible-slider-carousel')}
-                            value={animationIntensity || 50}
-                            onChange={(value) => setAttributes({ animationIntensity: value })}
-                            min={10}
-                            max={100}
-                            step={5}
-                            help={__('Stärke des 3D-Effekts (Standard: 50)', 'flexible-slider-carousel')}
-                        />
-                    )}
+                    {/* Focus Position removed - using Centered Slides instead */}
 
-                    <SelectControl
-                        label={__('Focus Position', 'flexible-slider-carousel')}
-                        value={focusAt || '0'}
-                        options={[
-                            { label: __('Left (0)', 'flexible-slider-carousel'), value: '0' },
-                            { label: __('Center', 'flexible-slider-carousel'), value: 'center' }
-                        ]}
-                        onChange={(value) => setAttributes({ focusAt: value })}
-                        help={__('Position of active slide in viewport (Standard: Left)', 'flexible-slider-carousel')}
-                    />
 
-                    <RangeControl
-                        label={__('Peek Distance (px)', 'flexible-slider-carousel')}
-                        value={peek || 0}
-                        onChange={(value) => setAttributes({ peek: value })}
-                        min={0}
-                        max={100}
-                        step={5}
-                        help={__('Show part of next/previous slides (Standard: 0px)', 'flexible-slider-carousel')}
+
+                    <ToggleControl
+                        label={__('Centered Slides', 'flexible-slider-carousel')}
+                        checked={centeredSlides !== false}
+                        onChange={(value) => setAttributes({ centeredSlides: value })}
+                        help={__('Center the active slide (works great with 1.5+ frames)', 'flexible-slider-carousel')}
                     />
 
                     <ToggleControl
@@ -501,6 +620,30 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                         help={__('Higher values = more sensitive touch/swipe (Standard: 0.5)', 'flexible-slider-carousel')}
                     />
 
+                    {animationType === 'slide' && (
+                        <>
+                            <RangeControl
+                                label="Grid Rows"
+                                value={gridRows}
+                                onChange={(value) => setAttributes({ gridRows: value })}
+                                min={1}
+                                max={4}
+                                step={1}
+                            />
+                            {gridRows > 1 && (
+                                <SelectControl
+                                    label="Grid Fill"
+                                    value={gridFill}
+                                    options={[
+                                        { label: 'Column', value: 'column' },
+                                        { label: 'Row', value: 'row' }
+                                    ]}
+                                    onChange={(value) => setAttributes({ gridFill: value })}
+                                />
+                            )}
+                        </>
+                    )}
+
                     <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #ddd' }}>
                         <Button
                             isSecondary
@@ -514,8 +657,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                     animationType: 'slide',
                                     animationDirection: 'horizontal',
                                     animationIntensity: 50,
-                                    focusAt: 'center',
-                                    peek: 120,
+                                    centeredSlides: true,
                                     keyboard: true,
                                     touchRatio: 0.5
                                 });
@@ -525,7 +667,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                             {__('Auf Standardwerte zurücksetzen', 'flexible-slider-carousel')}
                         </Button>
                         <p style={{ fontSize: '12px', color: '#666', marginTop: '8px', textAlign: 'center' }}>
-                            {__('Setzt alle Glide.js Optionen auf Standardwerte zurück', 'flexible-slider-carousel')}
+                            {__('Setzt alle Swiper.js Optionen auf Standardwerte zurück', 'flexible-slider-carousel')}
                         </p>
                     </div>
                 </PanelBody>
@@ -1014,6 +1156,8 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                 </Popover>
                             )}
                         </div>
+
+
                     </PanelBody>
 
                 </PanelBody>
@@ -1043,6 +1187,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                         onSlidesToScrollChange={(slidesToScroll) => setAttributes({ slidesToScroll })}
                         previewBreakpoint={previewBreakpoint}
                         onPreviewBreakpointChange={setPreviewBreakpoint}
+                        is3DEffect={['flip', 'creative', 'cube'].includes(animationType)}
                     />
                 </PanelBody>
 
@@ -1067,13 +1212,10 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                     frameBlock?.attributes?.content?.replace(/<[^>]*>/g, '').substring(0, 20) ||
                                     `${__('Frame', 'flexible-slider-carousel')} ${i + 1}`;
 
-                                const { startIndex, endIndex } = getCurrentVisibleRange();
-                                const isInRange = i >= startIndex && i <= endIndex;
-
                                 return (
                                     <button
                                         key={i}
-                                        className={`fsc-slider__frame-title-editor ${isInRange ? 'fsc-slider__frame-title-editor--active' : ''}`}
+                                        className="fsc-slider__frame-title-editor"
                                         style={{
                                             fontSize: `${tabFontSize}px`,
                                             fontWeight: tabFontWeight,
@@ -1082,17 +1224,27 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                             borderRadius: `${tabBorderRadius}px`,
                                             borderWidth: `${tabBorderWidth}px`,
                                             borderStyle: 'solid',
-                                            color: isInRange ? tabTextColorActive : tabTextColor,
-                                            backgroundColor: isInRange ? tabBackgroundColorActive : tabBackgroundColor,
-                                            borderColor: isInRange ? tabBorderColorActive : tabBorderColor,
-                                            boxShadow: isInRange ? tabBoxShadowActive : tabBoxShadow
+                                            color: tabTextColor,
+                                            backgroundColor: tabBackgroundColor,
+                                            borderColor: tabBorderColor,
+                                            boxShadow: tabBoxShadow
                                         }}
                                         onClick={() => {
-                                            const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames`);
+                                            const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames-editor`);
                                             if (framesContainer) {
                                                 const frameWidth = framesContainer.querySelector('.fsc-frame')?.offsetWidth || 0;
-                                                const gap = 20;
-                                                framesContainer.scrollLeft = i * (frameWidth + gap);
+                                                const currentGap = gap || 10;
+                                                const containerWidth = framesContainer.offsetWidth;
+
+                                                if (centeredSlides !== false) {
+                                                    // Center the target frame
+                                                    const targetScroll = i * (frameWidth + currentGap);
+                                                    const centerOffset = (containerWidth - frameWidth) / 2;
+                                                    framesContainer.scrollLeft = targetScroll - centerOffset;
+                                                } else {
+                                                    // Standard left-aligned scrolling
+                                                    framesContainer.scrollLeft = i * (frameWidth + currentGap);
+                                                }
                                             }
                                         }}
                                     >
@@ -1116,7 +1268,29 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
 
                     <div className="fsc-slider__preview-content">
                         <div className="fsc-slider__frames-container">
-                            <div {...innerBlocksProps} />
+                            {/* Show only the configured number of frames in editor preview */}
+                            <div
+                                {...innerBlocksProps}
+                                style={{
+                                    display: 'flex',
+                                    gap: `${gap || 10}px`,
+                                    overflow: 'hidden',
+                                    width: '100%'
+                                }}
+                                className="fsc-slider__frames-editor"
+                                data-slides-to-show={slidesToShow?.desktop || 1}
+                            />
+
+                            {/* Apply slidesToShow styling to frames */}
+                            <style>
+                                {`
+                                    [data-block="${clientId}"] .fsc-slider__frames-editor .fsc-frame {
+                                        flex: 0 0 calc((100% - ${((slidesToShow?.desktop || 1) - 1) * (gap || 10)}px) / ${slidesToShow?.desktop || 1}) !important;
+                                        min-width: calc((100% - ${((slidesToShow?.desktop || 1) - 1) * (gap || 10)}px) / ${slidesToShow?.desktop || 1}) !important;
+                                        max-width: calc((100% - ${((slidesToShow?.desktop || 1) - 1) * (gap || 10)}px) / ${slidesToShow?.desktop || 1}) !important;
+                                    }
+                                `}
+                            </style>
 
                             {/* Editor Navigation Arrows - Only show if enabled */}
                             {showNavigation && (
@@ -1125,14 +1299,29 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                         className="swiper-button-prev"
                                         style={{
                                             backgroundColor: arrowBackgroundColor || '#007cba',
-                                            color: arrowTextColor || '#ffffff'
+                                            color: arrowTextColor || '#ffffff',
+                                            position: 'absolute',
+                                            left: '10px',
+                                            top: '50%',
+                                            transform: 'translateY(-50%)',
+                                            zIndex: 10
                                         }}
                                         onClick={() => {
-                                            const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames`);
+                                            const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames-editor`);
                                             if (framesContainer) {
                                                 const frameWidth = framesContainer.querySelector('.fsc-frame')?.offsetWidth || 0;
-                                                const gap = 20;
-                                                framesContainer.scrollLeft -= (frameWidth + gap);
+                                                const currentGap = gap || 10;
+                                                const containerWidth = framesContainer.offsetWidth;
+
+                                                if (centeredSlides !== false) {
+                                                    // Center the previous frame
+                                                    const scrollPosition = framesContainer.scrollLeft - (frameWidth + currentGap);
+                                                    const centerOffset = (containerWidth - frameWidth) / 2;
+                                                    framesContainer.scrollLeft = scrollPosition - centerOffset;
+                                                } else {
+                                                    // Standard left-aligned scrolling
+                                                    framesContainer.scrollLeft -= (frameWidth + currentGap);
+                                                }
                                             }
                                         }}
                                     >
@@ -1143,14 +1332,29 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                         className="swiper-button-next"
                                         style={{
                                             backgroundColor: arrowBackgroundColor || '#007cba',
-                                            color: arrowTextColor || '#ffffff'
+                                            color: arrowTextColor || '#ffffff',
+                                            position: 'absolute',
+                                            right: '10px',
+                                            top: '50%',
+                                            transform: 'translateY(-50%)',
+                                            zIndex: 10
                                         }}
                                         onClick={() => {
-                                            const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames`);
+                                            const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames-editor`);
                                             if (framesContainer) {
                                                 const frameWidth = framesContainer.querySelector('.fsc-frame')?.offsetWidth || 0;
-                                                const gap = 20;
-                                                framesContainer.scrollLeft += (frameWidth + gap);
+                                                const currentGap = gap || 10;
+                                                const containerWidth = framesContainer.offsetWidth;
+
+                                                if (centeredSlides !== false) {
+                                                    // Center the next frame
+                                                    const scrollPosition = framesContainer.scrollLeft + (frameWidth + currentGap);
+                                                    const centerOffset = (containerWidth - frameWidth) / 2;
+                                                    framesContainer.scrollLeft = scrollPosition - centerOffset;
+                                                } else {
+                                                    // Standard right-aligned scrolling
+                                                    framesContainer.scrollLeft += (frameWidth + currentGap);
+                                                }
                                             }
                                         }}
                                     >
@@ -1163,28 +1367,33 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                         {/* Editor Navigation Dots - Only show if enabled */}
                         {showDots && (
                             <div className="swiper-pagination">
-                                {Array.from({ length: Math.max(1, frameCount) }, (_, i) => {
-                                    const { startIndex, endIndex } = getCurrentVisibleRange();
-                                    const isInRange = i >= startIndex && i <= endIndex;
+                                {Array.from({ length: Math.max(1, frameCount) }, (_, i) => (
+                                    <button
+                                        key={i}
+                                        className="swiper-pagination-bullet"
+                                        style={{
+                                            backgroundColor: dotBackgroundColor || '#007cba'
+                                        }}
+                                        onClick={() => {
+                                            const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames-editor`);
+                                            if (framesContainer) {
+                                                const frameWidth = framesContainer.querySelector('.fsc-frame')?.offsetWidth || 0;
+                                                const currentGap = gap || 10;
+                                                const containerWidth = framesContainer.offsetWidth;
 
-                                    return (
-                                        <button
-                                            key={i}
-                                            className={`swiper-pagination-bullet ${isInRange ? 'swiper-pagination-bullet-active' : ''}`}
-                                            style={{
-                                                backgroundColor: isInRange ? (dotBackgroundColorActive || '#007cba') : (dotBackgroundColor || '#dddddd')
-                                            }}
-                                            onClick={() => {
-                                                const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames`);
-                                                if (framesContainer) {
-                                                    const frameWidth = framesContainer.querySelector('.fsc-frame')?.offsetWidth || 0;
-                                                    const gap = 20;
-                                                    framesContainer.scrollLeft = i * (frameWidth + gap);
+                                                if (centeredSlides !== false) {
+                                                    // Center the target frame
+                                                    const targetScroll = i * (frameWidth + currentGap);
+                                                    const centerOffset = (containerWidth - frameWidth) / 2;
+                                                    framesContainer.scrollLeft = targetScroll - centerOffset;
+                                                } else {
+                                                    // Standard left-aligned scrolling
+                                                    framesContainer.scrollLeft = i * (frameWidth + currentGap);
                                                 }
-                                            }}
-                                        />
-                                    );
-                                })}
+                                            }
+                                        }}
+                                    />
+                                ))}
                             </div>
                         )}
 
@@ -1199,13 +1408,10 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                             frameBlock?.attributes?.content?.replace(/<[^>]*>/g, '').substring(0, 20) ||
                                             `${__('Frame', 'flexible-slider-carousel')} ${i + 1}`;
 
-                                        const { startIndex, endIndex } = getCurrentVisibleRange();
-                                        const isInRange = i >= startIndex && i <= endIndex;
-
                                         return (
                                             <button
                                                 key={i}
-                                                className={`fsc-slider__frame-title-editor ${isInRange ? 'fsc-slider__frame-title-editor--active' : ''}`}
+                                                className="fsc-slider__frame-title-editor"
                                                 style={{
                                                     fontSize: `${tabFontSize}px`,
                                                     fontWeight: tabFontWeight,
@@ -1214,17 +1420,17 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                                     borderRadius: `${tabBorderRadius}px`,
                                                     borderWidth: `${tabBorderWidth}px`,
                                                     borderStyle: 'solid',
-                                                    color: isInRange ? tabTextColorActive : tabTextColor,
-                                                    backgroundColor: isInRange ? tabBackgroundColorActive : tabBackgroundColor,
-                                                    borderColor: isInRange ? tabBorderColorActive : tabBorderColor,
-                                                    boxShadow: isInRange ? tabBoxShadowActive : tabBoxShadow
+                                                    color: tabTextColor,
+                                                    backgroundColor: tabBackgroundColor,
+                                                    borderColor: tabBorderColor,
+                                                    boxShadow: tabBoxShadow
                                                 }}
                                                 onClick={() => {
-                                                    const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames`);
+                                                    const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames-editor`);
                                                     if (framesContainer) {
                                                         const frameWidth = framesContainer.querySelector('.fsc-frame')?.offsetWidth || 0;
-                                                        const gap = 20;
-                                                        framesContainer.scrollLeft = i * (frameWidth + gap);
+                                                        const currentGap = gap || 10;
+                                                        framesContainer.scrollLeft = i * (frameWidth + currentGap);
                                                     }
                                                 }}
                                             >
@@ -1313,7 +1519,7 @@ const PostQueryControls = ({ attributes, setAttributes, postTypes, taxonomies })
 };
 
 // Responsive Settings Component
-const ResponsiveSettings = ({ settings, onChange, slidesToShow, slidesToScroll, onSlidesToShowChange, onSlidesToScrollChange, previewBreakpoint, onPreviewBreakpointChange }) => {
+const ResponsiveSettings = ({ settings, onChange, slidesToShow, slidesToScroll, onSlidesToShowChange, onSlidesToScrollChange, previewBreakpoint, onPreviewBreakpointChange, is3DEffect }) => {
     const [activeTab, setActiveTab] = useState('desktop');
 
     const updateBreakpoint = (breakpoint, key, value) => {
@@ -1345,7 +1551,7 @@ const ResponsiveSettings = ({ settings, onChange, slidesToShow, slidesToScroll, 
             {breakpoint !== 'phone' && (
                 <RangeControl
                     label={__('Min Width (px)', 'flexible-slider-carousel')}
-                    value={settings[breakpoint]?.minWidth || 0}
+                    value={settings[breakpoint]?.minWidth !== undefined ? settings[breakpoint].minWidth : 0}
                     onChange={(value) => updateBreakpoint(breakpoint, 'minWidth', value)}
                     min={0}
                     max={2000}
@@ -1355,7 +1561,7 @@ const ResponsiveSettings = ({ settings, onChange, slidesToShow, slidesToScroll, 
 
             <RangeControl
                 label={__('Inner Padding (px)', 'flexible-slider-carousel')}
-                value={settings[breakpoint]?.innerPadding || 10}
+                value={settings[breakpoint]?.innerPadding !== undefined ? settings[breakpoint].innerPadding : 10}
                 onChange={(value) => updateBreakpoint(breakpoint, 'innerPadding', value)}
                 min={0}
                 max={100}
@@ -1363,23 +1569,47 @@ const ResponsiveSettings = ({ settings, onChange, slidesToShow, slidesToScroll, 
                 help={__('Padding inside frames (Standard: 10px)', 'flexible-slider-carousel')}
             />
 
-            <RangeControl
-                label={__('Slides To Show', 'flexible-slider-carousel')}
-                value={slidesToShow[breakpoint] || 1}
-                onChange={(value) => updateSlidesToShow(breakpoint, value)}
-                min={1}
-                max={5}
-                step={1}
-            />
+            {is3DEffect ? (
+                <div style={{ opacity: 0.5, pointerEvents: 'none' }}>
+                    <RangeControl
+                        label={__('Slides To Show (Fixed at 1 for 3D effects)', 'flexible-slider-carousel')}
+                        value={1}
+                        min={1}
+                        max={1}
+                        step={1}
+                        disabled={true}
+                    />
+                    <RangeControl
+                        label={__('Slides To Scroll (Fixed at 1 for 3D effects)', 'flexible-slider-carousel')}
+                        value={1}
+                        min={1}
+                        max={1}
+                        step={1}
+                        disabled={true}
+                    />
+                </div>
+            ) : (
+                <>
+                    <RangeControl
+                        label={__('Slides To Show', 'flexible-slider-carousel')}
+                        value={Math.round((slidesToShow[breakpoint] || 1) * 10)}
+                        onChange={(value) => updateSlidesToShow(breakpoint, value / 10)}
+                        min={10}
+                        max={50}
+                        step={1}
+                        help={__('10 = 1.0 frames, 15 = 1.5 frames, 23 = 2.3 frames, etc. Use for precise peek control.', 'flexible-slider-carousel')}
+                    />
 
-            <RangeControl
-                label={__('Slides To Scroll', 'flexible-slider-carousel')}
-                value={slidesToScroll[breakpoint] || 1}
-                onChange={(value) => updateSlidesToScroll(breakpoint, value)}
-                min={1}
-                max={5}
-                step={1}
-            />
+                    <RangeControl
+                        label={__('Slides To Scroll', 'flexible-slider-carousel')}
+                        value={slidesToScroll[breakpoint] || 1}
+                        onChange={(value) => updateSlidesToScroll(breakpoint, value)}
+                        min={1}
+                        max={5}
+                        step={1}
+                    />
+                </>
+            )}
         </div>
     );
 

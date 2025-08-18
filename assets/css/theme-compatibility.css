@@ -112,7 +112,6 @@
 /* Frame styling - theme-aware */
 .fsc-frame {
     background-color: var(--fsc-bg-primary, #ffffff);
-    border: 1px solid var(--fsc-border-light, #eeeeee);
     border-radius: var(--fsc-border-radius, 0);
     overflow: hidden;
 }

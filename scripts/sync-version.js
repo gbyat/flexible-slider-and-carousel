@@ -13,25 +13,25 @@ const pluginFile = path.join(__dirname, '..', 'flexible-slider-and-carousel.php'
 
 if (fs.existsSync(pluginFile)) {
     let pluginContent = fs.readFileSync(pluginFile, 'utf8');
-    
+
     // Update version in plugin header
     pluginContent = pluginContent.replace(
         /Version:\s*\d+\.\d+\.\d+/,
         `Version: ${version}`
     );
-    
+
     // Update version in plugin data
     pluginContent = pluginContent.replace(
         /"version"\s*=>\s*['"]\d+\.\d+\.\d+['"]/,
         `"version" => "${version}"`
     );
-    
+
     // Update FSC_PLUGIN_VERSION constant
     pluginContent = pluginContent.replace(
         /define\('FSC_PLUGIN_VERSION',\s*['"]\d+\.\d+\.\d+['"]\);/,
         `define('FSC_PLUGIN_VERSION', '${version}');`
     );
-    
+
     fs.writeFileSync(pluginFile, pluginContent);
     console.log('✅ Updated flexible-slider-and-carousel.php');
 } else {
@@ -48,13 +48,13 @@ blockFiles.forEach(blockFile => {
     const blockPath = path.join(__dirname, '..', blockFile);
     if (fs.existsSync(blockPath)) {
         let blockContent = fs.readFileSync(blockPath, 'utf8');
-        
+
         // Update version in block.json
         blockContent = blockContent.replace(
             /"version"\s*:\s*['"]\d+\.\d+\.\d+['"]/,
             `"version": "${version}"`
         );
-        
+
         fs.writeFileSync(blockPath, blockContent);
         console.log(`✅ Updated ${blockFile}`);
     }

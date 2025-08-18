@@ -60,15 +60,12 @@ module.exports = {
                     from: 'src/frame/frontend.css',
                     to: 'frame/frontend.css'
                 },
-                // Copy Glide.js CSS files
+                // Copy Swiper CSS files
                 {
-                    from: 'node_modules/@glidejs/glide/dist/css/glide.core.min.css',
-                    to: 'slider/glide.core.min.css'
-                },
-                {
-                    from: 'node_modules/@glidejs/glide/dist/css/glide.theme.min.css',
-                    to: 'slider/glide.theme.min.css'
+                    from: 'node_modules/swiper/swiper-bundle.css',
+                    to: 'slider/swiper-bundle.css'
                 }
+
             ]
         })
     ],
@@ -86,8 +83,7 @@ module.exports = {
         ...defaultConfig.resolve,
         alias: {
             ...defaultConfig.resolve.alias,
-            '@': path.resolve(__dirname, 'src'),
-            '@glidejs/glide': path.resolve(__dirname, 'node_modules/@glidejs/glide/dist/glide.esm.js')
+            '@': path.resolve(__dirname, 'src')
         }
     }
 }; 

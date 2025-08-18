@@ -4,7 +4,7 @@
  */
 
 import Swiper from 'swiper';
-import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, EffectCoverflow, EffectCreative } from 'swiper/modules';
+import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, EffectCoverflow, EffectCreative, EffectCube, EffectCards, Grid } from 'swiper/modules';
 // We provide our own CSS; no direct Swiper CSS imports to avoid loader conflicts
 
 (function () {
@@ -22,6 +22,8 @@ import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, Eff
             // Initialize Swiper.js
             this.initSwiper();
         }
+
+
 
         getSliderSettings() {
             return {
@@ -41,9 +43,9 @@ import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, Eff
                     phone: parseInt(this.slider.dataset.breakpointPhone) || 768
                 },
                 slidesToShow: {
-                    desktop: parseInt(this.slider.dataset.slidesDesktop) || 1,
-                    tablet: parseInt(this.slider.dataset.slidesTablet) || 1,
-                    phone: parseInt(this.slider.dataset.slidesPhone) || 1
+                    desktop: parseFloat(this.slider.dataset.slidesDesktop) || 1,
+                    tablet: parseFloat(this.slider.dataset.slidesTablet) || 1,
+                    phone: parseFloat(this.slider.dataset.slidesPhone) || 1
                 },
                 slidesToScroll: {
                     desktop: parseInt(this.slider.dataset.slidesScrollDesktop) || 1,
@@ -68,6 +70,11 @@ import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, Eff
                 tabBorderColorActive: this.slider.dataset.tabBorderColorActive || '#007cba',
                 tabBoxShadow: this.slider.dataset.tabBoxShadow || '0 1px 3px rgba(0,0,0,0.1)',
                 tabBoxShadowActive: this.slider.dataset.tabBoxShadowActive || '0 2px 6px rgba(0,0,0,0.2)',
+                // Frame Styling Settings
+                frameBorderRadius: this.slider.dataset.frameBorderRadius !== undefined ? parseInt(this.slider.dataset.frameBorderRadius) : 8,
+                frameBorderWidth: this.slider.dataset.frameBorderWidth !== undefined ? parseInt(this.slider.dataset.frameBorderWidth) : 0,
+                frameBorderColor: this.slider.dataset.frameBorderColor || '#dddddd',
+                frameBoxShadow: this.slider.dataset.frameBoxShadow || 'none',
                 // Navigation Colors
                 arrowBackgroundColor: this.slider.dataset.arrowBackgroundColor || '#007cba',
                 arrowBackgroundColorHover: this.slider.dataset.arrowBackgroundColorHover || '#005a87',
@@ -77,8 +84,12 @@ import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, Eff
                 dotBackgroundColorActive: this.slider.dataset.dotBackgroundColorActive || '#007cba',
                 // Swiper related defaults mapped from data-* attributes
                 sliderType: this.slider.dataset.sliderType || 'carousel',
-                gap: parseInt(this.slider.dataset.gap) || 10,
+                gap: this.slider.dataset.gap !== undefined ? parseInt(this.slider.dataset.gap) : 10,
                 animationDuration: parseInt(this.slider.dataset.animationDuration) || 400,
+                // Responsive Settings
+                innerPaddingDesktop: parseInt(this.slider.dataset.responsiveDesktopPadding) || 10,
+                innerPaddingTablet: parseInt(this.slider.dataset.responsiveTabletPadding) || 10,
+                innerPaddingPhone: parseInt(this.slider.dataset.responsivePhonePadding) || 10,
                 animationTimingFunc: this.slider.dataset.animationTimingFunc || 'cubic-bezier(0.165, 0.840, 0.440, 1.000)',
                 animationType: this.slider.dataset.animationType || 'slide',
                 animationDirection: this.slider.dataset.animationDirection || 'horizontal',
@@ -86,7 +97,10 @@ import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, Eff
                 focusAt: this.slider.dataset.focusAt || 'center',
                 peek: parseInt(this.slider.dataset.peek) || 0,
                 keyboard: this.slider.dataset.keyboard === 'true',
-                touchRatio: parseFloat(this.slider.dataset.touchRatio) || 0.5
+                touchRatio: parseFloat(this.slider.dataset.touchRatio) || 0.5,
+                centeredSlides: this.slider.dataset.centeredSlides === 'true',
+                gridRows: parseInt(this.slider.dataset.gridRows) || 1,
+                gridFill: this.slider.dataset.gridFill || 'row'
             };
         }
 
@@ -110,7 +124,7 @@ import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, Eff
             console.log('================================');
 
             if (this.totalSlides <= 1) {
-                console.log('Not enough slides, skipping Glide.js initialization');
+                console.log('Not enough slides, skipping Swiper initialization');
                 return;
             }
 
@@ -127,13 +141,40 @@ import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, Eff
 
                 // Initialize Swiper with responsive breakpoints
                 const effectMap = {
-                    slide: undefined,
+                    slide: 'slide',
                     fade: 'fade',
                     flip: 'flip',
                     coverflow: 'coverflow',
-                    creative: 'creative'
+                    creative: 'creative',
+                    cube: 'cube',
+                    cards: 'cards'
                 };
-                const effect = effectMap[this.settings.animationType];
+
+                // Handle navigation elements visibility and positioning
+                const navigationElements = this.slider.querySelectorAll('.swiper-button-prev, .swiper-button-next');
+                navigationElements.forEach(element => {
+                    if (this.settings.showNavigation) {
+                        element.style.display = 'flex';
+                        element.style.position = 'absolute';
+                        element.style.top = '50%';
+                        element.style.transform = 'translateY(-50%)';
+                        element.style.zIndex = '10';
+                    } else {
+                        element.style.display = 'none';
+                    }
+                });
+
+                // For fade effect, if user wants to show multiple slides, fallback to slide effect
+                let effect = effectMap[this.settings.animationType];
+                if (effect === 'fade' && this.settings.slidesToShow.desktop > 1) {
+                    console.log('⚠️ Fade effect requested but slidesToShow > 1, falling back to slide effect');
+                    effect = 'slide';
+                }
+
+                // Cards effect - removed minimum frame restriction, allowing any frame count
+                if (effect === 'cards') {
+                    console.log('🎯 Cards effect detected - allowing any frame count');
+                }
 
                 // Set data-effect attribute for CSS targeting
                 const swiperElement = this.slider.querySelector('.swiper');
@@ -141,11 +182,7 @@ import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, Eff
                     swiperElement.setAttribute('data-effect', effect);
                 }
 
-                // Set peek distance for slide effect
-                if (this.settings.peek > 0 && effect === 'slide') {
-                    swiperElement.setAttribute('data-peek', 'true');
-                    swiperElement.style.setProperty('--peek-distance', `${this.settings.peek}px`);
-                }
+                // Removed peek distance - using only Swiper's native features
 
                 // Set CSS variables for colors on both the main slider container and swiper element
                 if (this.settings.arrowBackgroundColor) {
@@ -186,6 +223,69 @@ import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, Eff
                 if (this.settings.tabBackgroundColor) {
                     this.slider.style.setProperty('--tab-background-color', this.settings.tabBackgroundColor);
                 }
+
+                // Apply frame styling function
+                const applyFrameStyling = () => {
+                    const frames = this.slider.querySelectorAll('.fsc-frame');
+                    console.log('🔍 Found frames:', frames.length);
+                    console.log('🔍 Frame border settings:', {
+                        width: this.settings.frameBorderWidth,
+                        color: this.settings.frameBorderColor,
+                        shouldShowBorder: this.settings.frameBorderWidth > 0
+                    });
+
+                    frames.forEach((frame, index) => {
+                        console.log('🔍 Processing frame ' + index + ':', frame);
+
+                        if (this.settings.frameBorderRadius !== undefined) {
+                            frame.style.borderRadius = this.settings.frameBorderRadius + 'px';
+                            console.log('🎨 Set frame ' + index + ' borderRadius:', this.settings.frameBorderRadius + 'px');
+                        }
+
+                        if (this.settings.frameBorderWidth !== undefined && this.settings.frameBorderWidth > 0) {
+                            frame.style.borderWidth = this.settings.frameBorderWidth + 'px';
+                            frame.style.borderStyle = 'solid';
+                            frame.style.borderColor = this.settings.frameBorderColor || '#dddddd';
+                            console.log('🎨 Set frame ' + index + ' border:', this.settings.frameBorderWidth + 'px solid', this.settings.frameBorderColor);
+                        } else {
+                            frame.style.border = 'none';
+                            console.log('🎨 Removed frame ' + index + ' border');
+                        }
+
+                        if (this.settings.frameBoxShadow !== undefined) {
+                            frame.style.boxShadow = this.settings.frameBoxShadow;
+                            console.log('🎨 Set frame ' + index + ' boxShadow:', this.settings.frameBoxShadow);
+                        }
+                    });
+                };
+
+                // Apply styling initially
+                applyFrameStyling();
+
+                // Set up MutationObserver to reapply styling when DOM changes
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                            // New frames added, reapply styling
+                            setTimeout(applyFrameStyling, 100);
+                        }
+                    });
+                });
+
+                observer.observe(this.slider, { childList: true, subtree: true });
+
+                // Set CSS variables for responsive settings
+                if (this.settings.innerPaddingDesktop !== undefined) {
+                    this.slider.style.setProperty('--inner-padding-desktop', this.settings.innerPaddingDesktop + 'px');
+                }
+                if (this.settings.innerPaddingTablet !== undefined) {
+                    this.slider.style.setProperty('--inner-padding-tablet', this.settings.innerPaddingTablet + 'px');
+                }
+                if (this.settings.innerPaddingPhone !== undefined) {
+                    this.slider.style.setProperty('--inner-padding-phone', this.settings.innerPaddingPhone + 'px');
+                }
+
+
                 if (this.settings.tabBackgroundColorHover) {
                     this.slider.style.setProperty('--tab-background-color-hover', this.settings.tabBackgroundColorHover);
                 }
@@ -218,28 +318,64 @@ import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, Eff
                 console.log('Tab Border Active:', this.settings.tabBorderColorActive);
                 console.log('=============================');
 
+                // Log the effect type for debugging
+                console.log('🔍 Effect type determined:', effect);
+
+                // Load required modules based on settings
+                const modules = [];
+
+                if (this.settings.showNavigation) {
+                    modules.push(Navigation);
+                }
+                if (this.settings.showDots) {
+                    modules.push(Pagination);
+                }
+                if (this.settings.autoPlay) {
+                    modules.push(Autoplay);
+                }
+
+                // Add Grid module if multiple rows are configured
+                if (this.settings.gridRows > 1) {
+                    modules.push(Grid);
+                }
+
+                // Add effect modules based on animation type
+                if (['flip', 'coverflow', 'creative', 'cube', 'cards'].includes(this.settings.animationType)) {
+                    if (this.settings.animationType === 'flip') {
+                        modules.push(EffectFlip);
+                    } else if (this.settings.animationType === 'coverflow') {
+                        modules.push(EffectCoverflow);
+                    } else if (this.settings.animationType === 'creative') {
+                        modules.push(EffectCreative);
+                    } else if (this.settings.animationType === 'cube') {
+                        modules.push(EffectCube);
+                    } else if (this.settings.animationType === 'cards') {
+                        modules.push(EffectCards);
+                    }
+                }
+
                 this.swiper = new Swiper(swiperElement, {
-                    modules: [Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, EffectCoverflow, EffectCreative],
+                    modules: modules,
                     loop: this.settings.sliderType === 'carousel', // Endless loop for carousel, finite for slider
                     slidesPerView: this.settings.slidesToShow.desktop,
                     slidesPerGroup: this.settings.slidesToScroll.desktop,
                     spaceBetween: this.settings.gap,
                     speed: this.settings.animationDuration,
                     effect: effect,
-                    centeredSlides: this.settings.focusAt === 'center',
+                    centeredSlides: this.settings.centeredSlides,
                     keyboard: { enabled: !!this.settings.keyboard },
                     allowTouchMove: this.settings.touchSwipe,
                     touchRatio: this.settings.touchRatio,
                     autoplay: this.settings.autoPlay ? { delay: this.settings.autoPlaySpeed * 1000, disableOnInteraction: false, pauseOnMouseEnter: true } : undefined,
                     navigation: this.settings.showNavigation ? { nextEl: this.slider.querySelector('.swiper-button-next'), prevEl: this.slider.querySelector('.swiper-button-prev') } : undefined,
                     pagination: this.settings.showDots ? { el: this.slider.querySelector('.swiper-pagination'), clickable: true } : undefined,
+                    grid: this.settings.gridRows > 1 ? {
+                        rows: this.settings.gridRows,
+                        fill: this.settings.gridFill
+                    } : undefined,
 
-                    // Peek distance - show part of next/previous slides
-                    // Only apply peek for slide effect, not for 3D effects
-                    ...(this.settings.peek > 0 && effect === 'slide' && {
-                        slidesPerView: 'auto',
-                        centeredSlides: true
-                    }),
+                    // Peek distance - will be handled after Swiper initialization
+                    // Swiper doesn't have native peek distance, we'll implement it manually
 
                     // Custom animation timing function
                     on: {
@@ -255,7 +391,10 @@ import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, Eff
                     ...(effect === 'fade' && {
                         fadeEffect: {
                             crossFade: true
-                        }
+                        },
+                        // Override slidesPerView for fade effect to show multiple slides
+                        slidesPerView: this.settings.slidesToShow.desktop,
+                        slidesPerGroup: this.settings.slidesToScroll.desktop
                     }),
                     ...(effect === 'flip' && {
                         flipEffect: {
@@ -289,17 +428,20 @@ import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, Eff
                         [this.settings.breakpoints.desktop]: {
                             slidesPerView: this.settings.slidesToShow.desktop,
                             slidesPerGroup: this.settings.slidesToScroll.desktop,
-                            spaceBetween: this.settings.gap
+                            spaceBetween: this.settings.gap,
+                            centeredSlides: this.settings.centeredSlides !== false
                         },
                         [this.settings.breakpoints.tablet]: {
                             slidesPerView: this.settings.slidesToShow.tablet,
                             slidesPerGroup: this.settings.slidesToScroll.tablet,
-                            spaceBetween: Math.max(this.settings.gap - 5, 0)
+                            spaceBetween: Math.max(this.settings.gap - 5, 0),
+                            centeredSlides: this.settings.centeredSlides !== false
                         },
                         [this.settings.breakpoints.phone]: {
                             slidesPerView: this.settings.slidesToShow.phone,
                             slidesPerGroup: this.settings.slidesToScroll.phone,
-                            spaceBetween: Math.max(this.settings.gap - 10, 0)
+                            spaceBetween: Math.max(this.settings.gap - 10, 0),
+                            centeredSlides: this.settings.centeredSlides !== false
                         }
                     }
                 });
@@ -308,6 +450,9 @@ import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, Eff
                 console.log('🔍 About to create animation transformers...');
                 console.log('Settings object:', this.settings);
                 console.log('Animation type from settings:', this.settings.animationType);
+                console.log('🔍 Using Swiper native effects only');
+                console.log('🔍 Effect type:', effect);
+                console.log('🔍 Using Swiper native features only');
 
                 console.log('=====================================');
 
@@ -317,6 +462,8 @@ import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, Eff
 
                 // Apply custom animation timing function
                 this.applyAnimationTiming();
+
+                // Peek distance removed - using only Swiper's native features
 
                 // Apply custom styling to text navigation
                 this.updateTextNavigation();
@@ -559,7 +706,7 @@ import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, Eff
                 const currentSlide = this.swiper.realIndex ?? this.swiper.activeIndex ?? 0;
 
                 this.frameTitles.forEach((title, index) => {
-                    // Only the currently active slide is highlighted (native Glide.js behavior)
+                    // Only the currently active slide is highlighted (native Swiper behavior)
                     const isActive = index === currentSlide;
                     title.classList.toggle('fsc-slider__frame-title--active', isActive);
                     this.applyTabStyling(title, isActive);
@@ -573,9 +720,13 @@ import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, Eff
                 this.applyAnimationTiming();
             });
 
+            // Removed peek distance resize listener - using only Swiper's native features
+
             // Set initial state immediately (first tab active)
             updateActiveState();
         }
+
+
 
         destroy() {
             if (this.swiper) {
@@ -599,7 +750,7 @@ import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, Eff
             }
 
             // Remove Swiper class
-            this.slider.classList.remove('glide');
+            this.slider.classList.remove('swiper');
         }
     }
 
