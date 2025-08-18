@@ -1,3 +1,8 @@
+## 2025-08-18 13:21:36 - feat: Migrate from Glide.js to Swiper.js for slider functionality, update author information, and enhance frame styling options
+
+### Changed Files:
+- `package.json`
+
 ## 2025-08-18 13:21:07 - fix: Update FSC_PLUGIN_VERSION constant in sync-version.js
 
 ### Changed Files:
