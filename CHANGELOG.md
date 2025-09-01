@@ -1,3 +1,8 @@
+## 2025-09-01 14:54:22 - 1.3.0
+
+### Changed Files:
+- `flexible-slider-and-carousel.php`
+
 ## 2025-09-01 14:54:20 - Prepare release
 
 ### Changed Files:
