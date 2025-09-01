@@ -33,7 +33,7 @@ const TEMPLATE = [
 
 const SliderBlock = ({ attributes, setAttributes, clientId }) => {
     const {
-        sliderDesign,
+
         autoPlay,
         autoPlaySpeed,
         touchSwipe,
@@ -105,7 +105,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
     const [previewBreakpoint, setPreviewBreakpoint] = useState('desktop');
 
     const blockProps = useBlockProps({
-        className: `fsc-slider fsc-slider--${sliderDesign || 'default'}`,
+        className: 'fsc-slider',
         style: {
             textAlign: align
         },
@@ -257,6 +257,46 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
             }
         }
     }, [animationType, slidesToShow, slidesToScroll, setAttributes]);
+
+    // Simple CSS-based editor preview (no Swiper to avoid conflicts)
+    useEffect(() => {
+        const sliderBlock = document.querySelector(`[data-block="${clientId}"]`);
+        if (!sliderBlock) return;
+
+        // Apply basic styling for editor preview
+        const framesContainer = sliderBlock.querySelector('.fsc-slider__frames-editor');
+        if (framesContainer) {
+            framesContainer.style.display = 'flex';
+            framesContainer.style.gap = `${gap || 10}px`;
+            framesContainer.style.overflow = 'hidden';
+            framesContainer.style.width = '100%';
+        }
+    }, [clientId, gap]);
+
+    // Convert frames to swiper-slides in editor and fix navigation arrows
+    useEffect(() => {
+        const sliderBlock = document.querySelector(`[data-block="${clientId}"]`);
+        if (!sliderBlock) return;
+
+        // Add swiper-slide class to frames
+        const frames = sliderBlock.querySelectorAll('.fsc-frame');
+        frames.forEach(frame => {
+            if (!frame.classList.contains('swiper-slide')) {
+                frame.classList.add('swiper-slide');
+            }
+        });
+
+        // Fix navigation arrows content
+        const prevButton = sliderBlock.querySelector('.swiper-button-prev');
+        const nextButton = sliderBlock.querySelector('.swiper-button-next');
+
+        if (prevButton && !prevButton.textContent) {
+            prevButton.textContent = '‹';
+        }
+        if (nextButton && !nextButton.textContent) {
+            nextButton.textContent = '›';
+        }
+    }, [clientId, frameCount]);
 
     // Force re-render when tab styling attributes change
     useEffect(() => {
@@ -413,109 +453,82 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
 
             <InspectorControls>
                 <PanelBody title={__('Slider Settings', 'flexible-slider-carousel')} initialOpen={true}>
-                    <SelectControl
-                        label={__('Slider Design', 'flexible-slider-carousel')}
-                        value={sliderDesign}
-                        options={[
-                            { label: __('Default', 'flexible-slider-carousel'), value: 'default' },
-                            { label: __('Minimal', 'flexible-slider-carousel'), value: 'minimal' },
-                            { label: __('Modern', 'flexible-slider-carousel'), value: 'modern' },
-                            { label: __('Classic', 'flexible-slider-carousel'), value: 'classic' },
-                            { label: __('Card', 'flexible-slider-carousel'), value: 'card' }
-                        ]}
-                        onChange={(value) => setAttributes({ sliderDesign: value })}
-                    />
-
                     <div className="fsc-slider__info">
                         <p>{__('Add frames manually using the + button below to create your slider content.', 'flexible-slider-carousel')}</p>
                     </div>
 
-                    <PanelBody title={__('Frame Styling', 'flexible-slider-carousel')} initialOpen={false}>
-                        <RangeControl
-                            label={__('Border Radius (px)', 'flexible-slider-carousel')}
-                            value={frameBorderRadius !== undefined ? frameBorderRadius : 8}
-                            onChange={(value) => setAttributes({ frameBorderRadius: value })}
-                            min={0}
-                            max={50}
-                            step={1}
-                            help={__('Rounded corners for frames (Standard: 8px)', 'flexible-slider-carousel')}
-                        />
+                    <h4>{__('Frame Styling', 'flexible-slider-carousel')}</h4>
+                    <RangeControl
+                        label={__('Gap Between Frames (px)', 'flexible-slider-carousel')}
+                        value={gap !== undefined ? gap : 10}
+                        onChange={(value) => setAttributes({ gap: value })}
+                        min={0}
+                        max={50}
+                        step={1}
+                        help={__('Space between individual frames (Standard: 10px)', 'flexible-slider-carousel')}
+                    />
+                    <RangeControl
+                        label={__('Border Radius (px)', 'flexible-slider-carousel')}
+                        value={frameBorderRadius !== undefined ? frameBorderRadius : 8}
+                        onChange={(value) => setAttributes({ frameBorderRadius: value })}
+                        min={0}
+                        max={50}
+                        step={1}
+                        help={__('Rounded corners for frames (Standard: 8px)', 'flexible-slider-carousel')}
+                    />
 
-                        <RangeControl
-                            label={__('Border Width (px)', 'flexible-slider-carousel')}
-                            value={frameBorderWidth !== undefined ? frameBorderWidth : 0}
-                            onChange={(value) => setAttributes({ frameBorderWidth: value })}
-                            min={0}
-                            max={10}
-                            step={1}
-                            help={__('Frame border thickness (Standard: 0px)', 'flexible-slider-carousel')}
-                        />
+                    <RangeControl
+                        label={__('Border Width (px)', 'flexible-slider-carousel')}
+                        value={frameBorderWidth !== undefined ? frameBorderWidth : 0}
+                        onChange={(value) => setAttributes({ frameBorderWidth: value })}
+                        min={0}
+                        max={10}
+                        step={1}
+                        help={__('Frame border thickness (Standard: 0px)', 'flexible-slider-carousel')}
+                    />
 
-                        <div className="fsc-color-control">
-                            <label className="components-base-control__label">{__('Border Color', 'flexible-slider-carousel')}</label>
-                            <div className="fsc-color-indicator-wrapper">
-                                <ColorIndicator
-                                    colorValue={frameBorderColor}
-                                    onClick={() => setActiveColorPicker('frameBorderColor')}
-                                />
-                                <Button
-                                    className="fsc-color-button"
-                                    onClick={() => setAttributes({ frameBorderColor: undefined })}
-                                >
-                                    {__('Clear', 'flexible-slider-carousel')}
-                                </Button>
-                            </div>
-                            {activeColorPicker === 'frameBorderColor' && (
-                                <Popover
-                                    position="bottom center"
-                                    onClose={() => setActiveColorPicker(null)}
-                                >
-                                    <ColorPalette
-                                        value={frameBorderColor}
-                                        onChange={(color) => {
-                                            setAttributes({ frameBorderColor: color });
-                                            setActiveColorPicker(null);
-                                        }}
-                                    />
-                                </Popover>
-                            )}
+                    <div className="fsc-color-control">
+                        <label className="components-base-control__label">{__('Border Color', 'flexible-slider-carousel')}</label>
+                        <div className="fsc-color-indicator-wrapper">
+                            <ColorIndicator
+                                colorValue={frameBorderColor}
+                                onClick={() => setActiveColorPicker('frameBorderColor')}
+                            />
+                            <Button
+                                className="fsc-color-button"
+                                onClick={() => setAttributes({ frameBorderColor: undefined })}
+                            >
+                                {__('Clear', 'flexible-slider-carousel')}
+                            </Button>
                         </div>
+                        {activeColorPicker === 'frameBorderColor' && (
+                            <Popover
+                                position="bottom center"
+                                onClose={() => setActiveColorPicker(null)}
+                            >
+                                <ColorPalette
+                                    value={frameBorderColor}
+                                    onChange={(color) => {
+                                        setAttributes({ frameBorderColor: color });
+                                        setActiveColorPicker(null);
+                                    }}
+                                />
+                            </Popover>
+                        )}
+                    </div>
 
-                        <TextControl
-                            label={__('Box Shadow', 'flexible-slider-carousel')}
-                            value={frameBoxShadow || 'none'}
-                            onChange={(value) => setAttributes({ frameBoxShadow: value })}
-                            help={__('CSS box-shadow value (e.g., "0 2px 8px rgba(0,0,0,0.1)" or "none")', 'flexible-slider-carousel')}
-                            placeholder="none"
-                        />
+                    <TextControl
+                        label={__('Box Shadow', 'flexible-slider-carousel')}
+                        value={frameBoxShadow || 'none'}
+                        onChange={(value) => setAttributes({ frameBoxShadow: value })}
+                        help={__('CSS box-shadow value (e.g., "0 2px 8px rgba(0,0,0,0.1)" or "none")', 'flexible-slider-carousel')}
+                        placeholder="none"
+                    />
 
-                    </PanelBody>
+
                 </PanelBody>
 
                 <PanelBody title={__('Animation & Behavior', 'flexible-slider-carousel')} initialOpen={false}>
-                    <ToggleControl
-                        label={__('Auto Play', 'flexible-slider-carousel')}
-                        checked={autoPlay}
-                        onChange={(value) => setAttributes({ autoPlay: value })}
-                    />
-
-                    {autoPlay && (
-                        <RangeControl
-                            label={__('Auto Play Speed (seconds)', 'flexible-slider-carousel')}
-                            value={autoPlaySpeed}
-                            onChange={(value) => setAttributes({ autoPlaySpeed: value })}
-                            min={1}
-                            max={10}
-                            step={0.5}
-                        />
-                    )}
-
-                    <ToggleControl
-                        label={__('Touch/Swipe Support', 'flexible-slider-carousel')}
-                        checked={touchSwipe}
-                        onChange={(value) => setAttributes({ touchSwipe: value })}
-                    />
-
                     <SelectControl
                         label={__('Slider Type', 'flexible-slider-carousel')}
                         value={sliderType || 'carousel'}
@@ -525,41 +538,6 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                         ]}
                         onChange={(value) => setAttributes({ sliderType: value })}
                         help={__('Carousel loops endlessly, Slider stops at boundaries (Standard: Carousel)', 'flexible-slider-carousel')}
-                    />
-
-                    <RangeControl
-                        label={__('Gap Between Frames (px)', 'flexible-slider-carousel')}
-                        value={gap !== undefined ? gap : 10}
-                        onChange={(value) => setAttributes({ gap: value })}
-                        min={0}
-                        max={50}
-                        step={1}
-                        help={__('Standard: 10px', 'flexible-slider-carousel')}
-                    />
-
-                    <RangeControl
-                        label={__('Animation Duration (ms)', 'flexible-slider-carousel')}
-                        value={animationDuration || 400}
-                        onChange={(value) => setAttributes({ animationDuration: value })}
-                        min={100}
-                        max={2000}
-                        step={50}
-                        help={__('Standard: 400ms', 'flexible-slider-carousel')}
-                    />
-
-                    <SelectControl
-                        label={__('Animation Timing Function', 'flexible-slider-carousel')}
-                        value={animationTimingFunc || 'cubic-bezier(0.165, 0.840, 0.440, 1.000)'}
-                        options={[
-                            { label: __('Default (Smooth)', 'flexible-slider-carousel'), value: 'cubic-bezier(0.165, 0.840, 0.440, 1.000)' },
-                            { label: __('Linear', 'flexible-slider-carousel'), value: 'linear' },
-                            { label: __('Ease', 'flexible-slider-carousel'), value: 'ease' },
-                            { label: __('Ease-in', 'flexible-slider-carousel'), value: 'ease-in' },
-                            { label: __('Ease-out', 'flexible-slider-carousel'), value: 'ease-out' },
-                            { label: __('Ease-in-out', 'flexible-slider-carousel'), value: 'ease-in-out' }
-                        ]}
-                        onChange={(value) => setAttributes({ animationTimingFunc: value })}
-                        help={__('Standard: Default (Smooth)', 'flexible-slider-carousel')}
                     />
 
                     <SelectControl
@@ -578,6 +556,8 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                         help={__('Art der Slide-Animation (Standard: Slide)', 'flexible-slider-carousel')}
                     />
 
+
+
                     {/* Animation Direction - only for slide effect */}
                     {animationType === 'slide' && (
                         <SelectControl
@@ -592,33 +572,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                         />
                     )}
 
-                    {/* Focus Position removed - using Centered Slides instead */}
 
-
-
-                    <ToggleControl
-                        label={__('Centered Slides', 'flexible-slider-carousel')}
-                        checked={centeredSlides !== false}
-                        onChange={(value) => setAttributes({ centeredSlides: value })}
-                        help={__('Center the active slide (works great with 1.5+ frames)', 'flexible-slider-carousel')}
-                    />
-
-                    <ToggleControl
-                        label={__('Keyboard Navigation', 'flexible-slider-carousel')}
-                        checked={keyboard !== false}
-                        onChange={(value) => setAttributes({ keyboard: value })}
-                        help={__('Use arrow keys to navigate (Standard: Aktiviert)', 'flexible-slider-carousel')}
-                    />
-
-                    <RangeControl
-                        label={__('Touch/Swipe Sensitivity', 'flexible-slider-carousel')}
-                        value={touchRatio || 0.5}
-                        onChange={(value) => setAttributes({ touchRatio: value })}
-                        min={0.1}
-                        max={2.0}
-                        step={0.1}
-                        help={__('Higher values = more sensitive touch/swipe (Standard: 0.5)', 'flexible-slider-carousel')}
-                    />
 
                     {animationType === 'slide' && (
                         <>
@@ -643,6 +597,83 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                             )}
                         </>
                     )}
+
+
+                    <SelectControl
+                        label={__('Animation Timing Function', 'flexible-slider-carousel')}
+                        value={animationTimingFunc || 'cubic-bezier(0.165, 0.840, 0.440, 1.000)'}
+                        options={[
+                            { label: __('Default (Smooth)', 'flexible-slider-carousel'), value: 'cubic-bezier(0.165, 0.840, 0.440, 1.000)' },
+                            { label: __('Linear', 'flexible-slider-carousel'), value: 'linear' },
+                            { label: __('Ease', 'flexible-slider-carousel'), value: 'ease' },
+                            { label: __('Ease-in', 'flexible-slider-carousel'), value: 'ease-in' },
+                            { label: __('Ease-out', 'flexible-slider-carousel'), value: 'ease-out' },
+                            { label: __('Ease-in-out', 'flexible-slider-carousel'), value: 'ease-in-out' }
+                        ]}
+                        onChange={(value) => setAttributes({ animationTimingFunc: value })}
+                        help={__('Standard: Default (Smooth)', 'flexible-slider-carousel')}
+                    />
+
+                    <RangeControl
+                        label={__('Animation Duration (ms)', 'flexible-slider-carousel')}
+                        value={animationDuration || 400}
+                        onChange={(value) => setAttributes({ animationDuration: value })}
+                        min={100}
+                        max={2000}
+                        step={50}
+                        help={__('Standard: 400ms', 'flexible-slider-carousel')}
+                    />
+
+
+                    {/* Focus Position removed - using Centered Slides instead */}
+
+                    <ToggleControl
+                        label={__('Centered Slides', 'flexible-slider-carousel')}
+                        checked={centeredSlides !== false}
+                        onChange={(value) => setAttributes({ centeredSlides: value })}
+                        help={__('Center the active slide (works great with 1.5+ frames)', 'flexible-slider-carousel')}
+                    />
+
+                    <ToggleControl
+                        label={__('Auto Play', 'flexible-slider-carousel')}
+                        checked={autoPlay}
+                        onChange={(value) => setAttributes({ autoPlay: value })}
+                    />
+
+                    {autoPlay && (
+                        <RangeControl
+                            label={__('Auto Play Speed (seconds)', 'flexible-slider-carousel')}
+                            value={autoPlaySpeed}
+                            onChange={(value) => setAttributes({ autoPlaySpeed: value })}
+                            min={1}
+                            max={10}
+                            step={0.5}
+                        />
+                    )}
+
+                    <ToggleControl
+                        label={__('Keyboard Navigation', 'flexible-slider-carousel')}
+                        checked={keyboard !== false}
+                        onChange={(value) => setAttributes({ keyboard: value })}
+                        help={__('Use arrow keys to navigate (Standard: Aktiviert)', 'flexible-slider-carousel')}
+                    />
+
+                    <ToggleControl
+                        label={__('Touch/Swipe Support', 'flexible-slider-carousel')}
+                        checked={touchSwipe}
+                        onChange={(value) => setAttributes({ touchSwipe: value })}
+                    />
+
+                    <RangeControl
+                        label={__('Touch/Swipe Sensitivity', 'flexible-slider-carousel')}
+                        value={touchRatio || 0.5}
+                        onChange={(value) => setAttributes({ touchRatio: value })}
+                        min={0.1}
+                        max={2.0}
+                        step={0.1}
+                        help={__('Higher values = more sensitive touch/swipe (Standard: 0.5)', 'flexible-slider-carousel')}
+                    />
+
 
                     <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #ddd' }}>
                         <Button
@@ -1259,143 +1290,81 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                 <div className="fsc-slider__preview">
                     <div className="fsc-slider__preview-header">
                         <h4>{__('Slider Preview', 'flexible-slider-carousel')}</h4>
-                        <div className="fsc-slider__preview-badges">
-                            <span className="fsc-slider__badge fsc-slider__badge--design">
-                                {sliderDesign ? sliderDesign.charAt(0).toUpperCase() + sliderDesign.slice(1) : 'Default'}
-                            </span>
-                        </div>
+
                     </div>
 
                     <div className="fsc-slider__preview-content">
                         <div className="fsc-slider__frames-container">
                             {/* Show only the configured number of frames in editor preview */}
-                            <div
-                                {...innerBlocksProps}
-                                style={{
-                                    display: 'flex',
-                                    gap: `${gap || 10}px`,
-                                    overflow: 'hidden',
-                                    width: '100%'
-                                }}
-                                className="fsc-slider__frames-editor"
-                                data-slides-to-show={slidesToShow?.desktop || 1}
-                            />
+                            <div className="swiper">
+                                <div
+                                    {...innerBlocksProps}
+                                    className="swiper-wrapper fsc-slider__frames-editor"
+                                    style={{
+                                        width: '100%'
+                                    }}
+                                />
+                                <style>
+                                    {`
+                                        [data-block="${clientId}"] .fsc-slider__frames-editor .fsc-frame {
+                                            width: 100%;
+                                            flex-shrink: 0;
+                                        }
+                                        [data-block="${clientId}"] .fsc-slider__frames-editor .fsc-frame {
+                                            width: calc((100% - ${((slidesToShow?.desktop || 1) - 1) * (gap || 10)}px) / ${slidesToShow?.desktop || 1}) !important;
+                                            min-width: calc((100% - ${((slidesToShow?.desktop || 1) - 1) * (gap || 10)}px) / ${slidesToShow?.desktop || 1}) !important;
+                                            max-width: calc((100% - ${((slidesToShow?.desktop || 1) - 1) * (gap || 10)}px) / ${slidesToShow?.desktop || 1}) !important;
+                                        }
+                                        [data-block="${clientId}"] .swiper-button-prev,
+                                        [data-block="${clientId}"] .swiper-button-next {
+                                            position: absolute !important;
+                                            top: 50% !important;
+                                            transform: translateY(-50%) !important;
+                                            z-index: 10 !important;
+                                            width: 40px !important;
+                                            height: 40px !important;
+                                            display: flex !important;
+                                            align-items: center !important;
+                                            justify-content: center !important;
+                                            border: none !important;
+                                            cursor: pointer !important;
+                                            font-size: 20px !important;
+                                            font-weight: bold !important;
+                                        }
+                                        [data-block="${clientId}"] .swiper-button-prev {
+                                            left: 10px !important;
+                                        }
+                                        [data-block="${clientId}"] .swiper-button-next {
+                                            right: 10px !important;
+                                        }
+                                    `}
+                                </style>
 
-                            {/* Apply slidesToShow styling to frames */}
-                            <style>
-                                {`
-                                    [data-block="${clientId}"] .fsc-slider__frames-editor .fsc-frame {
-                                        flex: 0 0 calc((100% - ${((slidesToShow?.desktop || 1) - 1) * (gap || 10)}px) / ${slidesToShow?.desktop || 1}) !important;
-                                        min-width: calc((100% - ${((slidesToShow?.desktop || 1) - 1) * (gap || 10)}px) / ${slidesToShow?.desktop || 1}) !important;
-                                        max-width: calc((100% - ${((slidesToShow?.desktop || 1) - 1) * (gap || 10)}px) / ${slidesToShow?.desktop || 1}) !important;
-                                    }
-                                `}
-                            </style>
-
-                            {/* Editor Navigation Arrows - Only show if enabled */}
-                            {showNavigation && (
-                                <>
-                                    <button
-                                        className="swiper-button-prev"
-                                        style={{
+                                {/* Swiper Navigation Arrows */}
+                                {showNavigation && (
+                                    <>
+                                        <div className="swiper-button-prev" style={{
                                             backgroundColor: arrowBackgroundColor || '#007cba',
-                                            color: arrowTextColor || '#ffffff',
-                                            position: 'absolute',
-                                            left: '10px',
-                                            top: '50%',
-                                            transform: 'translateY(-50%)',
-                                            zIndex: 10
-                                        }}
-                                        onClick={() => {
-                                            const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames-editor`);
-                                            if (framesContainer) {
-                                                const frameWidth = framesContainer.querySelector('.fsc-frame')?.offsetWidth || 0;
-                                                const currentGap = gap || 10;
-                                                const containerWidth = framesContainer.offsetWidth;
-
-                                                if (centeredSlides !== false) {
-                                                    // Center the previous frame
-                                                    const scrollPosition = framesContainer.scrollLeft - (frameWidth + currentGap);
-                                                    const centerOffset = (containerWidth - frameWidth) / 2;
-                                                    framesContainer.scrollLeft = scrollPosition - centerOffset;
-                                                } else {
-                                                    // Standard left-aligned scrolling
-                                                    framesContainer.scrollLeft -= (frameWidth + currentGap);
-                                                }
-                                            }
-                                        }}
-                                    >
-                                        ‹
-                                    </button>
-
-                                    <button
-                                        className="swiper-button-next"
-                                        style={{
+                                            color: arrowTextColor || '#ffffff'
+                                        }}></div>
+                                        <div className="swiper-button-next" style={{
                                             backgroundColor: arrowBackgroundColor || '#007cba',
-                                            color: arrowTextColor || '#ffffff',
-                                            position: 'absolute',
-                                            right: '10px',
-                                            top: '50%',
-                                            transform: 'translateY(-50%)',
-                                            zIndex: 10
-                                        }}
-                                        onClick={() => {
-                                            const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames-editor`);
-                                            if (framesContainer) {
-                                                const frameWidth = framesContainer.querySelector('.fsc-frame')?.offsetWidth || 0;
-                                                const currentGap = gap || 10;
-                                                const containerWidth = framesContainer.offsetWidth;
+                                            color: arrowTextColor || '#ffffff'
+                                        }}></div>
+                                    </>
+                                )}
 
-                                                if (centeredSlides !== false) {
-                                                    // Center the next frame
-                                                    const scrollPosition = framesContainer.scrollLeft + (frameWidth + currentGap);
-                                                    const centerOffset = (containerWidth - frameWidth) / 2;
-                                                    framesContainer.scrollLeft = scrollPosition - centerOffset;
-                                                } else {
-                                                    // Standard right-aligned scrolling
-                                                    framesContainer.scrollLeft += (frameWidth + currentGap);
-                                                }
-                                            }
-                                        }}
-                                    >
-                                        ›
-                                    </button>
-                                </>
-                            )}
+                                {/* Swiper Pagination */}
+                                {showDots && (
+                                    <div className="swiper-pagination" style={{
+                                        '--swiper-pagination-color': dotBackgroundColorActive || '#007cba',
+                                        '--swiper-pagination-bullet-inactive-color': dotBackgroundColor || '#dddddd'
+                                    }}></div>
+                                )}
+                            </div>
                         </div>
 
-                        {/* Editor Navigation Dots - Only show if enabled */}
-                        {showDots && (
-                            <div className="swiper-pagination">
-                                {Array.from({ length: Math.max(1, frameCount) }, (_, i) => (
-                                    <button
-                                        key={i}
-                                        className="swiper-pagination-bullet"
-                                        style={{
-                                            backgroundColor: dotBackgroundColor || '#007cba'
-                                        }}
-                                        onClick={() => {
-                                            const framesContainer = document.querySelector(`[data-block="${clientId}"] .fsc-slider__frames-editor`);
-                                            if (framesContainer) {
-                                                const frameWidth = framesContainer.querySelector('.fsc-frame')?.offsetWidth || 0;
-                                                const currentGap = gap || 10;
-                                                const containerWidth = framesContainer.offsetWidth;
 
-                                                if (centeredSlides !== false) {
-                                                    // Center the target frame
-                                                    const targetScroll = i * (frameWidth + currentGap);
-                                                    const centerOffset = (containerWidth - frameWidth) / 2;
-                                                    framesContainer.scrollLeft = targetScroll - centerOffset;
-                                                } else {
-                                                    // Standard left-aligned scrolling
-                                                    framesContainer.scrollLeft = i * (frameWidth + currentGap);
-                                                }
-                                            }
-                                        }}
-                                    />
-                                ))}
-                            </div>
-                        )}
 
                         {/* Editor Text Navigation Below Slider */}
                         {showTextNavigation && textNavigationPosition === 'below' && (
@@ -1446,7 +1415,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                     <div className="fsc-slider__preview-info">
                         <p><strong>{__('Configuration:', 'flexible-slider-carousel')}</strong></p>
                         <ul>
-                            <li>{__('Design:', 'flexible-slider-carousel')} {sliderDesign || 'Default'}</li>
+
                             <li>{__('Content:', 'flexible-slider-carousel')} {__('Manual Frames', 'flexible-slider-carousel')}</li>
                             <li>{__('Animation:', 'flexible-slider-carousel')} {/* transition */}</li>
                             {autoPlay && <li>{__('Auto Play:', 'flexible-slider-carousel')} {autoPlaySpeed}s</li>}

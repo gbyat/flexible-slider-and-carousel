@@ -334,6 +334,11 @@ import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, Eff
                     modules.push(Autoplay);
                 }
 
+                // Add Keyboard module if keyboard navigation is enabled
+                if (this.settings.keyboard) {
+                    modules.push(Keyboard);
+                }
+
                 // Add Grid module if multiple rows are configured
                 if (this.settings.gridRows > 1) {
                     modules.push(Grid);

@@ -1,3 +1,14 @@
+## 2025-09-01 14:54:19 - Release v1.2.0
+
+### Changed Files:
+- `.gitattributes`
+- `.gitignore`
+- `package.json`
+- `scripts/backup.js`
+- `src/slider/block.json`
+- `src/slider/frontend.js`
+- `src/slider/index.js`
+
 ## 2025-08-18 13:21:39 - 1.2.0
 
 ### Changed Files:

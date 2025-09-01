@@ -30,10 +30,7 @@
     }
   },
   "attributes": {
-    "sliderDesign": {
-      "type": "string",
-      "default": "default"
-    },
+
     "autoPlay": {
       "type": "boolean",
       "default": false
