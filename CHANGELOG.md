@@ -1,3 +1,8 @@
+## 2025-09-03 18:24:27 - Prepare release
+
+### Changed Files:
+- `package.json`
+
 ## 2025-09-03 18:24:26 - Release v$(node -p 'require(./package.json).version')
 
 ### Changed Files:
