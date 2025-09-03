@@ -1,3 +1,8 @@
+## 2025-09-03 11:32:51 - Prepare release
+
+### Changed Files:
+- `package.json`
+
 ## 2025-09-03 11:32:50 - Release
 
 ### Changed Files:
