@@ -36,7 +36,7 @@ class FSC_Assets
     public function enqueue_admin_assets($hook)
     {
         // Nur auf Plugin-Seiten laden
-        if (strpos($hook, 'flexible-slider-carousel') !== false) {
+        if (strpos($hook, 'flexible-slider-and-carousel') !== false) {
             // WordPress Color Picker
             wp_enqueue_style('wp-color-picker');
             wp_enqueue_script('wp-color-picker');

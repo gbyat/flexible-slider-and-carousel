@@ -1,3 +1,29 @@
+## 2025-09-03 11:32:50 - Release
+
+### Changed Files:
+- `.gitignore`
+- `flexible-slider-and-carousel.php`
+- `includes/class-fsc-assets.php`
+- `includes/class-fsc-post-loader.php`
+- `includes/class-fsc-utilities.php`
+- `languages/flexible-slider-and-carousel-de_DE-0dcf940976531614c705359e3ee9679b.json`
+- `languages/flexible-slider-and-carousel-de_DE.json`
+- `languages/flexible-slider-and-carousel-de_DE.mo`
+- `languages/flexible-slider-and-carousel-de_DE.po`
+- `languages/flexible-slider-and-carousel.pot`
+- `package.json`
+- `scripts/create-pot.js`
+- `scripts/hash-json.js`
+- `scripts/po-to-jed.js`
+- `scripts/po-to-mo.js`
+- `src/frame/block.json`
+- `src/frame/index.js`
+- `src/slider/block.json`
+- `src/slider/frontend.css`
+- `src/slider/frontend.js`
+- `src/slider/index.js`
+- `src/slider/render.php`
+
 ## 2025-09-01 14:54:22 - 1.3.0
 
 ### Changed Files:

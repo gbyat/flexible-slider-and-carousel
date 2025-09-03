@@ -88,6 +88,11 @@ $dot_background_color = isset($attributes['dotBackgroundColor']) ? $attributes['
 $dot_background_color_hover = isset($attributes['dotBackgroundColorHover']) ? $attributes['dotBackgroundColorHover'] : '#00a0d2';
 $dot_background_color_active = isset($attributes['dotBackgroundColorActive']) ? $attributes['dotBackgroundColorActive'] : '#007cba';
 
+// Arrow sizing
+$arrow_size = isset($attributes['arrowSize']) ? $attributes['arrowSize'] : 40;
+$arrow_padding = isset($attributes['arrowPadding']) ? $attributes['arrowPadding'] : 10;
+$arrow_border_radius = isset($attributes['arrowBorderRadius']) ? $attributes['arrowBorderRadius'] : 4;
+
 // Tab Styling settings
 $tab_font_size = isset($attributes['tabFontSize']) ? $attributes['tabFontSize'] : 14;
 $tab_font_weight = isset($attributes['tabFontWeight']) ? $attributes['tabFontWeight'] : 'normal';
@@ -160,6 +165,9 @@ wp_enqueue_style('swiper-bundle', $swiper_css_url, array(), '11.2.10');
     data-dot-background-color="<?php echo esc_attr($dot_background_color); ?>"
     data-dot-background-color-hover="<?php echo esc_attr($dot_background_color_hover); ?>"
     data-dot-background-color-active="<?php echo esc_attr($dot_background_color_active); ?>"
+    data-arrow-size="<?php echo esc_attr($arrow_size); ?>"
+    data-arrow-padding="<?php echo esc_attr($arrow_padding); ?>"
+    data-arrow-border-radius="<?php echo esc_attr($arrow_border_radius); ?>"
     data-auto-play="<?php echo esc_attr($auto_play ? 'true' : 'false'); ?>"
     data-auto-play-speed="<?php echo esc_attr($auto_play_speed); ?>"
     data-responsive-desktop-padding="<?php echo esc_attr($responsive_settings['desktop']['innerPadding']); ?>"

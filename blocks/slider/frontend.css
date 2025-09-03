@@ -22,6 +22,12 @@
     border-radius: 4px;
 }
 
+/* Hide Swiper's default pseudo-element so our text arrows are visible */
+.swiper-button-prev::after,
+.swiper-button-next::after {
+    content: none !important;
+}
+
 .swiper-button-prev:hover,
 .swiper-button-next:hover {
     background-color: var(--arrow-background-color-hover, #005a87) !important;

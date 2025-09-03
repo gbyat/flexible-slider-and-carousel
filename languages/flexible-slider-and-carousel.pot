@@ -1,0 +1,842 @@
+# Copyright (C) 2024 Flexible Slider and Carousel
+# This file is distributed under the same license as the Flexible Slider and Carousel package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Flexible Slider and Carousel 1.3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-09-03 08:17:11+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_x;_ex;_n;_nx;esc_attr__;esc_html__;esc_attr_e;esc_html_e;_n_noop;_nx_noop\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: includes\n"
+"X-Poedit-SearchPath-2: src\n"
+
+#: includes/class-fsc-admin.php:182
+msgid "%s Margin (px)"
+msgstr ""
+
+#: includes/class-fsc-admin.php:173
+msgid "%s Padding (px)"
+msgstr ""
+
+#: src/slider/index.js:1619
+msgid "10 = 1.0 frames, 15 = 1.5 frames, 23 = 2.3 frames, etc. Use for precise peek control."
+msgstr ""
+
+#: src/slider/index.js:739
+msgid "Above Slider"
+msgstr ""
+
+#: includes/class-fsc-admin.php:338
+msgid "Actions"
+msgstr ""
+
+#: src/slider/index.js:180
+msgid "Add Frame"
+msgstr ""
+
+#: src/slider/index.js:465
+msgid "Add frames manually using the + button below to create your slider content."
+msgstr ""
+
+#: includes/class-fsc-admin.php:432
+msgid "All sliders optimized successfully!"
+msgstr ""
+
+#: includes/class-fsc-admin.php:433
+msgid "An error occurred. Please try again."
+msgstr ""
+
+#: src/slider/index.js:539
+msgid "Animation & Behavior"
+msgstr ""
+
+#: src/slider/index.js:572
+msgid "Animation Direction"
+msgstr ""
+
+#: src/slider/index.js:626
+msgid "Animation Duration (ms)"
+msgstr ""
+
+#: src/slider/index.js:611
+msgid "Animation Timing Function"
+msgstr ""
+
+#: src/slider/index.js:552
+msgid "Animation Type"
+msgstr ""
+
+#: src/slider/index.js:1470
+msgid "Animation:"
+msgstr ""
+
+#: src/slider/index.js:1125
+msgid "Arrow Border Radius (px)"
+msgstr ""
+
+#: src/slider/index.js:1078
+msgid "Arrow Color"
+msgstr ""
+
+#: src/slider/index.js:1015
+msgid "Arrow Colors"
+msgstr ""
+
+#: src/slider/index.js:1117
+msgid "Arrow Padding (px)"
+msgstr ""
+
+#: src/slider/index.js:1109
+msgid "Arrow Size (px)"
+msgstr ""
+
+#: src/slider/index.js:1107
+msgid "Arrow Styling"
+msgstr ""
+
+#: src/slider/index.js:1472
+msgid "Arrows"
+msgstr ""
+
+#: src/slider/index.js:1532
+msgid "Ascending"
+msgstr ""
+
+#: src/slider/index.js:646
+msgid "Auto Play"
+msgstr ""
+
+#: src/slider/index.js:653
+msgid "Auto Play Speed (seconds)"
+msgstr ""
+
+#: src/slider/index.js:1471
+msgid "Auto Play:"
+msgstr ""
+
+#: src/slider/index.js:815
+msgid "Background Color"
+msgstr ""
+
+#: src/slider/index.js:907
+msgid "Background Color (Active)"
+msgstr ""
+
+#: src/slider/index.js:1048
+msgid "Background Color (Hover)"
+msgstr ""
+
+#: src/slider/index.js:1136
+msgid "Background Color (Normal)"
+msgstr ""
+
+#: src/slider/index.js:740
+msgid "Below Slider"
+msgstr ""
+
+#: src/slider/index.js:774
+msgid "Bold"
+msgstr ""
+
+#: src/slider/index.js:499
+msgid "Border Color"
+msgstr ""
+
+#: src/slider/index.js:937
+msgid "Border Color (Active)"
+msgstr ""
+
+#: src/slider/index.js:479
+msgid "Border Radius (px)"
+msgstr ""
+
+#: src/slider/index.js:489
+msgid "Border Width (px)"
+msgstr ""
+
+#: src/slider/index.js:529
+msgid "Box Shadow"
+msgstr ""
+
+#: src/slider/index.js:1004
+msgid "Box Shadow (Active)"
+msgstr ""
+
+#: includes/class-fsc-admin.php:290
+msgid "Build your slider by adding Frame blocks inside"
+msgstr ""
+
+#: includes/class-fsc-post-loader.php:390
+msgid "By"
+msgstr ""
+
+#: src/slider/index.js:561
+msgid "Cards"
+msgstr ""
+
+#: src/slider/index.js:544
+msgid "Carousel (Endless Loop)"
+msgstr ""
+
+#: src/slider/index.js:548
+msgid "Carousel loops endlessly, Slider stops at boundaries (Standard: Carousel)"
+msgstr ""
+
+#: includes/class-fsc-post-loader.php:421
+msgid "Categories"
+msgstr ""
+
+#: src/slider/index.js:754
+msgid "Center"
+msgstr ""
+
+#: src/slider/index.js:642
+msgid "Center the active slide (works great with 1.5+ frames)"
+msgstr ""
+
+#: src/slider/index.js:639
+msgid "Centered Slides"
+msgstr ""
+
+#: src/slider/index.js:509
+msgid "Clear"
+msgstr ""
+
+#: includes/class-fsc-admin.php:430
+msgid "Configuration exported successfully!"
+msgstr ""
+
+#: includes/class-fsc-admin.php:431
+msgid "Configuration imported successfully!"
+msgstr ""
+
+#: src/slider/index.js:1466
+msgid "Configuration:"
+msgstr ""
+
+#: includes/class-fsc-admin.php:682
+msgid "Configure default animation settings."
+msgstr ""
+
+#: includes/class-fsc-admin.php:677
+msgid "Configure default breakpoints for responsive design."
+msgstr ""
+
+#: includes/class-fsc-admin.php:667
+msgid "Configure default colors for navigation elements."
+msgstr ""
+
+#: includes/class-fsc-admin.php:672
+msgid "Configure default layout settings for different screen sizes."
+msgstr ""
+
+#: includes/class-fsc-admin.php:289
+msgid "Configure your slider settings in the block sidebar"
+msgstr ""
+
+#: includes/class-fsc-admin.php:336
+msgid "Content Mode"
+msgstr ""
+
+#: src/slider/index.js:1469
+msgid "Content:"
+msgstr ""
+
+#: src/slider/index.js:558
+msgid "Coverflow"
+msgstr ""
+
+#: src/slider/index.js:559
+msgid "Creative (1 Frame)"
+msgstr ""
+
+#: src/slider/index.js:1000
+msgid "CSS box-shadow value (e.g., 0 2px 4px rgba(0,0,0,0.1))"
+msgstr ""
+
+#: src/slider/index.js:1008
+msgid "CSS box-shadow value for active state"
+msgstr ""
+
+#: src/slider/index.js:560
+msgid "Cube (1 Frame)"
+msgstr ""
+
+#: src/slider/index.js:1519
+msgid "Date"
+msgstr ""
+
+#: src/slider/index.js:614
+msgid "Default (Smooth)"
+msgstr ""
+
+#: includes/class-fsc-admin.php:117
+msgid "Default Animations"
+msgstr ""
+
+#: includes/class-fsc-admin.php:110
+msgid "Default Breakpoints"
+msgstr ""
+
+#: includes/class-fsc-admin.php:96
+msgid "Default Colors"
+msgstr ""
+
+#: includes/class-fsc-admin.php:245
+msgid "Default Easing"
+msgstr ""
+
+#: includes/class-fsc-admin.php:103
+msgid "Default Layout"
+msgstr ""
+
+#: includes/class-fsc-admin.php:236
+msgid "Default Speed (ms)"
+msgstr ""
+
+#: includes/class-fsc-admin.php:221
+msgid "Default Transition"
+msgstr ""
+
+#: src/slider/index.js:632
+msgid "Default: 400ms"
+msgstr ""
+
+#: src/slider/index.js:622
+msgid "Default: Default (Smooth)"
+msgstr ""
+
+#: src/slider/index.js:1531
+msgid "Descending"
+msgstr ""
+
+#: includes/class-fsc-admin.php:193
+msgid "Desktop Breakpoint (px)"
+msgstr ""
+
+#: src/slider/index.js:579
+msgid "Direction of slide movement (default: horizontal)"
+msgstr ""
+
+#: src/slider/index.js:1133
+msgid "Dot Colors"
+msgstr ""
+
+#: src/slider/index.js:1472
+msgid "Dots"
+msgstr ""
+
+#: includes/class-fsc-utilities.php:79
+msgid "Ease"
+msgstr ""
+
+#: includes/class-fsc-admin.php:253
+msgid "Ease In"
+msgstr ""
+
+#: includes/class-fsc-admin.php:252
+msgid "Ease In Out"
+msgstr ""
+
+#: includes/class-fsc-admin.php:254
+msgid "Ease Out"
+msgstr ""
+
+#: src/slider/index.js:617
+msgid "Ease-in"
+msgstr ""
+
+#: src/slider/index.js:619
+msgid "Ease-in-out"
+msgstr ""
+
+#: src/slider/index.js:618
+msgid "Ease-out"
+msgstr ""
+
+#: includes/class-fsc-admin.php:355
+msgid "Edit"
+msgstr ""
+
+#: src/frame/index.js:38
+msgid "Enter frame title..."
+msgstr ""
+
+#: includes/class-fsc-admin.php:381
+msgid "Export"
+msgstr ""
+
+#: includes/class-fsc-admin.php:382
+msgid "Export all slider configurations and settings to a JSON file."
+msgstr ""
+
+#: includes/class-fsc-admin.php:384
+msgid "Export Configuration"
+msgstr ""
+
+#: includes/class-fsc-admin.php:229
+msgid "Fade"
+msgstr ""
+
+#: includes/class-fsc-admin.php:44
+msgid "Flexible Slider & Carousel"
+msgstr ""
+
+#: flexible-slider-and-carousel.php:65
+msgid "Flexible Slider and Carousel requires Gutenberg to be available."
+msgstr ""
+
+#: flexible-slider-and-carousel.php:40
+msgid "Flexible Slider and Carousel requires PHP version 8.1 or higher. You are running version %s."
+msgstr ""
+
+#: flexible-slider-and-carousel.php:53
+msgid "Flexible Slider and Carousel requires WordPress version 6.5 or higher. You are running version %s."
+msgstr ""
+
+#: includes/class-fsc-utilities.php:69
+msgid "Flip"
+msgstr ""
+
+#: src/slider/index.js:557
+msgid "Flip (1 Frame)"
+msgstr ""
+
+#: src/slider/index.js:761
+msgid "Font Size (px)"
+msgstr ""
+
+#: src/slider/index.js:770
+msgid "Font Weight"
+msgstr ""
+
+#: src/slider/index.js:1278
+msgid "Frame"
+msgstr ""
+
+#: src/slider/index.js:495
+msgid "Frame border thickness (Standard: 0px)"
+msgstr ""
+
+#: src/slider/index.js:468
+msgid "Frame Styling"
+msgstr ""
+
+#: src/frame/index.js:32
+msgid "Frame Title"
+msgstr ""
+
+#: src/slider/index.js:470
+msgid "Gap Between Frames (px)"
+msgstr ""
+
+#: includes/class-fsc-admin.php:287
+msgid "Go to any page or post editor"
+msgstr ""
+
+#: src/slider/index.js:682
+msgid "Higher values = more sensitive touch/swipe (Standard: 0.5)"
+msgstr ""
+
+#: src/slider/index.js:575
+msgid "Horizontal (Default)"
+msgstr ""
+
+#: includes/class-fsc-admin.php:389
+msgid "Import"
+msgstr ""
+
+#: includes/class-fsc-admin.php:393
+msgid "Import Configuration"
+msgstr ""
+
+#: includes/class-fsc-admin.php:390
+msgid "Import slider configurations from a previously exported JSON file."
+msgstr ""
+
+#: includes/class-fsc-admin.php:73
+msgid "Import/Export"
+msgstr ""
+
+#: includes/class-fsc-admin.php:377
+msgid "Import/Export Slider Configurations"
+msgstr ""
+
+#: src/slider/index.js:1582
+msgid "Inner Padding (px)"
+msgstr ""
+
+#: src/slider/index.js:1238
+msgid "Intersection Observer"
+msgstr ""
+
+#: src/slider/index.js:663
+msgid "Keyboard Navigation"
+msgstr ""
+
+#: src/slider/index.js:1232
+msgid "Lazy Loading"
+msgstr ""
+
+#: src/slider/index.js:753
+msgid "Left"
+msgstr ""
+
+#: src/slider/index.js:775
+msgid "Light"
+msgstr ""
+
+#: includes/class-fsc-admin.php:255
+msgid "Linear"
+msgstr ""
+
+#: includes/class-fsc-admin.php:335
+msgid "Location"
+msgstr ""
+
+#: src/slider/index.js:1469
+msgid "Manual Frames"
+msgstr ""
+
+#: src/slider/index.js:776
+msgid "Medium"
+msgstr ""
+
+#: src/slider/index.js:1521
+msgid "Menu Order"
+msgstr ""
+
+#: src/slider/index.js:1572
+msgid "Min Width (px)"
+msgstr ""
+
+#: src/slider/index.js:714
+msgid "Navigation"
+msgstr ""
+
+#: src/slider/index.js:716
+msgid "Navigation Arrows"
+msgstr ""
+
+#: src/slider/index.js:1014
+msgid "Navigation Colors"
+msgstr ""
+
+#: src/slider/index.js:722
+msgid "Navigation Dots"
+msgstr ""
+
+#: includes/class-fsc-admin.php:161
+msgid "Navigation Hidden Color"
+msgstr ""
+
+#: includes/class-fsc-admin.php:143
+msgid "Navigation Hover Color"
+msgstr ""
+
+#: includes/class-fsc-admin.php:152
+msgid "Navigation Inactive Color"
+msgstr ""
+
+#: includes/class-fsc-admin.php:134
+msgid "Navigation Normal Color"
+msgstr ""
+
+#: src/frame/index.js:34
+msgid "Navigation Title"
+msgstr ""
+
+#: src/slider/index.js:1472
+msgid "Navigation:"
+msgstr ""
+
+#: includes/class-fsc-admin.php:595
+msgid "No configuration provided."
+msgstr ""
+
+#: includes/class-fsc-post-loader.php:498
+msgid "No posts found matching your criteria."
+msgstr ""
+
+#: includes/class-fsc-post-loader.php:73
+msgid "No query parameters provided."
+msgstr ""
+
+#: includes/class-fsc-admin.php:527
+msgid "No settings provided."
+msgstr ""
+
+#: src/slider/index.js:773
+msgid "Normal"
+msgstr ""
+
+#: src/slider/index.js:1241
+msgid "Only load slider when it comes into view"
+msgstr ""
+
+#: includes/class-fsc-admin.php:402
+msgid "Optimize All Sliders"
+msgstr ""
+
+#: includes/class-fsc-admin.php:400
+msgid "Optimize all sliders for better performance."
+msgstr ""
+
+#: src/slider/index.js:1528
+msgid "Order"
+msgstr ""
+
+#: src/slider/index.js:1516
+msgid "Order By"
+msgstr ""
+
+#: src/slider/index.js:969
+msgid "Padding (px)"
+msgstr ""
+
+#: src/slider/index.js:1588
+msgid "Padding inside frames (Standard: 10px)"
+msgstr ""
+
+#: src/slider/index.js:1230
+msgid "Performance & SEO"
+msgstr ""
+
+#: includes/class-fsc-admin.php:399
+msgid "Performance Optimization"
+msgstr ""
+
+#: includes/class-fsc-admin.php:211
+msgid "Phone Breakpoint (px)"
+msgstr ""
+
+#: src/slider/index.js:1497
+msgid "Post Type"
+msgstr ""
+
+#: src/slider/index.js:1507
+msgid "Posts Per Page"
+msgstr ""
+
+#: includes/class-fsc-admin.php:284
+msgid "Quick Start Guide"
+msgstr ""
+
+#: src/slider/index.js:1522
+msgid "Random"
+msgstr ""
+
+#: src/slider/index.js:706
+msgid "Reset to default values"
+msgstr ""
+
+#: src/slider/index.js:709
+msgid "Resets all Swiper.js options to default values."
+msgstr ""
+
+#: src/slider/index.js:1245
+msgid "Responsive Settings"
+msgstr ""
+
+#: src/slider/index.js:755
+msgid "Right"
+msgstr ""
+
+#: src/slider/index.js:485
+msgid "Rounded corners for frames (Standard: 8px)"
+msgstr ""
+
+#: src/slider/index.js:777
+msgid "Semi Bold"
+msgstr ""
+
+#: includes/class-fsc-admin.php:55
+msgid "Settings"
+msgstr ""
+
+#: includes/class-fsc-admin.php:537
+msgid "Settings saved successfully!"
+msgstr ""
+
+#: src/slider/index.js:731
+msgid "Show frame titles as navigation tabs"
+msgstr ""
+
+#: includes/class-fsc-admin.php:228
+msgid "Slide"
+msgstr ""
+
+#: src/slider/index.js:555
+msgid "Slide (Standard)"
+msgstr ""
+
+#: src/slider/index.js:545
+msgid "Slider (Finite)"
+msgstr ""
+
+#: includes/class-fsc-admin.php:45
+msgid "Slider & Carousel"
+msgstr ""
+
+#: includes/class-fsc-admin.php:333
+msgid "Slider ID"
+msgstr ""
+
+#: src/slider/index.js:211
+msgid "Slider must have at least one frame."
+msgstr ""
+
+#: includes/class-fsc-admin.php:64
+msgid "Slider Overview"
+msgstr ""
+
+#: src/slider/index.js:1326
+msgid "Slider Preview"
+msgstr ""
+
+#: src/slider/index.js:463
+msgid "Slider Settings"
+msgstr ""
+
+#: src/slider/index.js:541
+msgid "Slider Type"
+msgstr ""
+
+#: src/slider/index.js:1623
+msgid "Slides To Scroll"
+msgstr ""
+
+#: src/slider/index.js:1602
+msgid "Slides To Scroll (Fixed at 1 for 3D effects)"
+msgstr ""
+
+#: src/slider/index.js:1613
+msgid "Slides To Show"
+msgstr ""
+
+#: src/slider/index.js:1594
+msgid "Slides To Show (Fixed at 1 for 3D effects)"
+msgstr ""
+
+#: src/slider/index.js:476
+msgid "Space between individual frames (Standard: 10px)"
+msgstr ""
+
+#: src/slider/index.js:875
+msgid "Tab Colors - Active State"
+msgstr ""
+
+#: src/slider/index.js:783
+msgid "Tab Colors - Normal State"
+msgstr ""
+
+#: src/slider/index.js:967
+msgid "Tab Layout & Effects"
+msgstr ""
+
+#: src/slider/index.js:748
+msgid "Tab Typography"
+msgstr ""
+
+#: includes/class-fsc-admin.php:202
+msgid "Tablet Breakpoint (px)"
+msgstr ""
+
+#: includes/class-fsc-post-loader.php:451
+msgid "Tags"
+msgstr ""
+
+#: src/slider/index.js:1472
+msgid "Text"
+msgstr ""
+
+#: src/slider/index.js:750
+msgid "Text Align"
+msgstr ""
+
+#: src/slider/index.js:785
+msgid "Text Color"
+msgstr ""
+
+#: src/slider/index.js:877
+msgid "Text Color (Active)"
+msgstr ""
+
+#: src/slider/index.js:728
+msgid "Text Navigation"
+msgstr ""
+
+#: src/slider/index.js:736
+msgid "Text Navigation Position"
+msgstr ""
+
+#: src/frame/index.js:37
+msgid "This title will be used in the text navigation. Leave empty to use content from the frame."
+msgstr ""
+
+#: src/slider/index.js:1520
+msgid "Title"
+msgstr ""
+
+#: includes/class-fsc-admin.php:285
+msgid "To create a slider or carousel:"
+msgstr ""
+
+#: includes/class-fsc-admin.php:320
+msgid "Total Sliders"
+msgstr ""
+
+#: includes/class-fsc-admin.php:325
+msgid "Total Views"
+msgstr ""
+
+#: src/slider/index.js:676
+msgid "Touch/Swipe Sensitivity"
+msgstr ""
+
+#: src/slider/index.js:670
+msgid "Touch/Swipe Support"
+msgstr ""
+
+#: includes/class-fsc-admin.php:334
+msgid "Type"
+msgstr ""
+
+#: src/slider/index.js:564
+msgid "Type of slide animation (default: Slide)"
+msgstr ""
+
+#: src/slider/index.js:666
+msgid "Use arrow keys to navigate (Default: Enabled)"
+msgstr ""
+
+#: src/slider/index.js:576
+msgid "Vertical"
+msgstr ""
+
+#: includes/class-fsc-admin.php:337
+msgid "Views"
+msgstr ""
+
+#: includes/class-fsc-admin.php:267
+msgid "You do not have sufficient permissions to access this page."
+msgstr ""
+
+#: includes/class-fsc-admin.php:521
+msgid "You do not have sufficient permissions to perform this action."
+msgstr ""
+
+#: includes/class-fsc-utilities.php:68
+msgid "Zoom"
+msgstr ""
+

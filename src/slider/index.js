@@ -87,6 +87,10 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
         arrowBackgroundColor,
         arrowBackgroundColorHover,
         arrowTextColor,
+        // Arrow Sizing
+        arrowSize,
+        arrowPadding,
+        arrowBorderRadius,
         dotBackgroundColor,
         dotBackgroundColorHover,
         dotBackgroundColorActive,
@@ -134,6 +138,10 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
         'data-dot-background-color': dotBackgroundColor || '#dddddd',
         'data-dot-background-color-hover': dotBackgroundColorHover || '#00a0d2',
         'data-dot-background-color-active': dotBackgroundColorActive || '#007cba',
+        // Arrow sizing
+        'data-arrow-size': arrowSize !== undefined ? arrowSize : 40,
+        'data-arrow-padding': arrowPadding !== undefined ? arrowPadding : 10,
+        'data-arrow-border-radius': arrowBorderRadius !== undefined ? arrowBorderRadius : 4,
         // Tab Colors
         'data-tab-text-color': tabTextColor || '#333333',
         'data-tab-text-color-hover': tabTextColorHover || '#ffffff',
@@ -169,7 +177,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                             wp.data.dispatch('core/block-editor').insertBlock(newFrame, undefined, clientId);
                         }}
                     >
-                        {__('Add Frame', 'flexible-slider-carousel')}
+                        {__('Add Frame', 'flexible-slider-and-carousel')}
                     </Button>
                 </div>
             )
@@ -200,7 +208,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
     // Validate minimum frames
     useEffect(() => {
         if (frameCount < 1) {
-            setError(__('Slider must have at least one frame.', 'flexible-slider-carousel'));
+            setError(__('Slider must have at least one frame.', 'flexible-slider-and-carousel'));
         } else {
             setError('');
         }
@@ -452,43 +460,43 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
             </BlockControls>
 
             <InspectorControls>
-                <PanelBody title={__('Slider Settings', 'flexible-slider-carousel')} initialOpen={true}>
+                <PanelBody title={__('Slider Settings', 'flexible-slider-and-carousel')} initialOpen={true}>
                     <div className="fsc-slider__info">
-                        <p>{__('Add frames manually using the + button below to create your slider content.', 'flexible-slider-carousel')}</p>
+                        <p>{__('Add frames manually using the + button below to create your slider content.', 'flexible-slider-and-carousel')}</p>
                     </div>
 
-                    <h4>{__('Frame Styling', 'flexible-slider-carousel')}</h4>
+                    <h4>{__('Frame Styling', 'flexible-slider-and-carousel')}</h4>
                     <RangeControl
-                        label={__('Gap Between Frames (px)', 'flexible-slider-carousel')}
+                        label={__('Gap Between Frames (px)', 'flexible-slider-and-carousel')}
                         value={gap !== undefined ? gap : 10}
                         onChange={(value) => setAttributes({ gap: value })}
                         min={0}
                         max={50}
                         step={1}
-                        help={__('Space between individual frames (Standard: 10px)', 'flexible-slider-carousel')}
+                        help={__('Space between individual frames (Standard: 10px)', 'flexible-slider-and-carousel')}
                     />
                     <RangeControl
-                        label={__('Border Radius (px)', 'flexible-slider-carousel')}
+                        label={__('Border Radius (px)', 'flexible-slider-and-carousel')}
                         value={frameBorderRadius !== undefined ? frameBorderRadius : 8}
                         onChange={(value) => setAttributes({ frameBorderRadius: value })}
                         min={0}
                         max={50}
                         step={1}
-                        help={__('Rounded corners for frames (Standard: 8px)', 'flexible-slider-carousel')}
+                        help={__('Rounded corners for frames (Standard: 8px)', 'flexible-slider-and-carousel')}
                     />
 
                     <RangeControl
-                        label={__('Border Width (px)', 'flexible-slider-carousel')}
+                        label={__('Border Width (px)', 'flexible-slider-and-carousel')}
                         value={frameBorderWidth !== undefined ? frameBorderWidth : 0}
                         onChange={(value) => setAttributes({ frameBorderWidth: value })}
                         min={0}
                         max={10}
                         step={1}
-                        help={__('Frame border thickness (Standard: 0px)', 'flexible-slider-carousel')}
+                        help={__('Frame border thickness (Standard: 0px)', 'flexible-slider-and-carousel')}
                     />
 
                     <div className="fsc-color-control">
-                        <label className="components-base-control__label">{__('Border Color', 'flexible-slider-carousel')}</label>
+                        <label className="components-base-control__label">{__('Border Color', 'flexible-slider-and-carousel')}</label>
                         <div className="fsc-color-indicator-wrapper">
                             <ColorIndicator
                                 colorValue={frameBorderColor}
@@ -498,7 +506,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                 className="fsc-color-button"
                                 onClick={() => setAttributes({ frameBorderColor: undefined })}
                             >
-                                {__('Clear', 'flexible-slider-carousel')}
+                                {__('Clear', 'flexible-slider-and-carousel')}
                             </Button>
                         </div>
                         {activeColorPicker === 'frameBorderColor' && (
@@ -518,42 +526,42 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                     </div>
 
                     <TextControl
-                        label={__('Box Shadow', 'flexible-slider-carousel')}
+                        label={__('Box Shadow', 'flexible-slider-and-carousel')}
                         value={frameBoxShadow || 'none'}
                         onChange={(value) => setAttributes({ frameBoxShadow: value })}
-                        help={__('CSS box-shadow value (e.g., "0 2px 8px rgba(0,0,0,0.1)" or "none")', 'flexible-slider-carousel')}
+                        help={__('CSS box-shadow value (e.g., "0 2px 8px rgba(0,0,0,0.1)" or "none")', 'flexible-slider-and-carousel')}
                         placeholder="none"
                     />
 
 
                 </PanelBody>
 
-                <PanelBody title={__('Animation & Behavior', 'flexible-slider-carousel')} initialOpen={false}>
+                <PanelBody title={__('Animation & Behavior', 'flexible-slider-and-carousel')} initialOpen={false}>
                     <SelectControl
-                        label={__('Slider Type', 'flexible-slider-carousel')}
+                        label={__('Slider Type', 'flexible-slider-and-carousel')}
                         value={sliderType || 'carousel'}
                         options={[
-                            { label: __('Carousel (Endless Loop)', 'flexible-slider-carousel'), value: 'carousel' },
-                            { label: __('Slider (Finite)', 'flexible-slider-carousel'), value: 'slider' }
+                            { label: __('Carousel (Endless Loop)', 'flexible-slider-and-carousel'), value: 'carousel' },
+                            { label: __('Slider (Finite)', 'flexible-slider-and-carousel'), value: 'slider' }
                         ]}
                         onChange={(value) => setAttributes({ sliderType: value })}
-                        help={__('Carousel loops endlessly, Slider stops at boundaries (Standard: Carousel)', 'flexible-slider-carousel')}
+                        help={__('Carousel loops endlessly, Slider stops at boundaries (Standard: Carousel)', 'flexible-slider-and-carousel')}
                     />
 
                     <SelectControl
-                        label={__('Animation Type', 'flexible-slider-carousel')}
+                        label={__('Animation Type', 'flexible-slider-and-carousel')}
                         value={animationType || 'slide'}
                         options={[
-                            { label: __('Slide (Standard)', 'flexible-slider-carousel'), value: 'slide' },
-                            { label: __('Fade', 'flexible-slider-carousel'), value: 'fade' },
-                            { label: __('Flip (1 Frame)', 'flexible-slider-carousel'), value: 'flip' },
-                            { label: __('Coverflow', 'flexible-slider-carousel'), value: 'coverflow' },
-                            { label: __('Creative (1 Frame)', 'flexible-slider-carousel'), value: 'creative' },
-                            { label: __('Cube (1 Frame)', 'flexible-slider-carousel'), value: 'cube' },
-                            { label: __('Cards', 'flexible-slider-carousel'), value: 'cards' }
+                            { label: __('Slide (Standard)', 'flexible-slider-and-carousel'), value: 'slide' },
+                            { label: __('Fade', 'flexible-slider-and-carousel'), value: 'fade' },
+                            { label: __('Flip (1 Frame)', 'flexible-slider-and-carousel'), value: 'flip' },
+                            { label: __('Coverflow', 'flexible-slider-and-carousel'), value: 'coverflow' },
+                            { label: __('Creative (1 Frame)', 'flexible-slider-and-carousel'), value: 'creative' },
+                            { label: __('Cube (1 Frame)', 'flexible-slider-and-carousel'), value: 'cube' },
+                            { label: __('Cards', 'flexible-slider-and-carousel'), value: 'cards' }
                         ]}
                         onChange={(value) => setAttributes({ animationType: value })}
-                        help={__('Art der Slide-Animation (Standard: Slide)', 'flexible-slider-carousel')}
+                        help={__('Type of slide animation (default: Slide)', 'flexible-slider-and-carousel')}
                     />
 
 
@@ -561,14 +569,14 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                     {/* Animation Direction - only for slide effect */}
                     {animationType === 'slide' && (
                         <SelectControl
-                            label={__('Animation Direction', 'flexible-slider-carousel')}
+                            label={__('Animation Direction', 'flexible-slider-and-carousel')}
                             value={animationDirection || 'horizontal'}
                             options={[
-                                { label: __('Horizontal (Standard)', 'flexible-slider-carousel'), value: 'horizontal' },
-                                { label: __('Vertical', 'flexible-slider-carousel'), value: 'vertical' }
+                                { label: __('Horizontal (Default)', 'flexible-slider-and-carousel'), value: 'horizontal' },
+                                { label: __('Vertical', 'flexible-slider-and-carousel'), value: 'vertical' }
                             ]}
                             onChange={(value) => setAttributes({ animationDirection: value })}
-                            help={__('Richtung der Slide-Bewegung (Standard: Horizontal)', 'flexible-slider-carousel')}
+                            help={__('Direction of slide movement (default: horizontal)', 'flexible-slider-and-carousel')}
                         />
                     )}
 
@@ -600,49 +608,49 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
 
 
                     <SelectControl
-                        label={__('Animation Timing Function', 'flexible-slider-carousel')}
+                        label={__('Animation Timing Function', 'flexible-slider-and-carousel')}
                         value={animationTimingFunc || 'cubic-bezier(0.165, 0.840, 0.440, 1.000)'}
                         options={[
-                            { label: __('Default (Smooth)', 'flexible-slider-carousel'), value: 'cubic-bezier(0.165, 0.840, 0.440, 1.000)' },
-                            { label: __('Linear', 'flexible-slider-carousel'), value: 'linear' },
-                            { label: __('Ease', 'flexible-slider-carousel'), value: 'ease' },
-                            { label: __('Ease-in', 'flexible-slider-carousel'), value: 'ease-in' },
-                            { label: __('Ease-out', 'flexible-slider-carousel'), value: 'ease-out' },
-                            { label: __('Ease-in-out', 'flexible-slider-carousel'), value: 'ease-in-out' }
+                            { label: __('Default (Smooth)', 'flexible-slider-and-carousel'), value: 'cubic-bezier(0.165, 0.840, 0.440, 1.000)' },
+                            { label: __('Linear', 'flexible-slider-and-carousel'), value: 'linear' },
+                            { label: __('Ease', 'flexible-slider-and-carousel'), value: 'ease' },
+                            { label: __('Ease-in', 'flexible-slider-and-carousel'), value: 'ease-in' },
+                            { label: __('Ease-out', 'flexible-slider-and-carousel'), value: 'ease-out' },
+                            { label: __('Ease-in-out', 'flexible-slider-and-carousel'), value: 'ease-in-out' }
                         ]}
                         onChange={(value) => setAttributes({ animationTimingFunc: value })}
-                        help={__('Standard: Default (Smooth)', 'flexible-slider-carousel')}
+                        help={__('Default: Default (Smooth)', 'flexible-slider-and-carousel')}
                     />
 
                     <RangeControl
-                        label={__('Animation Duration (ms)', 'flexible-slider-carousel')}
+                        label={__('Animation Duration (ms)', 'flexible-slider-and-carousel')}
                         value={animationDuration || 400}
                         onChange={(value) => setAttributes({ animationDuration: value })}
                         min={100}
                         max={2000}
                         step={50}
-                        help={__('Standard: 400ms', 'flexible-slider-carousel')}
+                        help={__('Default: 400ms', 'flexible-slider-and-carousel')}
                     />
 
 
                     {/* Focus Position removed - using Centered Slides instead */}
 
                     <ToggleControl
-                        label={__('Centered Slides', 'flexible-slider-carousel')}
+                        label={__('Centered Slides', 'flexible-slider-and-carousel')}
                         checked={centeredSlides !== false}
                         onChange={(value) => setAttributes({ centeredSlides: value })}
-                        help={__('Center the active slide (works great with 1.5+ frames)', 'flexible-slider-carousel')}
+                        help={__('Center the active slide (works great with 1.5+ frames)', 'flexible-slider-and-carousel')}
                     />
 
                     <ToggleControl
-                        label={__('Auto Play', 'flexible-slider-carousel')}
+                        label={__('Auto Play', 'flexible-slider-and-carousel')}
                         checked={autoPlay}
                         onChange={(value) => setAttributes({ autoPlay: value })}
                     />
 
                     {autoPlay && (
                         <RangeControl
-                            label={__('Auto Play Speed (seconds)', 'flexible-slider-carousel')}
+                            label={__('Auto Play Speed (seconds)', 'flexible-slider-and-carousel')}
                             value={autoPlaySpeed}
                             onChange={(value) => setAttributes({ autoPlaySpeed: value })}
                             min={1}
@@ -652,26 +660,26 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                     )}
 
                     <ToggleControl
-                        label={__('Keyboard Navigation', 'flexible-slider-carousel')}
+                        label={__('Keyboard Navigation', 'flexible-slider-and-carousel')}
                         checked={keyboard !== false}
                         onChange={(value) => setAttributes({ keyboard: value })}
-                        help={__('Use arrow keys to navigate (Standard: Aktiviert)', 'flexible-slider-carousel')}
+                        help={__('Use arrow keys to navigate (Default: Enabled)', 'flexible-slider-and-carousel')}
                     />
 
                     <ToggleControl
-                        label={__('Touch/Swipe Support', 'flexible-slider-carousel')}
+                        label={__('Touch/Swipe Support', 'flexible-slider-and-carousel')}
                         checked={touchSwipe}
                         onChange={(value) => setAttributes({ touchSwipe: value })}
                     />
 
                     <RangeControl
-                        label={__('Touch/Swipe Sensitivity', 'flexible-slider-carousel')}
+                        label={__('Touch/Swipe Sensitivity', 'flexible-slider-and-carousel')}
                         value={touchRatio || 0.5}
                         onChange={(value) => setAttributes({ touchRatio: value })}
                         min={0.1}
                         max={2.0}
                         step={0.1}
-                        help={__('Higher values = more sensitive touch/swipe (Standard: 0.5)', 'flexible-slider-carousel')}
+                        help={__('Higher values = more sensitive touch/swipe (Standard: 0.5)', 'flexible-slider-and-carousel')}
                     />
 
 
@@ -695,41 +703,41 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                             }}
                             style={{ width: '100%' }}
                         >
-                            {__('Auf Standardwerte zurücksetzen', 'flexible-slider-carousel')}
+                            {__('Reset to default values', 'flexible-slider-and-carousel')}
                         </Button>
                         <p style={{ fontSize: '12px', color: '#666', marginTop: '8px', textAlign: 'center' }}>
-                            {__('Setzt alle Swiper.js Optionen auf Standardwerte zurück', 'flexible-slider-carousel')}
+                            {__('Resets all Swiper.js options to default values.', 'flexible-slider-and-carousel')}
                         </p>
                     </div>
                 </PanelBody>
 
-                <PanelBody title={__('Navigation', 'flexible-slider-carousel')} initialOpen={false}>
+                <PanelBody title={__('Navigation', 'flexible-slider-and-carousel')} initialOpen={false}>
                     <ToggleControl
-                        label={__('Navigation Arrows', 'flexible-slider-carousel')}
+                        label={__('Navigation Arrows', 'flexible-slider-and-carousel')}
                         checked={showNavigation}
                         onChange={(value) => setAttributes({ showNavigation: value })}
                     />
 
                     <ToggleControl
-                        label={__('Navigation Dots', 'flexible-slider-carousel')}
+                        label={__('Navigation Dots', 'flexible-slider-and-carousel')}
                         checked={showDots}
                         onChange={(value) => setAttributes({ showDots: value })}
                     />
 
                     <ToggleControl
-                        label={__('Text Navigation', 'flexible-slider-carousel')}
+                        label={__('Text Navigation', 'flexible-slider-and-carousel')}
                         checked={showTextNavigation}
                         onChange={(value) => setAttributes({ showTextNavigation: value })}
-                        help={__('Show frame titles as navigation tabs', 'flexible-slider-carousel')}
+                        help={__('Show frame titles as navigation tabs', 'flexible-slider-and-carousel')}
                     />
 
                     {showTextNavigation && (
                         <SelectControl
-                            label={__('Text Navigation Position', 'flexible-slider-carousel')}
+                            label={__('Text Navigation Position', 'flexible-slider-and-carousel')}
                             value={textNavigationPosition}
                             options={[
-                                { label: __('Above Slider', 'flexible-slider-carousel'), value: 'above' },
-                                { label: __('Below Slider', 'flexible-slider-carousel'), value: 'below' }
+                                { label: __('Above Slider', 'flexible-slider-and-carousel'), value: 'above' },
+                                { label: __('Below Slider', 'flexible-slider-and-carousel'), value: 'below' }
                             ]}
                             onChange={(value) => setAttributes({ textNavigationPosition: value })}
                         />
@@ -737,20 +745,20 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
 
                     {showTextNavigation && (
                         <>
-                            <PanelBody title={__('Tab Typography', 'flexible-slider-carousel')} initialOpen={false}>
+                            <PanelBody title={__('Tab Typography', 'flexible-slider-and-carousel')} initialOpen={false}>
                                 <SelectControl
-                                    label={__('Text Align', 'flexible-slider-carousel')}
+                                    label={__('Text Align', 'flexible-slider-and-carousel')}
                                     value={tabTextAlign}
                                     options={[
-                                        { label: __('Left', 'flexible-slider-carousel'), value: 'left' },
-                                        { label: __('Center', 'flexible-slider-carousel'), value: 'center' },
-                                        { label: __('Right', 'flexible-slider-carousel'), value: 'right' }
+                                        { label: __('Left', 'flexible-slider-and-carousel'), value: 'left' },
+                                        { label: __('Center', 'flexible-slider-and-carousel'), value: 'center' },
+                                        { label: __('Right', 'flexible-slider-and-carousel'), value: 'right' }
                                     ]}
                                     onChange={(value) => setAttributes({ tabTextAlign: value })}
                                 />
 
                                 <RangeControl
-                                    label={__('Font Size (px)', 'flexible-slider-carousel')}
+                                    label={__('Font Size (px)', 'flexible-slider-and-carousel')}
                                     value={tabFontSize}
                                     onChange={(value) => setAttributes({ tabFontSize: value })}
                                     min={12}
@@ -759,22 +767,22 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                 />
 
                                 <SelectControl
-                                    label={__('Font Weight', 'flexible-slider-carousel')}
+                                    label={__('Font Weight', 'flexible-slider-and-carousel')}
                                     value={tabFontWeight}
                                     options={[
-                                        { label: __('Normal', 'flexible-slider-carousel'), value: 'normal' },
-                                        { label: __('Bold', 'flexible-slider-carousel'), value: 'bold' },
-                                        { label: __('Light', 'flexible-slider-carousel'), value: '300' },
-                                        { label: __('Medium', 'flexible-slider-carousel'), value: '500' },
-                                        { label: __('Semi Bold', 'flexible-slider-carousel'), value: '600' }
+                                        { label: __('Normal', 'flexible-slider-and-carousel'), value: 'normal' },
+                                        { label: __('Bold', 'flexible-slider-and-carousel'), value: 'bold' },
+                                        { label: __('Light', 'flexible-slider-and-carousel'), value: '300' },
+                                        { label: __('Medium', 'flexible-slider-and-carousel'), value: '500' },
+                                        { label: __('Semi Bold', 'flexible-slider-and-carousel'), value: '600' }
                                     ]}
                                     onChange={(value) => setAttributes({ tabFontWeight: value })}
                                 />
                             </PanelBody>
 
-                            <PanelBody title={__('Tab Colors - Normal State', 'flexible-slider-carousel')} initialOpen={false}>
+                            <PanelBody title={__('Tab Colors - Normal State', 'flexible-slider-and-carousel')} initialOpen={false}>
                                 <div className="fsc-color-control">
-                                    <label className="components-base-control__label">{__('Text Color', 'flexible-slider-carousel')}</label>
+                                    <label className="components-base-control__label">{__('Text Color', 'flexible-slider-and-carousel')}</label>
                                     <div className="fsc-color-indicator-wrapper">
                                         <ColorIndicator
                                             colorValue={tabTextColor}
@@ -784,7 +792,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                             className="fsc-color-button"
                                             onClick={() => setAttributes({ tabTextColor: undefined })}
                                         >
-                                            {__('Clear', 'flexible-slider-carousel')}
+                                            {__('Clear', 'flexible-slider-and-carousel')}
                                         </Button>
                                     </div>
                                     {activeColorPicker === 'tabTextColor' && (
@@ -804,7 +812,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                 </div>
 
                                 <div className="fsc-color-control">
-                                    <label className="components-base-control__label">{__('Background Color', 'flexible-slider-carousel')}</label>
+                                    <label className="components-base-control__label">{__('Background Color', 'flexible-slider-and-carousel')}</label>
                                     <div className="fsc-color-indicator-wrapper">
                                         <ColorIndicator
                                             colorValue={tabBackgroundColor}
@@ -814,7 +822,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                             className="fsc-color-button"
                                             onClick={() => setAttributes({ tabBackgroundColor: undefined })}
                                         >
-                                            {__('Clear', 'flexible-slider-carousel')}
+                                            {__('Clear', 'flexible-slider-and-carousel')}
                                         </Button>
                                     </div>
                                     {activeColorPicker === 'tabBackgroundColor' && (
@@ -834,7 +842,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                 </div>
 
                                 <div className="fsc-color-control">
-                                    <label className="components-base-control__label">{__('Border Color', 'flexible-slider-carousel')}</label>
+                                    <label className="components-base-control__label">{__('Border Color', 'flexible-slider-and-carousel')}</label>
                                     <div className="fsc-color-indicator-wrapper">
                                         <ColorIndicator
                                             colorValue={tabBorderColor}
@@ -844,7 +852,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                             className="fsc-color-button"
                                             onClick={() => setAttributes({ tabBorderColor: undefined })}
                                         >
-                                            {__('Clear', 'flexible-slider-carousel')}
+                                            {__('Clear', 'flexible-slider-and-carousel')}
                                         </Button>
                                     </div>
                                     {activeColorPicker === 'tabBorderColor' && (
@@ -864,9 +872,9 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                 </div>
                             </PanelBody>
 
-                            <PanelBody title={__('Tab Colors - Active State', 'flexible-slider-carousel')} initialOpen={false}>
+                            <PanelBody title={__('Tab Colors - Active State', 'flexible-slider-and-carousel')} initialOpen={false}>
                                 <div className="fsc-color-control">
-                                    <label className="components-base-control__label">{__('Text Color (Active)', 'flexible-slider-carousel')}</label>
+                                    <label className="components-base-control__label">{__('Text Color (Active)', 'flexible-slider-and-carousel')}</label>
                                     <div className="fsc-color-indicator-wrapper">
                                         <ColorIndicator
                                             colorValue={tabTextColorActive}
@@ -876,7 +884,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                             className="fsc-color-button"
                                             onClick={() => setAttributes({ tabTextColorActive: undefined })}
                                         >
-                                            {__('Clear', 'flexible-slider-carousel')}
+                                            {__('Clear', 'flexible-slider-and-carousel')}
                                         </Button>
                                     </div>
                                     {activeColorPicker === 'tabTextColorActive' && (
@@ -896,7 +904,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                 </div>
 
                                 <div className="fsc-color-control">
-                                    <label className="components-base-control__label">{__('Background Color (Active)', 'flexible-slider-carousel')}</label>
+                                    <label className="components-base-control__label">{__('Background Color (Active)', 'flexible-slider-and-carousel')}</label>
                                     <div className="fsc-color-indicator-wrapper">
                                         <ColorIndicator
                                             colorValue={tabBackgroundColorActive}
@@ -906,7 +914,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                             className="fsc-color-button"
                                             onClick={() => setAttributes({ tabBackgroundColorActive: undefined })}
                                         >
-                                            {__('Clear', 'flexible-slider-carousel')}
+                                            {__('Clear', 'flexible-slider-and-carousel')}
                                         </Button>
                                     </div>
                                     {activeColorPicker === 'tabBackgroundColorActive' && (
@@ -926,7 +934,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                 </div>
 
                                 <div className="fsc-color-control">
-                                    <label className="components-base-control__label">{__('Border Color (Active)', 'flexible-slider-carousel')}</label>
+                                    <label className="components-base-control__label">{__('Border Color (Active)', 'flexible-slider-and-carousel')}</label>
                                     <div className="fsc-color-indicator-wrapper">
                                         <ColorIndicator
                                             colorValue={tabBorderColorActive}
@@ -936,7 +944,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                             className="fsc-color-button"
                                             onClick={() => setAttributes({ tabBorderColorActive: undefined })}
                                         >
-                                            {__('Clear', 'flexible-slider-carousel')}
+                                            {__('Clear', 'flexible-slider-and-carousel')}
                                         </Button>
                                     </div>
                                     {activeColorPicker === 'tabBorderColorActive' && (
@@ -956,9 +964,9 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                 </div>
                             </PanelBody>
 
-                            <PanelBody title={__('Tab Layout & Effects', 'flexible-slider-carousel')} initialOpen={false}>
+                            <PanelBody title={__('Tab Layout & Effects', 'flexible-slider-and-carousel')} initialOpen={false}>
                                 <RangeControl
-                                    label={__('Padding (px)', 'flexible-slider-carousel')}
+                                    label={__('Padding (px)', 'flexible-slider-and-carousel')}
                                     value={tabPadding}
                                     onChange={(value) => setAttributes({ tabPadding: value })}
                                     min={0}
@@ -967,7 +975,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                 />
 
                                 <RangeControl
-                                    label={__('Border Radius (px)', 'flexible-slider-carousel')}
+                                    label={__('Border Radius (px)', 'flexible-slider-and-carousel')}
                                     value={tabBorderRadius}
                                     onChange={(value) => setAttributes({ tabBorderRadius: value })}
                                     min={0}
@@ -976,7 +984,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                 />
 
                                 <RangeControl
-                                    label={__('Border Width (px)', 'flexible-slider-carousel')}
+                                    label={__('Border Width (px)', 'flexible-slider-and-carousel')}
                                     value={tabBorderWidth}
                                     onChange={(value) => setAttributes({ tabBorderWidth: value })}
                                     min={0}
@@ -985,29 +993,29 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                 />
 
                                 <TextControl
-                                    label={__('Box Shadow', 'flexible-slider-carousel')}
+                                    label={__('Box Shadow', 'flexible-slider-and-carousel')}
                                     value={tabBoxShadow}
                                     onChange={(value) => setAttributes({ tabBoxShadow: value })}
                                     placeholder="0 2px 4px rgba(0,0,0,0.1)"
-                                    help={__('CSS box-shadow value (e.g., 0 2px 4px rgba(0,0,0,0.1))', 'flexible-slider-carousel')}
+                                    help={__('CSS box-shadow value (e.g., 0 2px 4px rgba(0,0,0,0.1))', 'flexible-slider-and-carousel')}
                                 />
 
                                 <TextControl
-                                    label={__('Box Shadow (Active)', 'flexible-slider-carousel')}
+                                    label={__('Box Shadow (Active)', 'flexible-slider-and-carousel')}
                                     value={tabBoxShadowActive}
                                     onChange={(value) => setAttributes({ tabBoxShadowActive: value })}
                                     placeholder="0 4px 8px rgba(0,0,0,0.2)"
-                                    help={__('CSS box-shadow value for active state', 'flexible-slider-carousel')}
+                                    help={__('CSS box-shadow value for active state', 'flexible-slider-and-carousel')}
                                 />
                             </PanelBody>
                         </>
                     )}
 
-                    <PanelBody title={__('Navigation Colors', 'flexible-slider-carousel')} initialOpen={false}>
-                        <h4>{__('Arrow Colors', 'flexible-slider-carousel')}</h4>
+                    <PanelBody title={__('Navigation Colors', 'flexible-slider-and-carousel')} initialOpen={false}>
+                        <h4>{__('Arrow Colors', 'flexible-slider-and-carousel')}</h4>
 
                         <div className="fsc-color-control">
-                            <label className="components-base-control__label">{__('Background Color', 'flexible-slider-carousel')}</label>
+                            <label className="components-base-control__label">{__('Background Color', 'flexible-slider-and-carousel')}</label>
                             <div className="fsc-color-indicator-wrapper">
                                 <ColorIndicator
                                     colorValue={arrowBackgroundColor}
@@ -1017,7 +1025,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                     className="fsc-color-button"
                                     onClick={() => setAttributes({ arrowBackgroundColor: undefined })}
                                 >
-                                    {__('Clear', 'flexible-slider-carousel')}
+                                    {__('Clear', 'flexible-slider-and-carousel')}
                                 </Button>
                             </div>
                             {activeColorPicker === 'arrowBackgroundColor' && (
@@ -1037,7 +1045,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                         </div>
 
                         <div className="fsc-color-control">
-                            <label className="components-base-control__label">{__('Background Color (Hover)', 'flexible-slider-carousel')}</label>
+                            <label className="components-base-control__label">{__('Background Color (Hover)', 'flexible-slider-and-carousel')}</label>
                             <div className="fsc-color-indicator-wrapper">
                                 <ColorIndicator
                                     colorValue={arrowBackgroundColorHover}
@@ -1047,7 +1055,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                     className="fsc-color-button"
                                     onClick={() => setAttributes({ arrowBackgroundColorHover: undefined })}
                                 >
-                                    {__('Clear', 'flexible-slider-carousel')}
+                                    {__('Clear', 'flexible-slider-and-carousel')}
                                 </Button>
                             </div>
                             {activeColorPicker === 'arrowBackgroundColorHover' && (
@@ -1067,7 +1075,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                         </div>
 
                         <div className="fsc-color-control">
-                            <label className="components-base-control__label">{__('Arrow Color', 'flexible-slider-carousel')}</label>
+                            <label className="components-base-control__label">{__('Arrow Color', 'flexible-slider-and-carousel')}</label>
                             <div className="fsc-color-indicator-wrapper">
                                 <ColorIndicator
                                     colorValue={arrowTextColor}
@@ -1077,7 +1085,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                     className="fsc-color-button"
                                     onClick={() => setAttributes({ arrowTextColor: undefined })}
                                 >
-                                    {__('Clear', 'flexible-slider-carousel')}
+                                    {__('Clear', 'flexible-slider-and-carousel')}
                                 </Button>
                             </div>
                             {activeColorPicker === 'arrowTextColor' && (
@@ -1096,10 +1104,36 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                             )}
                         </div>
 
-                        <h4>{__('Dot Colors', 'flexible-slider-carousel')}</h4>
+                        <h4 style={{ marginTop: '16px' }}>{__('Arrow Styling', 'flexible-slider-and-carousel')}</h4>
+                        <RangeControl
+                            label={__('Arrow Size (px)', 'flexible-slider-and-carousel')}
+                            value={arrowSize !== undefined ? arrowSize : 40}
+                            onChange={(value) => setAttributes({ arrowSize: value })}
+                            min={20}
+                            max={96}
+                            step={1}
+                        />
+                        <RangeControl
+                            label={__('Arrow Padding (px)', 'flexible-slider-and-carousel')}
+                            value={arrowPadding !== undefined ? arrowPadding : 10}
+                            onChange={(value) => setAttributes({ arrowPadding: value })}
+                            min={0}
+                            max={24}
+                            step={1}
+                        />
+                        <RangeControl
+                            label={__('Arrow Border Radius (px)', 'flexible-slider-and-carousel')}
+                            value={arrowBorderRadius !== undefined ? arrowBorderRadius : 4}
+                            onChange={(value) => setAttributes({ arrowBorderRadius: value })}
+                            min={0}
+                            max={24}
+                            step={1}
+                        />
+
+                        <h4>{__('Dot Colors', 'flexible-slider-and-carousel')}</h4>
 
                         <div className="fsc-color-control">
-                            <label className="components-base-control__label">{__('Background Color (Normal)', 'flexible-slider-carousel')}</label>
+                            <label className="components-base-control__label">{__('Background Color (Normal)', 'flexible-slider-and-carousel')}</label>
                             <div className="fsc-color-indicator-wrapper">
                                 <ColorIndicator
                                     colorValue={dotBackgroundColor}
@@ -1109,7 +1143,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                     className="fsc-color-button"
                                     onClick={() => setAttributes({ dotBackgroundColor: undefined })}
                                 >
-                                    {__('Clear', 'flexible-slider-carousel')}
+                                    {__('Clear', 'flexible-slider-and-carousel')}
                                 </Button>
                             </div>
                             {activeColorPicker === 'dotBackgroundColor' && (
@@ -1129,7 +1163,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                         </div>
 
                         <div className="fsc-color-control">
-                            <label className="components-base-control__label">{__('Background Color (Hover)', 'flexible-slider-carousel')}</label>
+                            <label className="components-base-control__label">{__('Background Color (Hover)', 'flexible-slider-and-carousel')}</label>
                             <div className="fsc-color-indicator-wrapper">
                                 <ColorIndicator
                                     colorValue={dotBackgroundColorHover}
@@ -1139,7 +1173,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                     className="fsc-color-button"
                                     onClick={() => setAttributes({ dotBackgroundColorHover: undefined })}
                                 >
-                                    {__('Clear', 'flexible-slider-carousel')}
+                                    {__('Clear', 'flexible-slider-and-carousel')}
                                 </Button>
                             </div>
                             {activeColorPicker === 'dotBackgroundColorHover' && (
@@ -1159,7 +1193,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                         </div>
 
                         <div className="fsc-color-control">
-                            <label className="components-base-control__label">{__('Background Color (Active)', 'flexible-slider-carousel')}</label>
+                            <label className="components-base-control__label">{__('Background Color (Active)', 'flexible-slider-and-carousel')}</label>
                             <div className="fsc-color-indicator-wrapper">
                                 <ColorIndicator
                                     colorValue={dotBackgroundColorActive}
@@ -1169,7 +1203,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                     className="fsc-color-button"
                                     onClick={() => setAttributes({ dotBackgroundColorActive: undefined })}
                                 >
-                                    {__('Clear', 'flexible-slider-carousel')}
+                                    {__('Clear', 'flexible-slider-and-carousel')}
                                 </Button>
                             </div>
                             {activeColorPicker === 'dotBackgroundColorActive' && (
@@ -1193,22 +1227,22 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
 
                 </PanelBody>
 
-                <PanelBody title={__('Performance & SEO', 'flexible-slider-carousel')} initialOpen={false}>
+                <PanelBody title={__('Performance & SEO', 'flexible-slider-and-carousel')} initialOpen={false}>
                     <ToggleControl
-                        label={__('Lazy Loading', 'flexible-slider-carousel')}
+                        label={__('Lazy Loading', 'flexible-slider-and-carousel')}
                         checked={loading}
                         onChange={(value) => setAttributes({ loading: value })}
                     />
 
                     <ToggleControl
-                        label={__('Intersection Observer', 'flexible-slider-carousel')}
+                        label={__('Intersection Observer', 'flexible-slider-and-carousel')}
                         checked={intersectionObserver}
                         onChange={(value) => setAttributes({ intersectionObserver: value })}
-                        help={__('Only load slider when it comes into view', 'flexible-slider-carousel')}
+                        help={__('Only load slider when it comes into view', 'flexible-slider-and-carousel')}
                     />
                 </PanelBody>
 
-                <PanelBody title={__('Responsive Settings', 'flexible-slider-carousel')} initialOpen={false}>
+                <PanelBody title={__('Responsive Settings', 'flexible-slider-and-carousel')} initialOpen={false}>
                     <ResponsiveSettings
                         settings={responsiveSettings}
                         slidesToShow={attributes.slidesToShow}
@@ -1241,7 +1275,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                 const frameTitle = frameBlock?.attributes?.frameTitle;
                                 const title = frameTitle ||
                                     frameBlock?.attributes?.content?.replace(/<[^>]*>/g, '').substring(0, 20) ||
-                                    `${__('Frame', 'flexible-slider-carousel')} ${i + 1}`;
+                                    `${__('Frame', 'flexible-slider-and-carousel')} ${i + 1}`;
 
                                 return (
                                     <button
@@ -1289,7 +1323,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
 
                 <div className="fsc-slider__preview">
                     <div className="fsc-slider__preview-header">
-                        <h4>{__('Slider Preview', 'flexible-slider-carousel')}</h4>
+                        <h4>{__('Slider Preview', 'flexible-slider-and-carousel')}</h4>
 
                     </div>
 
@@ -1321,8 +1355,10 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                             top: 50% !important;
                                             transform: translateY(-50%) !important;
                                             z-index: 10 !important;
-                                            width: 40px !important;
-                                            height: 40px !important;
+                                            width: ${(typeof arrowSize === 'number' ? arrowSize : 40)}px !important;
+                                            height: ${(typeof arrowSize === 'number' ? arrowSize : 40)}px !important;
+                                            padding: ${(typeof arrowPadding === 'number' ? arrowPadding : 10)}px !important;
+                                            border-radius: ${(typeof arrowBorderRadius === 'number' ? arrowBorderRadius : 4)}px !important;
                                             display: flex !important;
                                             align-items: center !important;
                                             justify-content: center !important;
@@ -1330,6 +1366,8 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                             cursor: pointer !important;
                                             font-size: 20px !important;
                                             font-weight: bold !important;
+                                            --swiper-navigation-size: 0px !important;
+                                            --swiper-navigation-color: transparent !important;
                                         }
                                         [data-block="${clientId}"] .swiper-button-prev {
                                             left: 10px !important;
@@ -1345,11 +1383,23 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                     <>
                                         <div className="swiper-button-prev" style={{
                                             backgroundColor: arrowBackgroundColor || '#007cba',
-                                            color: arrowTextColor || '#ffffff'
+                                            color: arrowTextColor || '#ffffff',
+                                            width: (arrowSize !== undefined ? arrowSize : 40) + 'px',
+                                            height: (arrowSize !== undefined ? arrowSize : 40) + 'px',
+                                            padding: (arrowPadding !== undefined ? arrowPadding : 10) + 'px',
+                                            borderRadius: (arrowBorderRadius !== undefined ? arrowBorderRadius : 4) + 'px',
+                                            fontSize: ((arrowSize !== undefined ? arrowSize : 40)) + 'px',
+                                            lineHeight: '1'
                                         }}></div>
                                         <div className="swiper-button-next" style={{
                                             backgroundColor: arrowBackgroundColor || '#007cba',
-                                            color: arrowTextColor || '#ffffff'
+                                            color: arrowTextColor || '#ffffff',
+                                            width: (arrowSize !== undefined ? arrowSize : 40) + 'px',
+                                            height: (arrowSize !== undefined ? arrowSize : 40) + 'px',
+                                            padding: (arrowPadding !== undefined ? arrowPadding : 10) + 'px',
+                                            borderRadius: (arrowBorderRadius !== undefined ? arrowBorderRadius : 4) + 'px',
+                                            fontSize: ((arrowSize !== undefined ? arrowSize : 40)) + 'px',
+                                            lineHeight: '1'
                                         }}></div>
                                     </>
                                 )}
@@ -1375,7 +1425,7 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                                         const frameTitle = frameBlock?.attributes?.frameTitle;
                                         const title = frameTitle ||
                                             frameBlock?.attributes?.content?.replace(/<[^>]*>/g, '').substring(0, 20) ||
-                                            `${__('Frame', 'flexible-slider-carousel')} ${i + 1}`;
+                                            `${__('Frame', 'flexible-slider-and-carousel')} ${i + 1}`;
 
                                         return (
                                             <button
@@ -1413,13 +1463,13 @@ const SliderBlock = ({ attributes, setAttributes, clientId }) => {
                     </div>
 
                     <div className="fsc-slider__preview-info">
-                        <p><strong>{__('Configuration:', 'flexible-slider-carousel')}</strong></p>
+                        <p><strong>{__('Configuration:', 'flexible-slider-and-carousel')}</strong></p>
                         <ul>
 
-                            <li>{__('Content:', 'flexible-slider-carousel')} {__('Manual Frames', 'flexible-slider-carousel')}</li>
-                            <li>{__('Animation:', 'flexible-slider-carousel')} {/* transition */}</li>
-                            {autoPlay && <li>{__('Auto Play:', 'flexible-slider-carousel')} {autoPlaySpeed}s</li>}
-                            {(showNavigation || showDots || showTextNavigation) && <li>{__('Navigation:', 'flexible-slider-carousel')} {showNavigation ? __('Arrows', 'flexible-slider-carousel') : ''} {showDots ? __('Dots', 'flexible-slider-carousel') : ''} {showTextNavigation ? __('Text', 'flexible-slider-carousel') : ''}</li>}
+                            <li>{__('Content:', 'flexible-slider-and-carousel')} {__('Manual Frames', 'flexible-slider-and-carousel')}</li>
+                            <li>{__('Animation:', 'flexible-slider-and-carousel')} {/* transition */}</li>
+                            {autoPlay && <li>{__('Auto Play:', 'flexible-slider-and-carousel')} {autoPlaySpeed}s</li>}
+                            {(showNavigation || showDots || showTextNavigation) && <li>{__('Navigation:', 'flexible-slider-and-carousel')} {showNavigation ? __('Arrows', 'flexible-slider-and-carousel') : ''} {showDots ? __('Dots', 'flexible-slider-and-carousel') : ''} {showTextNavigation ? __('Text', 'flexible-slider-and-carousel') : ''}</li>}
                         </ul>
                     </div>
                 </div>
@@ -1444,7 +1494,7 @@ const PostQueryControls = ({ attributes, setAttributes, postTypes, taxonomies })
     return (
         <div className="fsc-post-query-controls">
             <SelectControl
-                label={__('Post Type', 'flexible-slider-carousel')}
+                label={__('Post Type', 'flexible-slider-and-carousel')}
                 value={postQuery.postType || 'post'}
                 options={postTypes.map(type => ({
                     label: type.name,
@@ -1454,7 +1504,7 @@ const PostQueryControls = ({ attributes, setAttributes, postTypes, taxonomies })
             />
 
             <TextControl
-                label={__('Posts Per Page', 'flexible-slider-carousel')}
+                label={__('Posts Per Page', 'flexible-slider-and-carousel')}
                 type="number"
                 value={postQuery.postsPerPage || 5}
                 onChange={(value) => updateQuery('postsPerPage', parseInt(value))}
@@ -1463,23 +1513,23 @@ const PostQueryControls = ({ attributes, setAttributes, postTypes, taxonomies })
             />
 
             <SelectControl
-                label={__('Order By', 'flexible-slider-carousel')}
+                label={__('Order By', 'flexible-slider-and-carousel')}
                 value={postQuery.orderBy || 'date'}
                 options={[
-                    { label: __('Date', 'flexible-slider-carousel'), value: 'date' },
-                    { label: __('Title', 'flexible-slider-carousel'), value: 'title' },
-                    { label: __('Menu Order', 'flexible-slider-carousel'), value: 'menu_order' },
-                    { label: __('Random', 'flexible-slider-carousel'), value: 'rand' }
+                    { label: __('Date', 'flexible-slider-and-carousel'), value: 'date' },
+                    { label: __('Title', 'flexible-slider-and-carousel'), value: 'title' },
+                    { label: __('Menu Order', 'flexible-slider-and-carousel'), value: 'menu_order' },
+                    { label: __('Random', 'flexible-slider-and-carousel'), value: 'rand' }
                 ]}
                 onChange={(value) => updateQuery('orderBy', value)}
             />
 
             <SelectControl
-                label={__('Order', 'flexible-slider-carousel')}
+                label={__('Order', 'flexible-slider-and-carousel')}
                 value={postQuery.order || 'DESC'}
                 options={[
-                    { label: __('Descending', 'flexible-slider-carousel'), value: 'DESC' },
-                    { label: __('Ascending', 'flexible-slider-carousel'), value: 'ASC' }
+                    { label: __('Descending', 'flexible-slider-and-carousel'), value: 'DESC' },
+                    { label: __('Ascending', 'flexible-slider-and-carousel'), value: 'ASC' }
                 ]}
                 onChange={(value) => updateQuery('order', value)}
             />
@@ -1519,7 +1569,7 @@ const ResponsiveSettings = ({ settings, onChange, slidesToShow, slidesToScroll, 
         <div className="fsc-breakpoint-settings">
             {breakpoint !== 'phone' && (
                 <RangeControl
-                    label={__('Min Width (px)', 'flexible-slider-carousel')}
+                    label={__('Min Width (px)', 'flexible-slider-and-carousel')}
                     value={settings[breakpoint]?.minWidth !== undefined ? settings[breakpoint].minWidth : 0}
                     onChange={(value) => updateBreakpoint(breakpoint, 'minWidth', value)}
                     min={0}
@@ -1529,19 +1579,19 @@ const ResponsiveSettings = ({ settings, onChange, slidesToShow, slidesToScroll, 
             )}
 
             <RangeControl
-                label={__('Inner Padding (px)', 'flexible-slider-carousel')}
+                label={__('Inner Padding (px)', 'flexible-slider-and-carousel')}
                 value={settings[breakpoint]?.innerPadding !== undefined ? settings[breakpoint].innerPadding : 10}
                 onChange={(value) => updateBreakpoint(breakpoint, 'innerPadding', value)}
                 min={0}
                 max={100}
                 step={5}
-                help={__('Padding inside frames (Standard: 10px)', 'flexible-slider-carousel')}
+                help={__('Padding inside frames (Standard: 10px)', 'flexible-slider-and-carousel')}
             />
 
             {is3DEffect ? (
                 <div style={{ opacity: 0.5, pointerEvents: 'none' }}>
                     <RangeControl
-                        label={__('Slides To Show (Fixed at 1 for 3D effects)', 'flexible-slider-carousel')}
+                        label={__('Slides To Show (Fixed at 1 for 3D effects)', 'flexible-slider-and-carousel')}
                         value={1}
                         min={1}
                         max={1}
@@ -1549,7 +1599,7 @@ const ResponsiveSettings = ({ settings, onChange, slidesToShow, slidesToScroll, 
                         disabled={true}
                     />
                     <RangeControl
-                        label={__('Slides To Scroll (Fixed at 1 for 3D effects)', 'flexible-slider-carousel')}
+                        label={__('Slides To Scroll (Fixed at 1 for 3D effects)', 'flexible-slider-and-carousel')}
                         value={1}
                         min={1}
                         max={1}
@@ -1560,17 +1610,17 @@ const ResponsiveSettings = ({ settings, onChange, slidesToShow, slidesToScroll, 
             ) : (
                 <>
                     <RangeControl
-                        label={__('Slides To Show', 'flexible-slider-carousel')}
+                        label={__('Slides To Show', 'flexible-slider-and-carousel')}
                         value={Math.round((slidesToShow[breakpoint] || 1) * 10)}
                         onChange={(value) => updateSlidesToShow(breakpoint, value / 10)}
                         min={10}
                         max={50}
                         step={1}
-                        help={__('10 = 1.0 frames, 15 = 1.5 frames, 23 = 2.3 frames, etc. Use for precise peek control.', 'flexible-slider-carousel')}
+                        help={__('10 = 1.0 frames, 15 = 1.5 frames, 23 = 2.3 frames, etc. Use for precise peek control.', 'flexible-slider-and-carousel')}
                     />
 
                     <RangeControl
-                        label={__('Slides To Scroll', 'flexible-slider-carousel')}
+                        label={__('Slides To Scroll', 'flexible-slider-and-carousel')}
                         value={slidesToScroll[breakpoint] || 1}
                         onChange={(value) => updateSlidesToScroll(breakpoint, value)}
                         min={1}

@@ -30,7 +30,6 @@
     }
   },
   "attributes": {
-
     "autoPlay": {
       "type": "boolean",
       "default": false
@@ -234,6 +233,18 @@
       "type": "string",
       "default": "#007cba"
     },
+    "arrowSize": {
+      "type": "number",
+      "default": 40
+    },
+    "arrowPadding": {
+      "type": "number",
+      "default": 10
+    },
+    "arrowBorderRadius": {
+      "type": "number",
+      "default": 4
+    },
     "sliderId": {
       "type": "string",
       "default": ""
@@ -251,7 +262,7 @@
       "default": false
     }
   },
-  "textdomain": "flexible-slider-carousel",
+  "textdomain": "flexible-slider-and-carousel",
   "editorScript": "file:./editor.js",
   "script": "file:./frontend.js",
   "editorStyle": "file:./editor.css",

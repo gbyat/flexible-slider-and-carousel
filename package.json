@@ -4,7 +4,7 @@
   "description": "A comprehensive WordPress plugin for creating sliders and carousels using Gutenberg blocks",
   "main": "flexible-slider-and-carousel.php",
   "scripts": {
-    "build": "webpack --mode=production",
+    "build": "webpack --mode=production && node scripts/create-pot.js && node scripts/po-to-mo.js languages/flexible-slider-and-carousel-de_DE.po && node scripts/po-to-jed.js languages/flexible-slider-and-carousel-de_DE.po && node scripts/hash-json.js",
     "build:prod": "webpack --mode=production",
     "dev": "webpack --mode=development --watch",
     "start": "webpack --mode=development",

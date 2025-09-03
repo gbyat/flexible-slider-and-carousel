@@ -63,10 +63,10 @@ class FSC_Utilities
     public static function get_animation_options()
     {
         return array(
-            'slide' => __('Slide', 'flexible-slider-carousel'),
-            'fade' => __('Fade', 'flexible-slider-carousel'),
-            'zoom' => __('Zoom', 'flexible-slider-carousel'),
-            'flip' => __('Flip', 'flexible-slider-carousel')
+            'slide' => __('Slide', 'flexible-slider-and-carousel'),
+            'fade' => __('Fade', 'flexible-slider-and-carousel'),
+            'zoom' => __('Zoom', 'flexible-slider-and-carousel'),
+            'flip' => __('Flip', 'flexible-slider-and-carousel')
         );
     }
 
@@ -76,11 +76,11 @@ class FSC_Utilities
     public static function get_easing_options()
     {
         return array(
-            'ease' => __('Ease', 'flexible-slider-carousel'),
-            'ease-in' => __('Ease In', 'flexible-slider-carousel'),
-            'ease-out' => __('Ease Out', 'flexible-slider-carousel'),
-            'ease-in-out' => __('Ease In Out', 'flexible-slider-carousel'),
-            'linear' => __('Linear', 'flexible-slider-carousel')
+            'ease' => __('Ease', 'flexible-slider-and-carousel'),
+            'ease-in' => __('Ease In', 'flexible-slider-and-carousel'),
+            'ease-out' => __('Ease Out', 'flexible-slider-and-carousel'),
+            'ease-in-out' => __('Ease In Out', 'flexible-slider-and-carousel'),
+            'linear' => __('Linear', 'flexible-slider-and-carousel')
         );
     }
 

@@ -32,7 +32,7 @@
       "default": ""
     }
   },
-  "textdomain": "flexible-slider-carousel",
+  "textdomain": "flexible-slider-and-carousel",
   "editorScript": "file:./editor.js",
   "editorStyle": "file:./editor.css",
   "style": "file:./frontend.css",

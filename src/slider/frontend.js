@@ -82,6 +82,10 @@ import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, Eff
                 dotBackgroundColor: this.slider.dataset.dotBackgroundColor || '#dddddd',
                 dotBackgroundColorHover: this.slider.dataset.dotBackgroundColorHover || '#00a0d2',
                 dotBackgroundColorActive: this.slider.dataset.dotBackgroundColorActive || '#007cba',
+                // Arrow sizing
+                arrowSize: this.slider.dataset.arrowSize !== undefined ? parseInt(this.slider.dataset.arrowSize) : 40,
+                arrowPadding: this.slider.dataset.arrowPadding !== undefined ? parseInt(this.slider.dataset.arrowPadding) : 10,
+                arrowBorderRadius: this.slider.dataset.arrowBorderRadius !== undefined ? parseInt(this.slider.dataset.arrowBorderRadius) : 4,
                 // Swiper related defaults mapped from data-* attributes
                 sliderType: this.slider.dataset.sliderType || 'carousel',
                 gap: this.slider.dataset.gap !== undefined ? parseInt(this.slider.dataset.gap) : 10,
@@ -159,6 +163,27 @@ import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, Eff
                         element.style.top = '50%';
                         element.style.transform = 'translateY(-50%)';
                         element.style.zIndex = '10';
+                        // Use Swiper CSS variables for size & color
+                        element.style.setProperty('--swiper-navigation-size', this.settings.arrowSize + 'px');
+                        element.style.setProperty('--swiper-navigation-color', this.settings.arrowTextColor);
+                        // Add visible text arrows if empty
+                        if (!element.textContent || element.textContent.trim() === '') {
+                            element.textContent = element.classList.contains('swiper-button-prev') ? '‹' : '›';
+                        }
+                        // Apply sizing and shape
+                        element.style.width = this.settings.arrowSize + 'px';
+                        element.style.height = this.settings.arrowSize + 'px';
+                        element.style.padding = this.settings.arrowPadding + 'px';
+                        element.style.borderRadius = this.settings.arrowBorderRadius + 'px';
+                        element.style.alignItems = 'center';
+                        element.style.justifyContent = 'center';
+                        element.style.border = 'none';
+                        element.style.cursor = 'pointer';
+                        element.style.backgroundColor = this.settings.arrowBackgroundColor;
+                        element.style.color = this.settings.arrowTextColor;
+                        // Scale icon based on available inner box size
+                        element.style.fontSize = this.settings.arrowSize + 'px';
+                        element.style.lineHeight = '1';
                     } else {
                         element.style.display = 'none';
                     }
@@ -580,10 +605,12 @@ import { Navigation, Pagination, Autoplay, Keyboard, EffectFade, EffectFlip, Eff
 
             // Optional controls per settings
             if (this.settings.showNavigation) {
-                const prev = document.createElement('div');
+                const prev = document.createElement('button');
                 prev.className = 'swiper-button-prev';
-                const next = document.createElement('div');
+                prev.textContent = '‹';
+                const next = document.createElement('button');
                 next.className = 'swiper-button-next';
+                next.textContent = '›';
                 container.appendChild(prev);
                 container.appendChild(next);
             }

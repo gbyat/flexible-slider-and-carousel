@@ -29,13 +29,13 @@ const FrameBlock = ({ attributes, setAttributes, clientId }) => {
             </BlockControls>
 
             <InspectorControls>
-                <PanelBody title={__('Frame Title', 'flexible-slider-carousel')} initialOpen={true}>
+                <PanelBody title={__('Frame Title', 'flexible-slider-and-carousel')} initialOpen={true}>
                     <TextControl
-                        label={__('Navigation Title', 'flexible-slider-carousel')}
+                        label={__('Navigation Title', 'flexible-slider-and-carousel')}
                         value={frameTitle || ''}
                         onChange={(value) => setAttributes({ frameTitle: value })}
-                        help={__('This title will be used in the text navigation. Leave empty to use content from the frame.', 'flexible-slider-carousel')}
-                        placeholder={__('Enter frame title...', 'flexible-slider-carousel')}
+                        help={__('This title will be used in the text navigation. Leave empty to use content from the frame.', 'flexible-slider-and-carousel')}
+                        placeholder={__('Enter frame title...', 'flexible-slider-and-carousel')}
                     />
                 </PanelBody>
             </InspectorControls>
