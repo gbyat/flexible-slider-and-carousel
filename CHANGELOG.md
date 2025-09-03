@@ -1,3 +1,9 @@
+## 2025-09-03 18:24:30 - 1.3.4
+
+### Changed Files:
+- `flexible-slider-and-carousel.php`
+- `languages/flexible-slider-and-carousel.pot`
+
 ## 2025-09-03 18:24:27 - Prepare release
 
 ### Changed Files:
