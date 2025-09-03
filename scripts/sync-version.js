@@ -20,11 +20,11 @@ if (fs.existsSync(pluginFile)) {
         `Version: ${version}`
     );
 
-    // Update version in plugin data
-    pluginContent = pluginContent.replace(
-        /"version"\s*=>\s*['"]\d+\.\d+\.\d+['"]/,
-        `"version" => "${version}"`
-    );
+    // Update version in plugin data (this pattern doesn't exist in our plugin)
+    // pluginContent = pluginContent.replace(
+    //     /"version"\s*=>\s*['"]\d+\.\d+\.\d+['"]/,
+    //     `"version" => "${version}"`
+    // );
 
     // Update FSC_PLUGIN_VERSION constant
     pluginContent = pluginContent.replace(

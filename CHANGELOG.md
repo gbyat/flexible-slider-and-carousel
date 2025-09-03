@@ -1,3 +1,8 @@
+## 2025-09-03 18:24:26 - Release v$(node -p 'require(./package.json).version')
+
+### Changed Files:
+- `scripts/sync-version.js`
+
 ## 2025-09-03 13:14:04 - 1.3.3
 
 ### Changed Files:
