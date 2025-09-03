@@ -4,7 +4,7 @@
  * Plugin Name: Flexible Slider and Carousel
  * Plugin URI: https://github.com/your-username/flexible-slider-and-carousel
  * Description: A comprehensive WordPress plugin for creating beautiful sliders and carousels using Gutenberg blocks. Supports manual content, automatic post loading, and extensive customization options.
- * Version: 1.3.1
+ * Version: 1.3.2
  * Author: webentwicklerin, Gabriele Laesser
  * Author URI: https://yoursite.com
  * License: GPL v2 or later
@@ -26,7 +26,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('FSC_PLUGIN_VERSION', '1.3.1');
+define('FSC_PLUGIN_VERSION', '1.3.2');
 define('FSC_PLUGIN_FILE', __FILE__);
 define('FSC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('FSC_PLUGIN_URL', plugin_dir_url(__FILE__));
