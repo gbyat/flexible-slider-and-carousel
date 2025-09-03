@@ -14,9 +14,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "status": "node scripts/status.js",
     "backup": "node scripts/backup.js",
-    "release:patch": "git add -A && git commit -m \"Prepare release\" && npm version patch && npm run build && git add -A && git commit -m \"Release\" && git push && git push --tags",
-    "release:minor": "git add -A && git commit -m \"Prepare release\" && npm version minor && npm run build && git add -A && git commit -m \"Release\" && git push && git push --tags",
-    "release:major": "git add -A && git commit -m \"Prepare release\" && npm version major && npm run build && git add -A && git commit -m \"Release\" && git push && git push --tags",
+    "release:patch": "git add -A && git commit -m \"Prepare release\" && npm version patch && npm run build && git add -A && git commit -m \"Release v%npm_package_version%\" && git push && git push --tags",
+    "release:minor": "git add -A && git commit -m \"Prepare release\" && npm version minor && npm run build && git add -A && git commit -m \"Release v%npm_package_version%\" && git push && git push --tags",
+    "release:major": "git add -A && git commit -m \"Prepare release\" && npm version major && npm run build && git add -A && git commit -m \"Release v%npm_package_version%\" && git push && git push --tags",
     "version": "node scripts/sync-version.js"
   },
   "keywords": [
